@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import type { LanguageInfo, LanguagePack } from "@/packs/types";
@@ -11,8 +11,16 @@ const pad = (n: number) => String(n).padStart(4, "0");
 
 function Heart({ color }: { color: string }) {
   return (
-    <svg viewBox="0 0 7 6" className={t.brandHeart} shapeRendering="crispEdges" aria-hidden="true">
-      <path fill={color} d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z" />
+    <svg
+      viewBox="0 0 7 6"
+      className={t.brandHeart}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      <path
+        fill={color}
+        d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"
+      />
       <rect x={1} y={1} width={1} height={1} fill="#fff" />
     </svg>
   );
@@ -53,7 +61,10 @@ export function TitleScreen({
   footer?: ReactNode;
 }) {
   const [activeIndex, setActiveIndex] = useState(() =>
-    Math.max(0, minigames.findIndex((m) => m.id === initialId)),
+    Math.max(
+      0,
+      minigames.findIndex((m) => m.id === initialId),
+    ),
   );
   const [helpFor, setHelpFor] = useState<Minigame | null>(null);
   const opts: MinigameOptions = { direction };
@@ -69,11 +80,14 @@ export function TitleScreen({
     if (helpFor) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
-      const onControl = e.target instanceof Element && e.target.closest("button, input, a, dialog");
+      const onControl =
+        e.target instanceof Element &&
+        e.target.closest("button, input, a, dialog");
       if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
       else if (e.key === "Enter" && !onControl) onPlay(active.id);
-      else if (/^[1-9]$/.test(e.key) && Number(e.key) <= minigames.length) setActiveIndex(Number(e.key) - 1);
+      else if (/^[1-9]$/.test(e.key) && Number(e.key) <= minigames.length)
+        setActiveIndex(Number(e.key) - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -87,74 +101,111 @@ export function TitleScreen({
         <Heart color="var(--rival)" />
       </div>
 
-      <div className={t.cards}>
+      <div
+        className={t.cards}
+        style={{ "--cards": minigames.length } as CSSProperties}
+      >
         {minigames.map((m, i) => {
           const on = i === activeIndex;
           const name = strings.modes[m.id] ?? m.id;
           const info = strings.minigameInfo[m.id];
           const Preview = m.Preview;
           return (
-            <section key={m.id} className={`${t.card} ${on ? t.cardOn : t.cardOff}`} aria-label={name}>
-              <button
-                type="button"
-                className={t.previewButton}
-                aria-label={fill(on ? strings.title.playName : strings.title.choose, { name })}
-                aria-current={on ? "true" : undefined}
-                onClick={() => (on ? onPlay(m.id) : setActiveIndex(i))}
-              >
-                <Preview pack={pack} opts={opts} />
-              </button>
+            <section
+              key={m.id}
+              className={`${t.card} ${on ? t.cardOn : t.cardOff}`}
+              aria-label={name}
+            >
+              <div className={t.cardBody}>
+                <button
+                  type="button"
+                  className={t.previewButton}
+                  aria-label={fill(
+                    on ? strings.title.playName : strings.title.choose,
+                    { name },
+                  )}
+                  aria-current={on ? "true" : undefined}
+                  onClick={() => (on ? onPlay(m.id) : setActiveIndex(i))}
+                >
+                  <Preview pack={pack} opts={opts} />
+                </button>
 
-              {on && (
-                <div className={t.info}>
-                  <div className={t.infoHead}>
-                    <h2 className={t.infoName}>{name.toUpperCase()}</h2>
-                    <span className={t.infoMeta}>
-                      <span className={t.best}>{fill(strings.best, { score: pad(best[m.id] ?? 0) })}</span>
-                      <button
-                        type="button"
-                        className={t.help}
-                        aria-label={fill(strings.title.help, { name })}
-                        onClick={() => setHelpFor(m)}
-                      >
-                        ?
-                      </button>
-                    </span>
-                  </div>
-                  {info && <p className={t.description}>{fill(info.description, { language: target.name })}</p>}
-                  <div className={t.langRow}>
-                    <span className={t.langLabel}>{strings.title.language}</span>
-                    {m.usesDirection ? (
-                      <span className={t.segment} role="group" aria-label={strings.title.language}>
-                        {(["toTarget", "toBase"] as const).map((d) => {
-                          const [from, to] = d === "toTarget" ? [base, target] : [target, base];
-                          return (
-                            <button
-                              key={d}
-                              type="button"
-                              className={`${t.segButton} ${direction === d ? t.segOn : ""}`}
-                              aria-pressed={direction === d}
-                              aria-label={fill(strings.directionAria, { from: from.name, to: to.name })}
-                              onClick={() => onDirection(d)}
-                            >
-                              <Tag l={from} text={from.label} /> &gt; <Tag l={to} text={to.label} />
-                            </button>
-                          );
-                        })}
+                {on && (
+                  <div className={t.info}>
+                    <div className={t.infoHead}>
+                      <h2 className={t.infoName}>{name.toUpperCase()}</h2>
+                      <span className={t.best}>
+                        {fill(strings.best, { score: pad(best[m.id] ?? 0) })}
                       </span>
-                    ) : (
-                      <span className={t.langChip}>
-                        {target.nativeName && <Tag l={target} text={target.nativeName} />}
-                        {target.nativeName ? " · " : ""}
-                        {target.name}
-                      </span>
+                    </div>
+                    {info && (
+                      <p className={t.description}>
+                        {fill(info.description, { language: target.name })}
+                      </p>
                     )}
-                    <button type="button" className={t.play} onClick={() => onPlay(m.id)}>
-                      {strings.title.play}
-                    </button>
+                    <div className={t.langRow}>
+                      <span className={t.langLabel}>
+                        {strings.title.language}
+                      </span>
+                      {m.usesDirection ? (
+                        <span
+                          className={t.segment}
+                          role="group"
+                          aria-label={strings.title.language}
+                        >
+                          {(["toTarget", "toBase"] as const).map((d) => {
+                            const [from, to] =
+                              d === "toTarget"
+                                ? [base, target]
+                                : [target, base];
+                            return (
+                              <button
+                                key={d}
+                                type="button"
+                                className={`${t.segButton} ${direction === d ? t.segOn : ""}`}
+                                aria-pressed={direction === d}
+                                aria-label={fill(strings.directionAria, {
+                                  from: from.name,
+                                  to: to.name,
+                                })}
+                                onClick={() => onDirection(d)}
+                              >
+                                <Tag l={from} text={from.label} /> &gt;{" "}
+                                <Tag l={to} text={to.label} />
+                              </button>
+                            );
+                          })}
+                        </span>
+                      ) : (
+                        <span className={t.langChip}>
+                          {target.nativeName && (
+                            <Tag l={target} text={target.nativeName} />
+                          )}
+                          {target.nativeName ? " · " : ""}
+                          {target.name}
+                        </span>
+                      )}
+                      <span className={t.actions}>
+                        <button
+                          type="button"
+                          className={t.help}
+                          aria-label={fill(strings.title.help, { name })}
+                          onClick={() => setHelpFor(m)}
+                        >
+                          ?
+                        </button>
+                        <button
+                          type="button"
+                          className={t.play}
+                          onClick={() => onPlay(m.id)}
+                        >
+                          {strings.title.play}
+                        </button>
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </section>
           );
         })}
@@ -163,15 +214,34 @@ export function TitleScreen({
       <p className={t.navHint}>{strings.title.navHint}</p>
 
       <div className={t.carouselBar}>
-        <button type="button" className={t.navButton} aria-label={strings.title.previous} onClick={() => step(-1)}>
+        <button
+          type="button"
+          className={t.navButton}
+          aria-label={strings.title.previous}
+          onClick={() => step(-1)}
+        >
           &lt;
         </button>
-        <span className={t.dots} aria-label={fill(strings.title.pageOf, { n: activeIndex + 1, total: minigames.length })}>
+        <span
+          className={t.dots}
+          aria-label={fill(strings.title.pageOf, {
+            n: activeIndex + 1,
+            total: minigames.length,
+          })}
+        >
           {minigames.map((m, i) => (
-            <span key={m.id} className={`${t.dot} ${i === activeIndex ? t.dotOn : ""}`} />
+            <span
+              key={m.id}
+              className={`${t.dot} ${i === activeIndex ? t.dotOn : ""}`}
+            />
           ))}
         </span>
-        <button type="button" className={t.navButton} aria-label={strings.title.next} onClick={() => step(1)}>
+        <button
+          type="button"
+          className={t.navButton}
+          aria-label={strings.title.next}
+          onClick={() => step(1)}
+        >
           &gt;
         </button>
       </div>
