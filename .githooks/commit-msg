@@ -1,0 +1,9 @@
+#!/bin/sh
+# Strip AI attribution from commit messages: no Claude co-author trailers or
+# "Generated with Claude Code" lines in this repo's history.
+msg="$1"
+tmp="$(mktemp)"
+grep -Eiv '^(Co-Authored-By:.*(claude|anthropic)|.*Generated with \[?Claude Code)' "$msg" > "$tmp"
+# Drop trailing blank lines left behind.
+awk 'NF{for(;n>0;n--)print "";print;next}{n++}' "$tmp" > "$msg"
+rm -f "$tmp"

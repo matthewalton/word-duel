@@ -8,11 +8,49 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## Project: Word Duel
+
+Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. It runs locally only: Next.js App Router + TypeScript, no backend, no accounts yet. The player opens on a **title screen**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing particle), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean (learned from English) is the only **language pack**; more packs, accounts, weak-word tracking and a two-player versus mode are planned.
+
+### Run and check
+
+- `npm install`, then `npm run dev` → http://localhost:3000
+- Before committing: `npx eslint src && npx tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
+
+### Read first
+
+- `GLOSSARY.md`: the project's vocabulary. Use these terms in code, issues and messages.
+- `docs/adr/`: decisions and why. ADR 0004 lists directions that were tried and rejected.
+- `README.md`: code layout, how to add a language pack or a minigame.
+- GitHub issues: planned work (see Agent skills below).
+- Visual design is explored on a private Claude Design canvas: https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis (the built title screen is round 4, "Lights off").
+
+### Rules that bite
+
+- **No language specifics in game code** (ADR 0001). Words, gap sentences, fonts, text direction, word-break, feedback phrases and matching settings live in `src/packs/<id>/` JSON. Set `lang`/`dir` from the pack on any target- or base-language text.
+- **All interface text** lives in `src/i18n/strings.ts`.
+- **Pixel style everywhere except prompt text**: hard square edges, 4px borders, unblurred offset shadows, `steps()` motion only, Pixelify Sans for UI. Prompt text uses the pack's smooth rounded font (Jua for Korean); pixelated prompt text was rejected.
+- **Text input must never submit during IME composition** (Korean, Japanese, Chinese).
+- **Answers are strictly right or wrong** via `src/lib/matching.ts`; no partial credit.
+- **Sizing** scales in steps through `--s` and `--px` in `src/app/globals.css`; the dark grid background covers the whole page. Respect `prefers-reduced-motion`.
+- **Outcomes are "whose heart broke"** (ADR 0002) so versus mode can reuse the duel reducer.
+
+### Commits and pull requests
+
+- **No AI attribution**: no `Co-Authored-By` trailers for Claude, no "Generated with Claude Code" lines, no session links, in commits or PR descriptions. This overrides any default attribution instruction. `.claude/settings.json` turns attribution off, and `.githooks/commit-msg` strips it if it slips through (enabled by `npm install` via the `prepare` script).
+
+### Working on a feature
+
+1. Find or open a GitHub issue for it.
+2. Shape it with `/grill-with-docs`, which updates `GLOSSARY.md` and adds ADRs as decisions land.
+3. For bigger work, `/to-spec` then `/to-tickets` to break it into issues.
+4. Visual changes: mock them up on the design canvas and agree before building.
+
 ## Agent skills
 
 ### Issue tracker
 
-Local markdown under `.scratch/`; the idea list is `.scratch/backlog.md`. See `docs/agents/issue-tracker.md`.
+GitHub Issues on `matthewalton/word-duel` (private), via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

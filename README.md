@@ -3,7 +3,7 @@
 A small pixel-art word duel for vocabulary practice. Local only, no backend.
 
 ```bash
-npm install
+npm install   # also enables the repo's git hooks (.githooks/)
 npm run dev   # http://localhost:3000
 ```
 
