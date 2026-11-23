@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import styles from "@/components/game.module.css";
-import { HeartsBreakingVisual, HowToStep } from "@/components/HowToParts";
+import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { pickIndex, shuffle } from "@/lib/random";
@@ -133,7 +133,7 @@ function GapGuardHowTo({ pack }: ShowcaseProps) {
           </span>
         ))}
       />
-      <HowToStep n={3} text={steps[2]} visual={<HeartsBreakingVisual />} />
+      <HowToStep n={3} text={steps[2]} visual={<StageProgressVisual />} />
     </>
   );
 }

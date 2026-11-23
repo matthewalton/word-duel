@@ -21,7 +21,7 @@ export interface Round {
   /** Unique per item (used for "never the same prompt twice in a row"). */
   id: string;
   itemIndex: number;
-  /** Small uppercase hint above the prompt. */
+  /** Short instruction for the round; Word Strike shows it as the input placeholder. */
   hint: string;
   prompt: LangText;
   /** For gap prompts: text before and after the blank. */

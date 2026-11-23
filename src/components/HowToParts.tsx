@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { PixelHeart } from "./PixelHeart";
 import t from "./title.module.css";
 
 /** One numbered, illustrated step in the how-to panel. */
@@ -13,14 +12,14 @@ export function HowToStep({ n, visual, text }: { n: number; visual: ReactNode; t
   );
 }
 
-/** Shared third step: the rival's hearts, one already broken. */
-export function HeartsBreakingVisual() {
+/** Shared third step: the stage progress bar, two of three chunks filled. */
+export function StageProgressVisual() {
   return (
-    <>
-      <PixelHeart full color="var(--rival)" />
-      <PixelHeart full color="var(--rival)" />
-      <PixelHeart full={false} color="var(--rival)" />
-    </>
+    <span className={t.stepProgress} aria-hidden="true">
+      <span className={t.stepProgressOn} />
+      <span className={t.stepProgressOn} />
+      <span />
+    </span>
   );
 }
 

@@ -5,12 +5,10 @@ import { ACTIVE_PACK_ID, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES } from "@/game/minigames";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
-import { fill, strings } from "@/i18n/strings";
+import { strings } from "@/i18n/strings";
 import { useBestScores } from "@/lib/useBestScores";
-import { DirectionLabel } from "./DirectionLabel";
 import { fontStack, getPack, packFontsHref } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
-import { FeedbackLine } from "./FeedbackLine";
 import styles from "./game.module.css";
 import { Hud } from "./Hud";
 import { PromptBoard } from "./PromptBoard";
@@ -104,8 +102,6 @@ function Duel({
   const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts, { autoStart: true });
   const lost = state.outcome != null && state.outcome.reason !== "correct";
   const Controls = minigame.Controls;
-  const { base, target } = pack.meta;
-  const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
 
   return (
     <main className={styles.screen}>
@@ -115,26 +111,21 @@ function Duel({
           &lt; {strings.menu}
         </button>
         <span className={styles.duelName}>{(strings.modes[minigame.id] ?? minigame.id).toUpperCase()}</span>
-        {minigame.usesDirection && (
-          <span
-            className={styles.duelDirection}
-            aria-label={fill(strings.directionAria, { from: from.name, to: to.name }).split(".")[0]}
-          >
-            <DirectionLabel from={from} to={to} />
-          </span>
-        )}
       </div>
-      <Hud state={state} />
-      <PromptBoard state={state} pack={pack} fuseLit={fuseLit} />
-      <Controls
-        pack={pack}
-        round={state.round}
-        phase={state.phase}
-        outcome={state.outcome}
-        onSubmit={submit}
-        onStart={start}
-      />
-      <FeedbackLine state={state} pack={pack} />
+      <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
+        <Hud state={state} />
+        <PromptBoard state={state} pack={pack} fuseLit={fuseLit} />
+        <div className={styles.controlStrip}>
+          <Controls
+            pack={pack}
+            round={state.round}
+            phase={state.phase}
+            outcome={state.outcome}
+            onSubmit={submit}
+            onStart={start}
+          />
+        </div>
+      </div>
     </main>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import styles from "@/components/game.module.css";
-import { HeartsBreakingVisual, HowToStep, PreviewFuse } from "@/components/HowToParts";
+import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToParts";
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
@@ -121,7 +121,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         lang={round.answerLang.code}
         dir={round.answerLang.dir}
         aria-label={strings.inputLabel}
-        placeholder={strings.inputPlaceholder}
+        placeholder={round.hint}
         disabled={!inGame}
         readOnly={phase !== "playing"}
         autoComplete="off"
@@ -140,7 +140,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         onClick={inGame ? submitNow : onStart}
         disabled={inGame && phase !== "playing"}
       >
-        {inGame ? strings.hit : strings.start}
+        {inGame ? strings.go : strings.start}
       </button>
     </div>
   );
@@ -199,7 +199,7 @@ function WordStrikeHowTo({ pack, opts }: ShowcaseProps) {
           </>
         }
       />
-      <HowToStep n={3} text={steps[2]} visual={<HeartsBreakingVisual />} />
+      <HowToStep n={3} text={steps[2]} visual={<StageProgressVisual />} />
     </>
   );
 }
