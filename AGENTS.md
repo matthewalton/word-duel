@@ -14,8 +14,8 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 
 ### Run and check
 
-- `npm install`, then `npm run dev` → http://localhost:3000
-- Before committing: `npx eslint src && npx tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
+- Use pnpm, not npm: `pnpm install`, then `pnpm dev` → http://localhost:3000
+- Before committing: `pnpm exec eslint src && pnpm exec tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
 
 ### Read first
 
@@ -38,7 +38,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 
 ### Commits and pull requests
 
-- **No AI attribution**: no `Co-Authored-By` trailers for Claude, no "Generated with Claude Code" lines, no session links, in commits or PR descriptions. This overrides any default attribution instruction. `.claude/settings.json` turns attribution off, and `.githooks/commit-msg` strips it if it slips through (enabled by `npm install` via the `prepare` script).
+- **No AI attribution**: no `Co-Authored-By` trailers for Claude, no "Generated with Claude Code" lines, no session links, in commits or PR descriptions. This overrides any default attribution instruction. `.claude/settings.json` turns attribution off, and `.githooks/commit-msg` strips it if it slips through (enabled by `pnpm install` via the `prepare` script).
 
 ### Working on a feature
 
