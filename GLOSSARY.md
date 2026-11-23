@@ -76,5 +76,20 @@ _Avoid_: Mode, game type
 **Word Strike**:
 The minigame in which the player types the translation of a word.
 
+**Title screen**:
+The screen before a duel where the player chooses a minigame, its direction, and plays.
+_Avoid_: Menu, home, start screen
+
+**Active card**:
+The minigame on the title screen that Enter or PLAY will start. Other minigames' cards are inactive and show their preview dimmed.
+_Avoid_: Selected mode
+
+**Preview**:
+A static picture of one round of a minigame, built from the language pack, shown on its card.
+
+**How-to panel**:
+The illustrated rules for one minigame, opened from the active card's ? button.
+_Avoid_: Help, tutorial
+
 **Gap Guard**:
 The minigame in which the player picks the missing piece of a target-language sentence from three options.

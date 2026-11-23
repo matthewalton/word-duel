@@ -36,6 +36,44 @@ export const strings = {
   heartLostLabel: "-♥",
   heartsAria: "{who}: {n} of {max} hearts",
   fuseAria: "Time left",
+  menu: "MENU",
+  menuAria: "Back to the title screen",
+  title: {
+    navHint: "← → or click to choose · Enter to play",
+    play: "PLAY",
+    language: "LANGUAGE",
+    choose: "Choose {name}",
+    playName: "Play {name}",
+    help: "How {name} works",
+    close: "Close",
+    previous: "Previous minigame",
+    next: "Next minigame",
+    pageOf: "{n} of {total}",
+  },
+  minigameInfo: {
+    "word-strike": {
+      description: "See a word, type its translation, hit Enter before the fuse runs out.",
+      steps: [
+        "A word appears",
+        "Type it in {language} and press Enter before the fuse runs out",
+        "A right answer breaks a CPU heart. Wrong or too slow breaks yours",
+      ],
+      rules: ["Switch the direction to practise both ways."],
+    },
+    "gap-guard": {
+      description: "Fill the blank in a {language} sentence. Three choices, one is right.",
+      steps: [
+        "A sentence is missing one piece",
+        "Pick the missing piece, or press 1, 2 or 3",
+        "A right answer breaks a CPU heart. Wrong or too slow breaks yours",
+      ],
+      rules: [],
+    },
+  } as Record<string, { description: string; steps: [string, string, string]; rules: string[] }>,
+  sharedRules: [
+    "Right answers in a row build a combo: up to {cap}× points.",
+    "Break all {hearts} CPU hearts to clear the stage. The fuse gets {step} second shorter each stage.",
+  ],
   creditsLabel: "Word data:",
 } as const;
 

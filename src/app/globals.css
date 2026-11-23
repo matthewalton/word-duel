@@ -1,5 +1,4 @@
 :root {
-  --page: #efe6f2;
   --ink: #2a2440;
   --screen: #2a2440;
   --board: #fbf7fc;
@@ -52,9 +51,20 @@ body {
   padding: 0;
 }
 
+/* The dark grid covers the whole page: the game is the page, not a box on it. */
+html {
+  background-color: var(--screen);
+}
+
 body {
-  background: var(--page);
-  color: var(--ink);
+  min-height: 100dvh;
+  background-color: var(--screen);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-attachment: fixed;
+  color: var(--board);
   font-family: var(--font-pixel), sans-serif;
   -webkit-font-smoothing: antialiased;
 }

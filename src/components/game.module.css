@@ -4,22 +4,11 @@
  * Logical properties only, so a right-to-left pack lays out correctly.
  */
 
-.title {
-  margin: 0;
-  padding-block: calc(20px * var(--s)) calc(4px * var(--s));
-  text-align: center;
-  font-size: calc(28px * var(--s));
-  font-weight: 700;
-  letter-spacing: calc(2px * var(--s));
-  text-transform: uppercase;
-}
-
 .page {
   --font-ui: var(--font-pixel), var(--font-body), sans-serif;
-  min-height: calc(100dvh - 60px * var(--s));
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: calc(16px * var(--s)) calc(16px * var(--s)) calc(40px * var(--s));
   font-family: var(--font-ui);
 }
 
@@ -28,39 +17,38 @@
 .screen {
   position: relative;
   flex: 1;
+  box-sizing: border-box;
   width: 100%;
-  max-height: calc(720px * var(--s));
-  max-width: calc(760px * var(--s));
+  max-width: calc(860px * var(--s));
+  max-height: calc(820px * var(--s));
   margin-inline: auto;
-  padding: calc(16px * var(--s));
+  padding: calc(24px * var(--s)) calc(20px * var(--s));
   display: flex;
   flex-direction: column;
   gap: calc(14px * var(--s));
   color: var(--board);
-  background-color: var(--screen);
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 16px 16px;
-  border: var(--border);
-  box-shadow: var(--shadow);
 }
 
-.screenHurt {
-  animation: screenHurt 480ms steps(1, end);
+/* Wrong answer: the edge of the whole page flashes pink-red. */
+.hurtFlash {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border: 8px solid var(--rival);
+  opacity: 0;
+  animation: hurtFlash 480ms steps(1, end);
 }
 
-@keyframes screenHurt {
+@keyframes hurtFlash {
   0%,
   50% {
-    border-color: var(--rival);
-    box-shadow: 8px 8px 0 var(--rival);
+    opacity: 1;
   }
   25%,
   75%,
   100% {
-    border-color: var(--ink);
-    box-shadow: var(--shadow);
+    opacity: 0;
   }
 }
 
@@ -98,10 +86,22 @@
   border-color: var(--accent);
 }
 
-.dirToggle {
+.modeBar {
+  align-items: center;
+}
+
+.duelName {
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.duelDirection {
   margin-inline-start: auto;
-  border-color: var(--player);
+  padding: calc(4px * var(--s)) calc(10px * var(--s));
+  font-size: calc(15px * var(--s));
   color: var(--player);
+  border: 3px solid var(--player);
 }
 
 /* ---------- HUD ---------- */
@@ -644,27 +644,9 @@
   color: var(--board);
 }
 
-.credits {
-  max-width: calc(760px * var(--s));
-  margin: calc(20px * var(--s)) auto 0;
-  font-family: var(--font-body);
-  font-size: calc(12px * var(--s));
-  line-height: 1.5;
-  text-align: center;
-  color: #6b5f7d;
-}
-
-.credits a {
-  color: inherit;
-}
-
 /* ---------- Phone width ---------- */
 
 @media (max-width: 520px) {
-  .page {
-    padding-inline: 8px;
-  }
-
   .screen {
     padding: 10px;
     gap: 10px;

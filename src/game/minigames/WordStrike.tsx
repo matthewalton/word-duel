@@ -2,11 +2,22 @@
 
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import styles from "@/components/game.module.css";
+import { HeartsBreakingVisual, HowToStep, PreviewFuse } from "@/components/HowToParts";
+import { wordBreakStyle } from "@/components/LangSpan";
+import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
 import { pickIndex } from "@/lib/random";
 import { normalizeAnswer } from "@/lib/matching";
 import type { LanguagePack, WordEntry } from "@/packs/types";
-import { langText, type ControlsProps, type Minigame, type MinigameOptions, type Round } from "../types";
+import {
+  langText,
+  type ControlsProps,
+  type LangText,
+  type Minigame,
+  type MinigameOptions,
+  type Round,
+  type ShowcaseProps,
+} from "../types";
 
 const unique = (items: string[]) => items.filter((x, i) => items.indexOf(x) === i);
 
@@ -135,10 +146,70 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
   );
 }
 
+/** The pack's first word as prompt and typed answer, in the chosen direction. */
+function sample(pack: LanguagePack, opts: MinigameOptions): { prompt: LangText; answer: LangText; answerName: string } {
+  const word = pack.words[0];
+  const { target, base } = pack.meta;
+  return opts.direction === "toTarget"
+    ? { prompt: langText(base, word.base[0]), answer: langText(target, word.target), answerName: target.name }
+    : { prompt: langText(target, word.target), answer: langText(base, word.base[0]), answerName: base.name };
+}
+
+function WordStrikePreview({ pack, opts }: ShowcaseProps) {
+  const { prompt, answer } = sample(pack, opts);
+  return (
+    <span className={t.preview}>
+      <span className={t.pvPrompt} lang={prompt.lang} dir={prompt.dir} style={wordBreakStyle(prompt)}>
+        {prompt.text}
+      </span>
+      <span className={t.pvInput}>
+        <span lang={answer.lang} dir={answer.dir}>
+          {answer.text}
+        </span>
+        <span className={t.pvCaret} />
+      </span>
+      <PreviewFuse lit={9} />
+    </span>
+  );
+}
+
+function WordStrikeHowTo({ pack, opts }: ShowcaseProps) {
+  const { prompt, answer, answerName } = sample(pack, opts);
+  const steps = strings.minigameInfo["word-strike"].steps;
+  return (
+    <>
+      <HowToStep
+        n={1}
+        text={steps[0]}
+        visual={
+          <span className={t.stepPrompt} lang={prompt.lang} dir={prompt.dir}>
+            {prompt.text}
+          </span>
+        }
+      />
+      <HowToStep
+        n={2}
+        text={fill(steps[1], { language: answerName })}
+        visual={
+          <>
+            <span className={t.stepInput} lang={answer.lang} dir={answer.dir}>
+              {answer.text}
+            </span>
+            <span className={t.stepKey}>ENTER</span>
+          </>
+        }
+      />
+      <HowToStep n={3} text={steps[2]} visual={<HeartsBreakingVisual />} />
+    </>
+  );
+}
+
 export const wordStrike: Minigame = {
   id: "word-strike",
   usesDirection: true,
   sampleRound: (pack, opts) => buildRound(pack, opts, 0),
   nextRound,
   Controls: WordStrikeControls,
+  Preview: WordStrikePreview,
+  HowTo: WordStrikeHowTo,
 };

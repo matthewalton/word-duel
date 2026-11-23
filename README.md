@@ -22,20 +22,20 @@ Rename the game in `src/config/game.ts` (`GAME_NAME`).
 | `src/game/duel.ts` | Pure duel reducer shared by every minigame |
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
 | `src/game/minigames/` | One module per minigame, plus the registry |
-| `src/components/` | Screen, HUD, hearts, prompt board, effects |
+| `src/components/` | Title screen, how-to panel, duel screen, HUD, hearts, prompt board, effects |
 
 ## Adding a language pack
 
 1. Copy `src/packs/ko-en/` to a new folder and replace the data.
 2. Pick a smooth, rounded Google font for prompts and a readable body font that covers the script (`meta.json` → `fonts`).
-3. Set `dir` and `wordBreak` per language in `meta.json`.
+3. Set `dir`, `wordBreak` and `nativeName` per language in `meta.json`.
 4. Register it in `src/packs/index.ts` and point `ACTIVE_PACK_ID` at it.
 
 Gap sentences mark the blank with `___`.
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack and renders its own controls. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts` and give it a label in `strings.modes`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Versus mode (later)
 

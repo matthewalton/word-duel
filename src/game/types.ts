@@ -61,6 +61,12 @@ export interface Outcome {
   given?: string;
 }
 
+/** Props for a minigame's title-screen preview and how-to steps. */
+export interface ShowcaseProps {
+  pack: LanguagePack;
+  opts: MinigameOptions;
+}
+
 export interface ControlsProps {
   pack: LanguagePack;
   round: Round;
@@ -82,4 +88,8 @@ export interface Minigame {
   sampleRound: (pack: LanguagePack, opts: MinigameOptions) => Round;
   nextRound: (pack: LanguagePack, opts: MinigameOptions, previous: Round | null) => Round;
   Controls: ComponentType<ControlsProps>;
+  /** Static picture of a round, shown on the title screen. */
+  Preview: ComponentType<ShowcaseProps>;
+  /** The three illustrated steps in the how-to panel. */
+  HowTo: ComponentType<ShowcaseProps>;
 }

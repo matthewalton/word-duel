@@ -2,10 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import styles from "@/components/game.module.css";
+import { HeartsBreakingVisual, HowToStep } from "@/components/HowToParts";
+import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { pickIndex, shuffle } from "@/lib/random";
 import { GAP_MARKER, type LanguagePack } from "@/packs/types";
-import { langText, type ControlsProps, type Minigame, type Round } from "../types";
+import { langText, type ControlsProps, type Minigame, type Round, type ShowcaseProps } from "../types";
 
 function buildRound(pack: LanguagePack, index: number, shuffleOptions: boolean): Round {
   const gap = pack.gaps[index];
@@ -84,6 +86,58 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
   );
 }
 
+function GapGuardPreview({ pack }: ShowcaseProps) {
+  const round = buildRound(pack, 0, false);
+  const { lang, dir } = round.prompt;
+  return (
+    <span className={t.preview}>
+      <span className={`${t.pvPrompt} ${t.pvSentence}`} lang={lang} dir={dir} style={{ wordBreak: round.prompt.wordBreak ?? "normal" }}>
+        {round.gap?.before}
+        <span className={t.pvBlank}>{round.reveal.text}</span>
+        {round.gap?.after}
+      </span>
+      <span className={t.pvChips}>
+        {(round.options ?? []).map((o) => (
+          <span key={o} lang={lang} dir={dir} className={`${t.pvChip} ${o === round.reveal.text ? t.pvChipOn : ""}`}>
+            {o}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function GapGuardHowTo({ pack }: ShowcaseProps) {
+  const round = buildRound(pack, 0, false);
+  const { lang, dir } = round.prompt;
+  const steps = strings.minigameInfo["gap-guard"].steps;
+  return (
+    <>
+      <HowToStep
+        n={1}
+        text={steps[0]}
+        visual={
+          <span className={`${t.stepPrompt} ${t.stepSentence}`} lang={lang} dir={dir}>
+            {round.gap?.before}
+            <span className={t.stepBlank}>{"\u00A0"}</span>
+            {round.gap?.after}
+          </span>
+        }
+      />
+      <HowToStep
+        n={2}
+        text={steps[1]}
+        visual={(round.options ?? []).map((o) => (
+          <span key={o} lang={lang} dir={dir} className={`${t.stepChip} ${o === round.reveal.text ? t.stepChipOn : ""}`}>
+            {o}
+          </span>
+        ))}
+      />
+      <HowToStep n={3} text={steps[2]} visual={<HeartsBreakingVisual />} />
+    </>
+  );
+}
+
 export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
@@ -91,4 +145,6 @@ export const gapGuard: Minigame = {
   nextRound: (pack, _opts, previous) =>
     buildRound(pack, pickIndex(pack.gaps.length, previous?.itemIndex ?? null), true),
   Controls: GapGuardControls,
+  Preview: GapGuardPreview,
+  HowTo: GapGuardHowTo,
 };

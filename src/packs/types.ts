@@ -14,6 +14,8 @@ export type TextDirection = "ltr" | "rtl";
 export interface LanguageInfo {
   /** Display name in the interface language, e.g. "Korean". */
   name: string;
+  /** The language's name for itself, e.g. "한국어". */
+  nativeName?: string;
   /** BCP-47 code, e.g. "ko". */
   code: string;
   /** Short label for the direction toggle, e.g. "한" or "EN". */

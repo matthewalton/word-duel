@@ -16,10 +16,20 @@ export const FUSE_SEGMENTS = 20;
  * best-score storage. A versus controller would replace the fuse/CPU part
  * with server messages while reusing `duelReducer` and the same screen.
  */
-export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOptions) {
-  const [state, dispatch] = useReducer(duelReducer, undefined, () =>
-    initialDuel(minigame.sampleRound(pack, opts)),
-  );
+export function useDuel(
+  pack: LanguagePack,
+  minigame: Minigame,
+  opts: MinigameOptions,
+  { autoStart = false }: { autoStart?: boolean } = {},
+) {
+  // With autoStart the first prompt is live straight away. Only mount with
+  // autoStart on the client (after a click), since the first round is random.
+  const [state, dispatch] = useReducer(duelReducer, undefined, () => {
+    const idle = initialDuel(minigame.sampleRound(pack, opts));
+    return autoStart
+      ? duelReducer(idle, { type: "start", round: minigame.nextRound(pack, opts, null) })
+      : idle;
+  });
   const [fuseLit, setFuseLit] = useState(FUSE_SEGMENTS);
 
   const roundRef = useRef(state.round);
