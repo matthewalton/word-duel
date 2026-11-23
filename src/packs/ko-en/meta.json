@@ -2,6 +2,7 @@
   "id": "ko-en",
   "target": {
     "name": "Korean",
+    "nativeName": "한국어",
     "code": "ko",
     "label": "한",
     "dir": "ltr",
@@ -9,6 +10,7 @@
   },
   "base": {
     "name": "English",
+    "nativeName": "English",
     "code": "en",
     "label": "EN",
     "dir": "ltr"
