@@ -10,7 +10,6 @@ export const strings = {
     "gap-guard": "Gap Guard",
   } as Record<string, string>,
   modesLabel: "Minigame",
-  direction: "{from} > {to}",
   directionAria: "Answer direction: {from} to {to}. Click to switch.",
   start: "START",
   hit: "HIT",
@@ -41,7 +40,6 @@ export const strings = {
   title: {
     navHint: "← → or click to choose · Enter to play",
     play: "PLAY",
-    language: "LANGUAGE",
     choose: "Choose {name}",
     playName: "Play {name}",
     help: "How {name} works",

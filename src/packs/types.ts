@@ -14,12 +14,10 @@ export type TextDirection = "ltr" | "rtl";
 export interface LanguageInfo {
   /** Display name in the interface language, e.g. "Korean". */
   name: string;
-  /** The language's name for itself, e.g. "한국어". */
-  nativeName?: string;
+  /** The language's name for itself, e.g. "한국어". Shown on the direction toggle. */
+  nativeName: string;
   /** BCP-47 code, e.g. "ko". */
   code: string;
-  /** Short label for the direction toggle, e.g. "한" or "EN". */
-  label: string;
   dir: TextDirection;
   /**
    * CSS `word-break` for prompts in this language. Korean wants "keep-all"
@@ -55,10 +53,12 @@ export interface PackMeta {
   /** The language the learner already knows. */
   base: LanguageInfo;
   fonts: {
-    /** Big prompt text. Must be smooth and rounded, never pixelated. */
-    prompt: FontSpec;
-    /** Body text and the answer input. Must cover the target script. */
-    body: FontSpec;
+    /**
+     * Every target- and base-language word: prompts, answers, choices and
+     * language names. Smooth and rounded, never pixelated, and covering both
+     * scripts. Interface text uses the pixel font instead.
+     */
+    words: FontSpec;
   };
 }
 

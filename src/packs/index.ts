@@ -37,15 +37,11 @@ export function getPack(id: string): LanguagePack {
   return pack;
 }
 
-/** Google Fonts stylesheet URL for the pack's fonts, or null if none. */
+/** Google Fonts stylesheet URL for the pack's font, or null if it is local. */
 export function packFontsHref(pack: LanguagePack): string | null {
-  const families = [pack.meta.fonts.prompt.google, pack.meta.fonts.body.google]
-    .filter((f): f is string => Boolean(f))
-    .filter((f, i, all) => all.indexOf(f) === i);
-  if (families.length === 0) return null;
-  const query = families
-    .map((f) => `family=${encodeURIComponent(f).replace(/%20/g, "+")}`)
-    .join("&");
+  const family = pack.meta.fonts.words.google;
+  if (!family) return null;
+  const query = `family=${encodeURIComponent(family).replace(/%20/g, "+")}`;
   return `https://fonts.googleapis.com/css2?${query}&display=swap`;
 }
 

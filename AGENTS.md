@@ -29,7 +29,8 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 
 - **No language specifics in game code** (ADR 0001). Words, gap sentences, fonts, text direction, word-break, feedback phrases and matching settings live in `src/packs/<id>/` JSON. Set `lang`/`dir` from the pack on any target- or base-language text.
 - **All interface text** lives in `src/i18n/strings.ts`.
-- **Pixel style everywhere except prompt text**: hard square edges, 4px borders, unblurred offset shadows, `steps()` motion only, Pixelify Sans for UI. Prompt text uses the pack's smooth rounded font (Jua for Korean); pixelated prompt text was rejected.
+- **Two fonts**: Pixelify Sans for short game text (titles, minigame names, buttons, scores, labels); the pack's one smooth rounded font (`fonts.words`, Jua for Korean) for every target- or base-language word (prompts, answers, choices, language names) and for anything read as sentences (descriptions, how-to steps and rules, credits). Pixelated prompt text and pixel body text were rejected.
+- **Pixel style everywhere**: hard square edges, 4px borders, unblurred offset shadows, `steps()` motion only.
 - **Text input must never submit during IME composition** (Korean, Japanese, Chinese).
 - **Answers are strictly right or wrong** via `src/lib/matching.ts`; no partial credit.
 - **Sizing** scales in steps through `--s` and `--px` in `src/app/globals.css`; the dark grid background covers the whole page. Respect `prefers-reduced-motion`.

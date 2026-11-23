@@ -3,7 +3,8 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
-import type { LanguageInfo, LanguagePack } from "@/packs/types";
+import type { LanguagePack } from "@/packs/types";
+import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
 import t from "./title.module.css";
 
@@ -23,14 +24,6 @@ function Heart({ color }: { color: string }) {
       />
       <rect x={1} y={1} width={1} height={1} fill="#fff" />
     </svg>
-  );
-}
-
-function Tag({ l, text }: { l: LanguageInfo; text: string }) {
-  return (
-    <span lang={l.code} dir={l.dir}>
-      {text}
-    </span>
   );
 }
 
@@ -69,6 +62,7 @@ export function TitleScreen({
   const [helpFor, setHelpFor] = useState<Minigame | null>(null);
   const opts: MinigameOptions = { direction };
   const { base, target } = pack.meta;
+  const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
   const active = minigames[activeIndex];
 
   const step = (delta: number) =>
@@ -144,64 +138,38 @@ export function TitleScreen({
                       </p>
                     )}
                     <div className={t.langRow}>
-                      <span className={t.langLabel}>
-                        {strings.title.language}
-                      </span>
-                      {m.usesDirection ? (
-                        <span
-                          className={t.segment}
-                          role="group"
-                          aria-label={strings.title.language}
-                        >
-                          {(["toTarget", "toBase"] as const).map((d) => {
-                            const [from, to] =
-                              d === "toTarget"
-                                ? [base, target]
-                                : [target, base];
-                            return (
-                              <button
-                                key={d}
-                                type="button"
-                                className={`${t.segButton} ${direction === d ? t.segOn : ""}`}
-                                aria-pressed={direction === d}
-                                aria-label={fill(strings.directionAria, {
-                                  from: from.name,
-                                  to: to.name,
-                                })}
-                                onClick={() => onDirection(d)}
-                              >
-                                <Tag l={from} text={from.label} /> &gt;{" "}
-                                <Tag l={to} text={to.label} />
-                              </button>
-                            );
+                      {m.usesDirection && (
+                        <button
+                          type="button"
+                          className={t.dirToggle}
+                          aria-label={fill(strings.directionAria, {
+                            from: from.name,
+                            to: to.name,
                           })}
-                        </span>
-                      ) : (
-                        <span className={t.langChip}>
-                          {target.nativeName && (
-                            <Tag l={target} text={target.nativeName} />
-                          )}
-                          {target.nativeName ? " · " : ""}
-                          {target.name}
-                        </span>
+                          onClick={() =>
+                            onDirection(
+                              direction === "toTarget" ? "toBase" : "toTarget",
+                            )
+                          }
+                        >
+                          <DirectionLabel from={from} to={to} />
+                        </button>
                       )}
-                      <span className={t.actions}>
-                        <button
-                          type="button"
-                          className={t.help}
-                          aria-label={fill(strings.title.help, { name })}
-                          onClick={() => setHelpFor(m)}
-                        >
-                          ?
-                        </button>
-                        <button
-                          type="button"
-                          className={t.play}
-                          onClick={() => onPlay(m.id)}
-                        >
-                          {strings.title.play}
-                        </button>
-                      </span>
+                      <button
+                        type="button"
+                        className={t.help}
+                        aria-label={fill(strings.title.help, { name })}
+                        onClick={() => setHelpFor(m)}
+                      >
+                        ?
+                      </button>
+                      <button
+                        type="button"
+                        className={t.play}
+                        onClick={() => onPlay(m.id)}
+                      >
+                        {strings.title.play}
+                      </button>
                     </div>
                   </div>
                 )}

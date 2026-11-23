@@ -7,6 +7,7 @@ import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { fill, strings } from "@/i18n/strings";
 import { useBestScores } from "@/lib/useBestScores";
+import { DirectionLabel } from "./DirectionLabel";
 import { fontStack, getPack, packFontsHref } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
 import { FeedbackLine } from "./FeedbackLine";
@@ -31,8 +32,7 @@ export function GameScreen() {
   const fontsHref = packFontsHref(pack);
 
   const vars = {
-    "--font-prompt": fontStack(pack.meta.fonts.prompt),
-    "--font-body": fontStack(pack.meta.fonts.body),
+    "--font-words": fontStack(pack.meta.fonts.words),
   } as CSSProperties;
 
   const play = (id: string) => {
@@ -120,13 +120,7 @@ function Duel({
             className={styles.duelDirection}
             aria-label={fill(strings.directionAria, { from: from.name, to: to.name }).split(".")[0]}
           >
-            <span lang={from.code} dir={from.dir}>
-              {from.label}
-            </span>{" "}
-            &gt;{" "}
-            <span lang={to.code} dir={to.dir}>
-              {to.label}
-            </span>
+            <DirectionLabel from={from} to={to} />
           </span>
         )}
       </div>
