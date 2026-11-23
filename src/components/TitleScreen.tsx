@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
@@ -64,6 +64,21 @@ export function TitleScreen({
   const { base, target } = pack.meta;
   const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
   const active = minigames[activeIndex];
+  const previews = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Focus follows the active card. Without this, a preview that was clicked
+  // keeps focus after the arrow keys move on, and the keyboard press makes
+  // its focus ring show on the now-inactive card.
+  useEffect(() => {
+    const focused = document.activeElement;
+    const target = previews.current[activeIndex];
+    if (
+      target &&
+      focused !== target &&
+      previews.current.includes(focused as HTMLButtonElement)
+    )
+      target.focus({ preventScroll: true });
+  }, [activeIndex]);
 
   const step = (delta: number) =>
     setActiveIndex((i) => (i + delta + minigames.length) % minigames.length);
@@ -112,6 +127,9 @@ export function TitleScreen({
             >
               <div className={t.cardBody}>
                 <button
+                  ref={(el) => {
+                    previews.current[i] = el;
+                  }}
                   type="button"
                   className={t.previewButton}
                   aria-label={fill(
