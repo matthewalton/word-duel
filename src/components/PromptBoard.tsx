@@ -1,11 +1,12 @@
-import { RULES } from "@/config/game";
 import type { DuelState } from "@/game/duel";
 import { fill, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
+import { FeedbackBand } from "./FeedbackBand";
 import { FuseBar } from "./FuseBar";
 import styles from "./game.module.css";
 import { LangSpan, wordBreakStyle } from "./LangSpan";
 
+/** The middle of the board: the prompt, its fuse, and the feedback band over it. */
 export function PromptBoard({
   state,
   pack,
@@ -23,12 +24,10 @@ export function PromptBoard({
   const fuseActive = phase === "playing" || phase === "resolving";
 
   return (
-    <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
-      <p className={styles.hint}>{round.hint}</p>
-
+    <div className={styles.promptArea}>
       <p
         key={`${round.id}-${fxKey}`}
-        className={`${styles.prompt} ${fxClass}`}
+        className={`${styles.prompt} ${round.gap ? styles.promptSentence : ""} ${fxClass}`}
         lang={round.prompt.lang}
         dir={round.prompt.dir}
         style={wordBreakStyle(round.prompt)}
@@ -37,7 +36,7 @@ export function PromptBoard({
           <>
             {round.gap.before}
             <span className={`${styles.blank} ${hit ? styles.blankFilled : ""}`}>
-              {hit ? round.reveal.text : " "}
+              {hit ? round.reveal.text : " "}
             </span>
             {round.gap.after}
           </>
@@ -54,23 +53,7 @@ export function PromptBoard({
 
       <FuseBar lit={fuseActive ? fuseLit : 20} active={fuseActive} />
 
-      {outcome && (
-        <span key={`float-${fxKey}`} className={`${styles.floatLabel} ${hit ? styles.floatHit : styles.floatMiss}`}>
-          {hit ? fill(strings.pointsLabel, { points: outcome.points }) : strings.heartLostLabel}
-        </span>
-      )}
-
-      {phase === "stageClear" && (
-        <div className={styles.banner} role="status">
-          <span className={styles.bannerTitle}>{fill(strings.stageBanner, { stage: state.stage })}</span>
-          <span className={styles.bannerSub}>{fill(strings.stageBannerSub, { bonus: RULES.stageBonus })}</span>
-          {pack.feedback.stageClear && (
-            <span className={styles.bannerPhrase} lang={target.code} dir={target.dir}>
-              {pack.feedback.stageClear}
-            </span>
-          )}
-        </div>
-      )}
+      <FeedbackBand state={state} pack={pack} />
 
       {phase === "gameOver" && (
         <div className={`${styles.banner} ${styles.bannerOver}`} role="status">

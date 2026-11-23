@@ -2,7 +2,9 @@ import { FUSE_SEGMENTS } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import styles from "./game.module.css";
 
+/** The fuse under the prompt. It burns in from both ends toward the middle. */
 export function FuseBar({ lit, active }: { lit: number; active: boolean }) {
+  const mid = (FUSE_SEGMENTS - 1) / 2;
   return (
     <div
       className={`${styles.fuse} ${active ? "" : styles.fuseIdle}`}
@@ -13,7 +15,7 @@ export function FuseBar({ lit, active }: { lit: number; active: boolean }) {
       aria-valuenow={lit}
     >
       {Array.from({ length: FUSE_SEGMENTS }, (_, i) => (
-        <span key={i} className={i < lit ? styles.fuseOn : styles.fuseOff} />
+        <span key={i} className={Math.abs(i - mid) < lit / 2 ? styles.fuseOn : undefined} />
       ))}
     </div>
   );

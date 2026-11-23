@@ -9,12 +9,16 @@ One game from START to game over, made of rounds against a single rival.
 _Avoid_: Match, session
 
 **Rival**:
-The opponent whose hearts the player breaks. In solo play the rival is the CPU; in versus it would be the other player.
+The opponent whose hearts the player breaks. In solo play the rival is the CPU, and its hearts are drawn as stage progress rather than as hearts; in versus it would be the other player.
 _Avoid_: Enemy, opponent, mascot
 
 **Heart**:
 One unit of life in a heart row. A right answer breaks one of the rival's hearts; a wrong answer or timeout breaks one of the player's.
 _Avoid_: Life, HP
+
+**Stage progress**:
+How many right answers are left before the next stage, drawn in solo play as a thin bar of chunks under the header. Each chunk is one of the CPU rival's hearts.
+_Avoid_: Level bar, XP
 
 **Round**:
 One prompt and its outcome.
@@ -63,6 +67,10 @@ _Avoid_: Card, question
 **Accepted answer**:
 Any answer that counts as right for a prompt. Matching is strictly right or wrong.
 _Avoid_: Correct answer (when more than one form is valid)
+
+**Feedback band**:
+The strip shown over the bottom of the prompt after an outcome: one short label and one target-language word (the feedback phrase or the answer).
+_Avoid_: Toast, message bar
 
 **Feedback phrase**:
 A short target-language exclamation shown by effects, so feedback also teaches.
