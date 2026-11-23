@@ -1,0 +1,5 @@
+{
+  "normalization": "NFC",
+  "caseInsensitive": true,
+  "ignoreLeadingWords": { "en": ["a", "an", "the"] }
+}

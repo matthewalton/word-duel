@@ -1,0 +1,12 @@
+[
+  { "sentence": "고양이___ 자요.", "translation": "The cat is sleeping.", "answer": "가", "options": ["가", "이", "를"] },
+  { "sentence": "하늘___ 파래요.", "translation": "The sky is blue.", "answer": "이", "options": ["이", "가", "을"] },
+  { "sentence": "저는 사과___ 먹어요.", "translation": "I eat an apple.", "answer": "를", "options": ["를", "을", "가"] },
+  { "sentence": "저는 밥___ 먹어요.", "translation": "I eat rice.", "answer": "을", "options": ["을", "를", "이"] },
+  { "sentence": "저는 학교___ 가요.", "translation": "I go to school.", "answer": "에", "options": ["에", "에서", "를"] },
+  { "sentence": "도서관___ 책을 읽어요.", "translation": "I read a book at the library.", "answer": "에서", "options": ["에서", "에", "와"] },
+  { "sentence": "친구___ 같이 학교에 가요.", "translation": "I go to school with a friend.", "answer": "와", "options": ["와", "과", "를"] },
+  { "sentence": "가방에 책___ 우유가 있어요.", "translation": "There is a book and milk in the bag.", "answer": "과", "options": ["과", "와", "을"] },
+  { "sentence": "이건 우유___.", "translation": "This is milk.", "answer": "예요", "options": ["예요", "이에요", "에요"] },
+  { "sentence": "저는 학생___.", "translation": "I am a student.", "answer": "이에요", "options": ["이에요", "예요", "에요"] }
+]
