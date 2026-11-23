@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "word-duel", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000 }
+    { "name": "word-duel", "runtimeExecutable": "pnpm", "runtimeArgs": ["dev"], "port": 3000 }
   ]
 }

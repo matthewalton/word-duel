@@ -3,8 +3,8 @@
 A small pixel-art word duel for vocabulary practice. Local only, no backend.
 
 ```bash
-npm install   # also enables the repo's git hooks (.githooks/)
-npm run dev   # http://localhost:3000
+pnpm install  # also enables the repo's git hooks (.githooks/)
+pnpm dev      # http://localhost:3000
 ```
 
 Rename the game in `src/config/game.ts` (`GAME_NAME`).
