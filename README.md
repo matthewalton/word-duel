@@ -27,7 +27,7 @@ Rename the game in `src/config/game.ts` (`GAME_NAME`).
 ## Adding a language pack
 
 1. Copy `src/packs/ko-en/` to a new folder and replace the data.
-2. Pick a smooth, rounded Google font for prompts and a readable body font that covers the script (`meta.json` → `fonts`).
+2. Pick one smooth, rounded Google font that covers both scripts, for every word in either language (`meta.json` → `fonts.words`). Interface text stays in the pixel font.
 3. Set `dir`, `wordBreak` and `nativeName` per language in `meta.json`.
 4. Register it in `src/packs/index.ts` and point `ACTIVE_PACK_ID` at it.
 

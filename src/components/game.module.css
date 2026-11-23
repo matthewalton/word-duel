@@ -5,7 +5,7 @@
  */
 
 .page {
-  --font-ui: var(--font-pixel), var(--font-body), sans-serif;
+  --font-ui: var(--font-pixel), var(--font-words), sans-serif;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -99,6 +99,10 @@
 .duelDirection {
   margin-inline-start: auto;
   padding: calc(4px * var(--s)) calc(10px * var(--s));
+  display: flex;
+  align-items: center;
+  gap: calc(7px * var(--s));
+  font-family: var(--font-words);
   font-size: calc(15px * var(--s));
   color: var(--player);
   border: 3px solid var(--player);
@@ -287,7 +291,7 @@
   margin: 0;
   max-width: 100%;
   text-align: center;
-  font-family: var(--font-prompt);
+  font-family: var(--font-words);
   font-size: clamp(calc(40px * var(--s)), 9vw, calc(72px * var(--s)));
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -367,7 +371,7 @@
 .translation {
   margin: 0;
   text-align: center;
-  font-family: var(--font-body);
+  font-family: var(--font-words);
   font-size: clamp(calc(16px * var(--s)), 3.6vw, calc(20px * var(--s)));
   color: #5b5070;
 }
@@ -466,7 +470,7 @@
 }
 
 .bannerPhrase {
-  font-family: var(--font-prompt);
+  font-family: var(--font-words);
   font-size: calc(26px * var(--s));
 }
 
@@ -515,7 +519,7 @@
   flex: 1;
   min-width: 0;
   padding: calc(10px * var(--s)) calc(14px * var(--s));
-  font-family: var(--font-body);
+  font-family: var(--font-words);
   font-size: calc(24px * var(--s));
   color: var(--ink);
   background: var(--board);
@@ -574,7 +578,7 @@
 .choiceButton {
   position: relative;
   padding: calc(12px * var(--s)) calc(8px * var(--s));
-  font-family: var(--font-body);
+  font-family: var(--font-words);
   font-size: calc(26px * var(--s));
   color: var(--ink);
   background: var(--board);
@@ -635,7 +639,7 @@
 
 .feedbackPhrase,
 .feedbackAnswer {
-  font-family: var(--font-body);
+  font-family: var(--font-words);
   font-weight: 700;
   font-size: 1.15em;
 }

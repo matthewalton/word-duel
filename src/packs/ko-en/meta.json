@@ -4,7 +4,6 @@
     "name": "Korean",
     "nativeName": "한국어",
     "code": "ko",
-    "label": "한",
     "dir": "ltr",
     "wordBreak": "keep-all"
   },
@@ -12,18 +11,12 @@
     "name": "English",
     "nativeName": "English",
     "code": "en",
-    "label": "EN",
     "dir": "ltr"
   },
   "fonts": {
-    "prompt": {
+    "words": {
       "family": "Jua",
       "google": "Jua",
-      "fallback": "sans-serif"
-    },
-    "body": {
-      "family": "Gowun Dodum",
-      "google": "Gowun Dodum",
       "fallback": "sans-serif"
     }
   },
