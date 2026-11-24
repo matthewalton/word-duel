@@ -276,7 +276,23 @@
 
 /* ---------- Open row ---------- */
 
+/* Opens in pixel steps from nothing to full height (0fr to 1fr), rather than
+ * appearing at once. */
+.drawer {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  animation: drawerOpen 160ms steps(4, end);
+}
+
+@keyframes drawerOpen {
+  from {
+    grid-template-rows: 0fr;
+  }
+}
+
 .details {
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: calc(14px * var(--s));
@@ -369,6 +385,30 @@
   font-size: calc(20px * var(--s));
   font-weight: 700;
   line-height: 1;
+}
+
+/* Stands in for a stat value while the round log loads: one text line tall. */
+.skeleton {
+  display: block;
+  width: 3em;
+  height: 1em;
+  background: var(--track);
+  animation: skeletonBlink 960ms steps(1, end) infinite;
+}
+
+.skeletonChip {
+  display: block;
+  width: 3em;
+  height: 1.2em;
+  margin-block: 0.1em;
+  background: var(--track);
+  animation: skeletonBlink 960ms steps(1, end) infinite;
+}
+
+@keyframes skeletonBlink {
+  50% {
+    opacity: 0.45;
+  }
 }
 
 .statLabel {
@@ -490,6 +530,14 @@
 
 .head:focus-visible {
   outline-offset: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .skeleton,
+  .skeletonChip {
+    animation: none;
+  }
 }
 
 /* ---------- Phone ---------- */

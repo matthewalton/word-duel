@@ -376,9 +376,24 @@ function Details({
   const { target, base } = pack.meta;
   const languageOf = (kind: PromptKind) => (kind === "toBase" ? base : target);
   const ready = detail && detail !== "failed" ? detail : null;
-  const pending = detail === undefined ? s.loading : s.none;
+  const loading = detail === undefined;
+  // Placeholder for a value the round log hasn't returned yet: the same height
+  // as the real value, so nothing shifts when it lands.
+  const pending: ReactNode = loading ? (
+    <>
+      <span className={w.skeleton} aria-hidden="true" />
+      <span className={styles.srOnly}>{s.loading}</span>
+    </>
+  ) : (
+    s.none
+  );
 
-  const stats = [
+  // Item stats already say whether wrong answers exist, so their section can
+  // hold its place while loading instead of popping in afterwards.
+  const wrongs = entry.kinds.reduce((n, k) => n + k.wrong, 0);
+  const placeholderChips = loading ? Math.min(wrongs, 3) : 0;
+
+  const stats: { label: string; value: ReactNode }[] = [
     { label: s.run, value: ready ? String(ready.run) : pending },
     { label: s.tooSlow, value: String(entry.timeouts) },
     {
@@ -389,59 +404,74 @@ function Details({
   ];
 
   return (
-    <div id={id} className={w.details}>
-      <section className={w.section}>
-        <h3 className={w.sectionLabel}>{s.byPrompt}</h3>
-        <ul className={w.kinds}>
-          {entry.kinds.map((k) => {
-            const total = k.right + k.wrong + k.timeouts;
-            const pct = percent(k.right, total);
-            const filled = Math.round((METER_SQUARES * k.right) / Math.max(total, 1));
-            return (
-              <li key={k.kind} className={w.kind}>
-                <span className={w.kindName}>
-                  {fill(s.promptKinds[k.kind], { language: languageOf(k.kind).name })}
-                </span>
-                <span className={w.meter} role="img" aria-label={fill(s.meterAria, { n: pct })}>
-                  {Array.from({ length: METER_SQUARES }, (_, i) => (
-                    <span key={i} className={i < filled ? w.meterOn : w.meterOff} />
-                  ))}
-                </span>
-                <span className={w.kindCount}>{fill(s.rightOf, { right: k.right, total })}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <dl className={w.stats}>
-        {stats.map((st) => (
-          <div key={st.label} className={w.stat}>
-            <dt className={w.statLabel}>{st.label}</dt>
-            <dd className={w.statValue}>{st.value}</dd>
-          </div>
-        ))}
-      </dl>
-
-      {ready && ready.wrongAnswers.length > 0 && (
+    <div className={w.drawer}>
+      <div id={id} className={w.details} aria-busy={loading}>
         <section className={w.section}>
-          <h3 className={w.sectionLabel}>{s.wrongAnswers}</h3>
-          <ul className={w.givens}>
-            {ready.wrongAnswers.map((g) => (
-              <li key={`${g.kind}:${g.given}`} className={w.given}>
-                <del>
-                  <LangSpan t={langText(languageOf(g.kind), g.given)} className={w.givenText} />
-                </del>
-                {g.count > 1 && (
-                  <span className={w.givenCount} aria-label={fill(s.timesAria, { n: g.count })}>
-                    {fill(s.times, { n: g.count })}
+          <h3 className={w.sectionLabel}>{s.byPrompt}</h3>
+          <ul className={w.kinds}>
+            {entry.kinds.map((k) => {
+              const total = k.right + k.wrong + k.timeouts;
+              const pct = percent(k.right, total);
+              const filled = Math.round((METER_SQUARES * k.right) / Math.max(total, 1));
+              return (
+                <li key={k.kind} className={w.kind}>
+                  <span className={w.kindName}>
+                    {fill(s.promptKinds[k.kind], { language: languageOf(k.kind).name })}
                   </span>
-                )}
-              </li>
-            ))}
+                  <span className={w.meter} role="img" aria-label={fill(s.meterAria, { n: pct })}>
+                    {Array.from({ length: METER_SQUARES }, (_, i) => (
+                      <span key={i} className={i < filled ? w.meterOn : w.meterOff} />
+                    ))}
+                  </span>
+                  <span className={w.kindCount}>{fill(s.rightOf, { right: k.right, total })}</span>
+                </li>
+              );
+            })}
           </ul>
         </section>
-      )}
+
+        <dl className={w.stats}>
+          {stats.map((st) => (
+            <div key={st.label} className={w.stat}>
+              <dt className={w.statLabel}>{st.label}</dt>
+              <dd className={w.statValue}>{st.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {ready && ready.wrongAnswers.length > 0 && (
+          <section className={w.section}>
+            <h3 className={w.sectionLabel}>{s.wrongAnswers}</h3>
+            <ul className={w.givens}>
+              {ready.wrongAnswers.map((g) => (
+                <li key={`${g.kind}:${g.given}`} className={w.given}>
+                  <del>
+                    <LangSpan t={langText(languageOf(g.kind), g.given)} className={w.givenText} />
+                  </del>
+                  {g.count > 1 && (
+                    <span className={w.givenCount} aria-label={fill(s.timesAria, { n: g.count })}>
+                      {fill(s.times, { n: g.count })}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {placeholderChips > 0 && (
+          <section className={w.section} aria-hidden="true">
+            <h3 className={w.sectionLabel}>{s.wrongAnswers}</h3>
+            <ul className={w.givens}>
+              {Array.from({ length: placeholderChips }, (_, i) => (
+                <li key={i} className={w.given}>
+                  <span className={`${w.givenText} ${w.skeletonChip}`} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
