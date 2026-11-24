@@ -1,15 +1,16 @@
 import { useEffect, useRef } from "react";
 import type { DuelState } from "@/game/duel";
-import { fill, strings } from "@/i18n/strings";
+import { strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
 import { FeedbackBand } from "./FeedbackBand";
 import { FuseBar } from "./FuseBar";
+import { GameOverPanel } from "./GameOverPanel";
 import styles from "./game.module.css";
 import { LangSpan, wordBreakStyle } from "./LangSpan";
 
 /**
  * The middle of the board: START on the ready screen, then the countdown,
- * then the prompt, its fuse, and the feedback band over it.
+ * then the prompt, its fuse, the feedback band over it, and game over.
  */
 export function PromptBoard({
   state,
@@ -27,7 +28,6 @@ export function PromptBoard({
   const hit = outcome?.reason === "correct";
   const lost = outcome != null && !hit;
   const fxClass = hit ? styles.promptHit : lost ? styles.promptMiss : "";
-  const target = pack.meta.target;
   const fuseActive = phase === "playing" || phase === "resolving";
 
   return (
@@ -76,19 +76,7 @@ export function PromptBoard({
 
       <FeedbackBand state={state} pack={pack} />
 
-      {phase === "gameOver" && (
-        <div className={`${styles.banner} ${styles.bannerOver}`} role="status">
-          <span className={styles.bannerTitle}>{strings.gameOver}</span>
-          <span className={styles.bannerSub}>{fill(strings.finalScore, { score: state.score })}</span>
-          {state.newBest && <span className={styles.newBest}>{strings.newBest}</span>}
-          {pack.feedback.gameOver && (
-            <span className={styles.bannerPhrase} lang={target.code} dir={target.dir}>
-              {pack.feedback.gameOver}
-            </span>
-          )}
-          <span className={styles.bannerHint}>{strings.playAgain}</span>
-        </div>
-      )}
+      {phase === "gameOver" && <GameOverPanel state={state} pack={pack} />}
     </div>
   );
 }

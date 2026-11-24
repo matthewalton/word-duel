@@ -24,15 +24,18 @@ export const strings = {
   correct: "CORRECT",
   wrong: "THE ANSWER WAS",
   tooSlow: "TOO SLOW · IT WAS",
-  nextStage: "NEXT STAGE",
+  stageUp: "STAGE {stage}",
   gameOver: "GAME OVER",
   finalScore: "SCORE {score}",
   newBest: "NEW BEST!",
   playAgain: "Press START to play again",
+  toReview: "TO REVIEW",
+  youAnswered: "You answered",
+  tooSlowShort: "TOO SLOW",
   pointsLabel: "+{points}",
   heartsAria: "{who}: {n} of {max} hearts",
   stageProgressAria: "Stage {stage}: {n} of {max} right answers to the next stage",
-  fuseAria: "Time left",
+  timeLeftAria: "Time left",
   menu: "MENU",
   menuAria: "Back to the title screen",
   title: {
@@ -48,10 +51,10 @@ export const strings = {
   },
   minigameInfo: {
     "word-strike": {
-      description: "See a word, type its translation, hit Enter before the fuse runs out.",
+      description: "See a word, type its translation, hit Enter before time runs out.",
       steps: [
         "A word appears",
-        "Type it in {language} and press Enter before the fuse runs out",
+        "Type it in {language} and press Enter before time runs out",
         "A right answer fills the stage bar. Wrong or too slow breaks a heart",
       ],
       rules: ["Switch the direction to practise both ways."],
@@ -68,7 +71,7 @@ export const strings = {
   } as Record<string, { description: string; steps: [string, string, string]; rules: string[] }>,
   sharedRules: [
     "Right answers in a row build a combo: up to {cap}× points.",
-    "Get {hearts} right to fill the stage bar and reach the next stage. The fuse gets {step} second shorter each stage.",
+    "Get {hearts} right to fill the stage bar and reach the next stage. Each stage gives you {step} second less to answer.",
   ],
   creditsLabel: "Word data:",
 } as const;

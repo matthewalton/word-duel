@@ -548,25 +548,6 @@
 
 /* ---------- Banners ---------- */
 
-.banner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: calc(8px * var(--s));
-  padding: calc(16px * var(--s));
-  text-align: center;
-  z-index: 2;
-  animation: bannerIn 240ms steps(3, end);
-}
-
-.bannerOver {
-  color: var(--board);
-  background: var(--ink);
-}
-
 .bannerTitle {
   font-size: clamp(calc(36px * var(--s)), 9vw, calc(60px * var(--s)));
   font-weight: 700;
@@ -594,6 +575,161 @@
   color: var(--ink);
   background: var(--accent);
   animation: blink 900ms steps(1, end) infinite;
+}
+
+/* ---------- Game over and review ---------- */
+
+/* Covers the prompt area: the score on one side, the misses on the other. */
+.gameOver {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: calc(48px * var(--s));
+  padding: calc(28px * var(--s)) calc(48px * var(--s));
+  overflow-y: auto;
+  color: var(--board);
+  background: var(--ink);
+  animation: bannerIn 240ms steps(3, end);
+}
+
+.gameOverSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(12px * var(--s));
+}
+
+.gameOverScore {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(12px * var(--s));
+}
+
+.gameOverSummary .bannerHint {
+  margin-block-start: calc(12px * var(--s));
+}
+
+.gameOverSummary .bannerTitle {
+  font-size: clamp(calc(32px * var(--s)), 5vw, calc(60px * var(--s)));
+  white-space: nowrap;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12px * var(--s));
+}
+
+.reviewHeading {
+  margin: 0;
+  font-size: calc(16px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(2px * var(--s));
+  color: var(--line);
+}
+
+.reviewList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12px * var(--s));
+}
+
+.reviewRow {
+  display: flex;
+  align-items: center;
+  gap: calc(16px * var(--s));
+  min-height: calc(60px * var(--s));
+  padding: calc(10px * var(--s)) calc(18px * var(--s));
+  color: var(--ink);
+  background: var(--board);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.reviewPair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(6px * var(--s)) calc(14px * var(--s));
+  min-width: 0;
+}
+
+.reviewPrompt,
+.reviewSentence,
+.reviewGuess del {
+  font-family: var(--font-words);
+}
+
+.reviewPrompt {
+  font-size: calc(26px * var(--s));
+  line-height: 1.1;
+}
+
+.reviewArrow {
+  font-size: calc(18px * var(--s));
+  color: var(--muted);
+}
+
+/* The accepted answer, in the right-answer colour. */
+.reviewAnswer {
+  padding: 0 calc(8px * var(--s));
+  font-family: var(--font-words);
+  background: var(--player);
+}
+
+.reviewPair .reviewAnswer {
+  padding-block: calc(3px * var(--s));
+  font-size: calc(28px * var(--s));
+  line-height: 1.1;
+}
+
+.reviewSentence {
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--s));
+  min-width: 0;
+  font-size: calc(26px * var(--s));
+  line-height: 1.3;
+}
+
+.reviewTranslation {
+  font-size: calc(16px * var(--s));
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.reviewGuess {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.reviewGuess del {
+  font-size: calc(20px * var(--s));
+  color: #b8203f;
+  text-decoration-thickness: 3px;
+}
+
+.reviewSlow {
+  font-size: calc(13px * var(--s));
+  letter-spacing: calc(1px * var(--s));
+  color: var(--muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 @keyframes bannerIn {
@@ -805,6 +941,46 @@
   .choiceButton {
     font-size: 22px;
   }
+
+  .gameOver {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 20px;
+    padding: 16px 12px;
+  }
+
+  .gameOverSummary {
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .gameOverSummary .bannerHint {
+    margin-block-start: 0;
+  }
+
+  .reviewRow {
+    gap: 10px;
+    min-height: 52px;
+    padding: 8px 12px;
+  }
+
+  .reviewPrompt,
+  .reviewSentence {
+    font-size: 21px;
+  }
+
+  .reviewPair .reviewAnswer {
+    font-size: 23px;
+  }
+
+  .reviewTranslation {
+    font-size: 14px;
+  }
+
+  .reviewGuess del {
+    font-size: 17px;
+  }
 }
 
 /* ---------- Reduced motion: keep colour cues, drop movement ---------- */
@@ -813,7 +989,7 @@
   .heartBreaking,
   .boardJolt,
   .bannerIn,
-  .banner {
+  .gameOver {
     animation: none;
   }
 

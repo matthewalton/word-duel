@@ -84,7 +84,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const composing = useRef(false);
 
-  const inGame = phase === "countdown" || phase === "playing" || phase === "resolving" || phase === "stageClear";
+  const inGame = phase === "countdown" || phase === "playing" || phase === "resolving";
   // Typing is allowed during the countdown so the input can hold focus, but
   // nothing submits until the round is live (and the input is cleared then).
   const editable = phase === "countdown" || phase === "playing";

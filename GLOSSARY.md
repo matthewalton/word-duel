@@ -35,7 +35,7 @@ _Avoid_: Question, turn
 The result of a round, expressed as whose heart broke and why (correct, wrong or timeout).
 
 **Fuse**:
-The time limit on a round, shown as a shrinking bar.
+The time limit on a round, shown as a shrinking bar. A code term only: interface text never says "fuse", it says time.
 _Avoid_: Timer, countdown (the countdown is the 3, 2, 1 before the first round)
 
 **Stage**:
@@ -78,6 +78,13 @@ _Avoid_: Correct answer (when more than one form is valid)
 **Feedback band**:
 The strip shown over the bottom of the prompt after an outcome: one short label and one target-language word (the feedback phrase or the answer).
 _Avoid_: Toast, message bar
+
+**Stage band**:
+The feedback band shown instead of CORRECT on the right answer that clears a stage: STAGE and the new stage number, with the pack's stage-clear phrase.
+
+**Review list**:
+The rounds the player lost in a duel, each with its accepted answer and what they gave (or "too slow"), shown at game over. Kept in memory for the duel only.
+_Avoid_: Missed-words list, mistakes
 
 **Feedback phrase**:
 A short target-language exclamation shown by effects, so feedback also teaches.

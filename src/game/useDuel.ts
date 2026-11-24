@@ -62,23 +62,18 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     return () => window.clearInterval(id);
   }, [state.phase, state.round, state.fuseMs]);
 
-  // After an outcome: pause, then stage banner or next prompt.
+  // After an outcome: hold it on screen, then the next prompt or game over.
   const { phase, outcome, fxKey } = state;
   useEffect(() => {
     if (phase !== "resolving" || !outcome) return;
-    const delay = outcome.reason === "correct" ? RULES.hitPauseMs : RULES.revealMs;
+    const delay =
+      outcome.reason !== "correct" ? RULES.revealMs : outcome.stageCleared ? RULES.stageClearMs : RULES.hitPauseMs;
     const t = window.setTimeout(() => {
-      if (outcome.stageCleared) dispatch({ type: "stageBanner" });
+      if (outcome.gameOver) dispatch({ type: "gameOver" });
       else advance();
     }, delay);
     return () => window.clearTimeout(t);
   }, [phase, outcome, fxKey, advance]);
-
-  useEffect(() => {
-    if (phase !== "stageClear") return;
-    const t = window.setTimeout(advance, RULES.stageBannerMs);
-    return () => window.clearTimeout(t);
-  }, [phase, advance]);
 
   // Countdown: one beat per number, a shorter one on GO, then the first round.
   const { count } = state;
