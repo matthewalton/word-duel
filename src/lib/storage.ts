@@ -22,7 +22,7 @@ export function saveBest(packId: string, minigameId: string, score: number): voi
   }
 }
 
-/** Every best score kept in this browser, for the guest merge on sign-in. */
+/** Every best score kept in this browser, for the guest merge. */
 export function listGuestBests(): { packId: string; minigameId: string; score: number }[] {
   const prefix = `${STORAGE_NAMESPACE}:best:`;
   const out: { packId: string; minigameId: string; score: number }[] = [];
@@ -38,4 +38,13 @@ export function listGuestBests(): { packId: string; minigameId: string; score: n
     // Storage unavailable: nothing to merge.
   }
   return out;
+}
+
+/** Delete these guest best scores from this browser, once the account has them. */
+export function clearGuestBests(entries: { packId: string; minigameId: string }[]): void {
+  try {
+    for (const e of entries) window.localStorage.removeItem(bestKey(e.packId, e.minigameId));
+  } catch {
+    // Storage unavailable: nothing was kept to delete.
+  }
 }

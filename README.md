@@ -26,7 +26,7 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/game/minigames/` | One module per minigame, plus the registry |
 | `src/components/` | Title screen, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
 | `src/lib/progress.ts` | Where best scores go: this browser for a guest, the account when signed in |
-| `src/lib/useAccount.ts` | Session in the browser, guest merge on sign-in, sign in and out |
+| `src/lib/useAccount.ts` | Session in the browser, guest merge, sign in and out |
 | `src/server/` | Server only: Drizzle schema, database, Better Auth, server actions for account data |
 | `drizzle/` | Generated SQL migrations |
 

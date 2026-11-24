@@ -123,9 +123,9 @@ A player who has not signed in. Guests can play everything; their progress is ke
 _Avoid_: Anonymous user, logged-out user
 
 **Account**:
-A signed-in player's record, reached through one or more OAuth providers. Progress kept in an account follows the player across devices.
+A signed-in player's record, reached through one or more OAuth providers; more providers are linked from the account menu. Progress kept in an account follows the player across devices.
 _Avoid_: Profile, user (in interface text)
 
 **Guest merge**:
-Bringing a browser's guest progress into an account on sign-in: the higher best score wins and word history is added.
+Bringing a browser's guest progress into an account whenever the browser holds any while signed in: a guest best score only fills a minigame the account has no score for (an account best is never replaced), word history is added, and the browser's guest progress is then deleted.
 _Avoid_: Sync, import
