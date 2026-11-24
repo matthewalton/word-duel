@@ -41,6 +41,7 @@ export function TitleScreen({
   onDirection,
   onPlay,
   gameName,
+  corner,
   footer,
 }: {
   pack: LanguagePack;
@@ -51,6 +52,8 @@ export function TitleScreen({
   onDirection: (d: Direction) => void;
   onPlay: (id: string) => void;
   gameName: string;
+  /** Top-right slot: sign-in or the account chip. */
+  corner?: ReactNode;
   footer?: ReactNode;
 }) {
   const [activeIndex, setActiveIndex] = useState(() =>
@@ -104,10 +107,13 @@ export function TitleScreen({
 
   return (
     <div className={t.titleScreen}>
-      <div className={t.brand}>
-        <Heart color="var(--player)" />
-        <h1 className={t.brandName}>{gameName.toUpperCase()}</h1>
-        <Heart color="var(--rival)" />
+      <div className={t.top}>
+        <div className={t.brand}>
+          <Heart color="var(--player)" />
+          <h1 className={t.brandName}>{gameName.toUpperCase()}</h1>
+          <Heart color="var(--rival)" />
+        </div>
+        <div className={t.corner}>{corner}</div>
       </div>
 
       <div

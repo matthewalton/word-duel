@@ -9,7 +9,7 @@ export function FuseBar({ lit, active }: { lit: number; active: boolean }) {
     <div
       className={`${styles.fuse} ${active ? "" : styles.fuseIdle}`}
       role="meter"
-      aria-label={strings.fuseAria}
+      aria-label={strings.timeLeftAria}
       aria-valuemin={0}
       aria-valuemax={FUSE_SEGMENTS}
       aria-valuenow={lit}

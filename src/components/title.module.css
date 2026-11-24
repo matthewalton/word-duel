@@ -19,10 +19,27 @@
   color: var(--board);
 }
 
+/* Brand in the middle, the account corner on the right. */
+.top {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: calc(24px * var(--s));
+}
+
 .brand {
+  grid-column: 2;
   display: flex;
   align-items: center;
   gap: calc(18px * var(--s));
+}
+
+.corner {
+  grid-column: 3;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .brandName {
@@ -592,6 +609,25 @@
     min-height: 100dvh;
     padding: 24px 16px 16px;
     gap: 16px;
+  }
+
+  /* Corner on its own row above the brand: they don't fit side by side. */
+  .top {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 12px;
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .corner {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
+    min-height: 44px;
   }
 
   .cards {

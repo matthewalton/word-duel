@@ -6,7 +6,7 @@
  * (the rival answered first → loser: "you") through the same reducer.
  */
 import { RULES, fuseForStage } from "@/config/game";
-import type { Outcome, Phase, Reason, Round, Side } from "./types";
+import type { Miss, Outcome, Phase, Reason, Round, Side } from "./types";
 
 export interface DuelState {
   phase: Phase;
@@ -24,6 +24,8 @@ export interface DuelState {
   fxKey: number;
   /** Beats left in the countdown; 0 shows GO. */
   count: number;
+  /** Rounds the player lost this duel, oldest first, for the review at game over. */
+  misses: Miss[];
 }
 
 export type DuelAction =
@@ -32,7 +34,7 @@ export type DuelAction =
   | { type: "tick" }
   | { type: "start"; round: Round }
   | { type: "resolve"; loser: Side; reason: Reason; given?: string }
-  | { type: "stageBanner" }
+  | { type: "gameOver" }
   | { type: "next"; round: Round };
 
 export function initialDuel(sample: Round): DuelState {
@@ -50,6 +52,7 @@ export function initialDuel(sample: Round): DuelState {
     outcome: null,
     fxKey: 0,
     count: RULES.countdownFrom,
+    misses: [],
   };
 }
 
@@ -100,10 +103,16 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       if (stageCleared) score += RULES.stageBonus;
       const gameOver = hearts.you === 0;
       const newBest = gameOver && score > state.best;
+      const misses =
+        action.reason === "correct"
+          ? state.misses
+          : [...state.misses, { round: state.round, reason: action.reason, given: action.given }];
 
+      // Even the last miss is held on screen first, so the player sees the answer.
       return {
         ...state,
-        phase: gameOver ? "gameOver" : "resolving",
+        phase: "resolving",
+        misses,
         hearts,
         score,
         combo,
@@ -121,19 +130,27 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       };
     }
 
-    case "stageBanner": {
+    case "gameOver":
+      if (state.phase !== "resolving" || !state.outcome?.gameOver) return state;
+      return { ...state, phase: "gameOver" };
+
+    // A cleared stage takes effect with the next prompt, so the band can still
+    // show the full stage bar.
+    case "next": {
+      if (state.phase !== "resolving" || state.outcome?.gameOver) return state;
+      if (!state.outcome?.stageCleared) {
+        return { ...state, phase: "playing", round: action.round, outcome: null };
+      }
       const stage = state.stage + 1;
       return {
         ...state,
-        phase: "stageClear",
+        phase: "playing",
+        round: action.round,
+        outcome: null,
         stage,
         fuseMs: fuseForStage(stage),
         hearts: { ...state.hearts, rival: state.maxHearts },
       };
     }
-
-    case "next":
-      if (state.phase !== "resolving" && state.phase !== "stageClear") return state;
-      return { ...state, phase: "playing", round: action.round, outcome: null };
   }
 }

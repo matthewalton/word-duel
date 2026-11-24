@@ -1,17 +1,21 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { ACTIVE_PACK_ID, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES } from "@/game/minigames";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
+import { useAccount } from "@/lib/useAccount";
 import { useBestScores } from "@/lib/useBestScores";
 import { fontStack, getPack, packFontsHref } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
+import a from "./account.module.css";
+import { AccountCorner } from "./AccountCorner";
 import styles from "./game.module.css";
 import { Hud } from "./Hud";
 import { PromptBoard } from "./PromptBoard";
+import { SignInDialog } from "./SignInDialog";
 import t from "./title.module.css";
 import { TitleScreen } from "./TitleScreen";
 
@@ -23,6 +27,9 @@ export function GameScreen() {
   const [view, setView] = useState<View>({ name: "title" });
   const [minigameId, setMinigameId] = useState(MINIGAMES[0].id);
   const [direction, setDirection] = useState<Direction>("toTarget");
+  const account = useAccount(pack.meta.id);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const openSignIn = () => setSignInOpen(true);
   const best = useBestScores(
     pack.meta.id,
     MINIGAMES.map((m) => m.id),
@@ -72,6 +79,7 @@ export function GameScreen() {
           onDirection={setDirection}
           onPlay={play}
           gameName={GAME_NAME}
+          corner={<AccountCorner account={account} onOpenSignIn={openSignIn} />}
           footer={credits}
         />
       ) : (
@@ -81,8 +89,19 @@ export function GameScreen() {
           minigame={getMinigame(minigameId)}
           direction={direction}
           onMenu={() => setView({ name: "title" })}
+          gameOverExtra={
+            !account.pending && !account.user ? (
+              <div className={a.nudge}>
+                <p className={a.nudgeText}>{strings.account.gameOverNudge}</p>
+                <button type="button" className={a.nudgeButton} onClick={openSignIn}>
+                  {strings.account.signIn}
+                </button>
+              </div>
+            ) : null
+          }
         />
       )}
+      {signInOpen && <SignInDialog onClose={() => setSignInOpen(false)} onSignIn={account.signIn} />}
     </div>
   );
 }
@@ -92,11 +111,13 @@ function Duel({
   minigame,
   direction,
   onMenu,
+  gameOverExtra,
 }: {
   pack: LanguagePack;
   minigame: Minigame;
   direction: Direction;
   onMenu: () => void;
+  gameOverExtra?: ReactNode;
 }) {
   const opts: MinigameOptions = useMemo(() => ({ direction }), [direction]);
   const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts);
@@ -114,7 +135,7 @@ function Duel({
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
         <Hud state={state} />
-        <PromptBoard state={state} pack={pack} fuseLit={fuseLit} onStart={start} />
+        <PromptBoard state={state} pack={pack} fuseLit={fuseLit} onStart={start} gameOverExtra={gameOverExtra} />
         <div className={styles.controlStrip}>
           <Controls
             pack={pack}

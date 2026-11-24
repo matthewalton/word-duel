@@ -11,7 +11,7 @@ export function Hud({ state }: { state: DuelState }) {
   const { hearts, maxHearts, outcome, fxKey, phase, stage } = state;
   // The heart that just broke is the first empty slot of your row.
   const breaking = outcome?.loser === "you" ? hearts.you : null;
-  const scored = outcome?.reason === "correct" && (phase === "resolving" || phase === "stageClear");
+  const scored = outcome?.reason === "correct" && phase === "resolving";
   const gained = scored ? outcome.points + (outcome.stageCleared ? RULES.stageBonus : 0) : 0;
 
   return (
@@ -53,14 +53,12 @@ export function Hud({ state }: { state: DuelState }) {
  */
 function StageProgress({ state, stage }: { state: DuelState; stage: number }) {
   const max = state.maxHearts;
-  // During the stage-clear band the rival has already refilled; keep it full.
-  const done = state.phase === "stageClear" ? max : max - state.hearts.rival;
-  const shownStage = state.phase === "stageClear" ? stage - 1 : stage;
+  const done = max - state.hearts.rival;
   return (
     <div
       className={styles.stageProgress}
       role="meter"
-      aria-label={fill(strings.stageProgressAria, { stage: shownStage, n: done, max })}
+      aria-label={fill(strings.stageProgressAria, { stage, n: done, max })}
       aria-valuemin={0}
       aria-valuemax={max}
       aria-valuenow={done}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { RULES } from "@/config/game";
 import { isAcceptedAnswer } from "@/lib/matching";
-import { loadBest, saveBest } from "@/lib/storage";
+import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
 import type { Minigame, MinigameOptions } from "./types";
@@ -30,12 +30,12 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
 
   // Best score for this pack + minigame.
   useEffect(() => {
-    dispatch({ type: "loadBest", best: loadBest(pack.meta.id, minigame.id) });
+    dispatch({ type: "loadBest", best: getBest(pack.meta.id, minigame.id) });
   }, [pack.meta.id, minigame.id]);
 
   useEffect(() => {
     if (state.phase === "gameOver" && state.newBest) {
-      saveBest(pack.meta.id, minigame.id, state.score);
+      recordBest(pack.meta.id, minigame.id, state.score);
     }
   }, [state.phase, state.newBest, state.score, pack.meta.id, minigame.id]);
 
@@ -62,23 +62,18 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     return () => window.clearInterval(id);
   }, [state.phase, state.round, state.fuseMs]);
 
-  // After an outcome: pause, then stage banner or next prompt.
+  // After an outcome: hold it on screen, then the next prompt or game over.
   const { phase, outcome, fxKey } = state;
   useEffect(() => {
     if (phase !== "resolving" || !outcome) return;
-    const delay = outcome.reason === "correct" ? RULES.hitPauseMs : RULES.revealMs;
+    const delay =
+      outcome.reason !== "correct" ? RULES.revealMs : outcome.stageCleared ? RULES.stageClearMs : RULES.hitPauseMs;
     const t = window.setTimeout(() => {
-      if (outcome.stageCleared) dispatch({ type: "stageBanner" });
+      if (outcome.gameOver) dispatch({ type: "gameOver" });
       else advance();
     }, delay);
     return () => window.clearTimeout(t);
   }, [phase, outcome, fxKey, advance]);
-
-  useEffect(() => {
-    if (phase !== "stageClear") return;
-    const t = window.setTimeout(advance, RULES.stageBannerMs);
-    return () => window.clearTimeout(t);
-  }, [phase, advance]);
 
   // Countdown: one beat per number, a shorter one on GO, then the first round.
   const { count } = state;

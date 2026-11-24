@@ -44,8 +44,11 @@ export interface MinigameOptions {
   direction: Direction;
 }
 
-/** "idle" is the ready screen with START; "countdown" runs 3, 2, 1, GO. */
-export type Phase = "idle" | "countdown" | "playing" | "resolving" | "stageClear" | "gameOver";
+/**
+ * "idle" is the ready screen with START; "countdown" runs 3, 2, 1, GO.
+ * "resolving" holds an outcome on screen, including the last miss before game over.
+ */
+export type Phase = "idle" | "countdown" | "playing" | "resolving" | "gameOver";
 
 export type Side = "you" | "rival";
 export type Reason = "correct" | "wrong" | "timeout";
@@ -59,6 +62,14 @@ export interface Outcome {
   stageCleared: boolean;
   gameOver: boolean;
   /** What the player picked/typed, for choice highlighting. */
+  given?: string;
+}
+
+/** A round the player lost, kept for the review list at game over. */
+export interface Miss {
+  round: Round;
+  reason: Exclude<Reason, "correct">;
+  /** What the player typed or picked; absent on a timeout. */
   given?: string;
 }
 
