@@ -35,7 +35,8 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 - **Answers are strictly right or wrong** via `src/lib/matching.ts`; no partial credit.
 - **Sizing** scales in steps through `--s` and `--px` in `src/app/globals.css`; the dark grid background covers the whole page. Respect `prefers-reduced-motion`.
 - **Outcomes are "whose heart broke"** (ADR 0002) so versus mode can reuse the duel reducer.
-- **Guest first** (ADR 0006): nothing may require signing in. Account data goes through `src/server/` server actions that read the session themselves; the title page stays static and reads the session in the browser.
+- **Guest first** (ADR 0006, 0008): nothing may require signing in, but only accounts keep anything: no best scores or word history in the browser. Account data goes through `src/server/` server actions that read the session themselves; the title page stays static and reads the session in the browser.
+- **Items have stable ids** (ADR 0007): every pack item and prompt has an `id` that is never reused or changed; word history points at item ids. Retire an item instead of deleting it.
 
 ### Commits and pull requests
 
