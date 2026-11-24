@@ -47,7 +47,7 @@ The number of right answers in a row; it multiplies points up to a cap.
 _Avoid_: Streak
 
 **Best score**:
-The highest score reached, kept per language pack and per minigame. An account keeps it; a guest's lasts only until the page closes.
+The highest score reached, kept per language pack and per minigame. Only an account has one; a guest has no best score, even for the page.
 _Avoid_: High score
 
 ## Content

@@ -79,7 +79,6 @@ export function SignInDialog({
             {strings.account.signInFailed}
           </p>
         )}
-        <p className={a.note}>{strings.account.mergeNote}</p>
         <button type="button" className={a.guest} onClick={onClose}>
           {strings.account.keepGuest}
         </button>

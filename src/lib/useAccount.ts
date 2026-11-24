@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { mergeGuestBests } from "@/server/progress";
+import { loadAccountBests } from "@/server/progress";
 import { authClient } from "./auth-client";
 import { setAccountProgress, setGuestProgress } from "./progress";
 import { PROVIDERS, type ProviderId } from "./providers";
-import { clearGuestBests, listGuestBests } from "./storage";
 
 export type AccountUser = { id: string; name: string };
 
@@ -48,8 +47,6 @@ export type Account = {
   /** Null for a guest, and while the session is still loading. */
   user: AccountUser | null;
   pending: boolean;
-  /** True briefly after the guest merge added at least one guest score to the account. */
-  merged: boolean;
   /** Set after returning from linking a provider, until the menu is closed. */
   linkResult: LinkResult | null;
   clearLinkResult: () => void;
@@ -61,13 +58,12 @@ export type Account = {
 
 /**
  * The player's account: reads the session in the browser (the page stays
- * static), runs the guest merge whenever this browser holds guest scores while
- * signed in, and points best scores at the account or back at this browser.
+ * static), and loads the account's best scores while signed in; a guest has
+ * none (ADR 0008).
  */
 export function useAccount(packId: string): Account {
   const { data, isPending } = authClient.useSession();
   const userId = data?.user.id ?? null;
-  const [merged, setMerged] = useState(false);
   // Coming back from a provider link: the account menu says how it went.
   // Safe to read on the first render: the menu only shows once the session
   // has loaded, after hydration.
@@ -81,30 +77,17 @@ export function useAccount(packId: string): Account {
       return;
     }
     let live = true;
-    const guest = listGuestBests();
-    mergeGuestBests(guest, packId)
-      .then((result) => {
-        if (!result) return;
-        // The account has them now: this browser's guest scores go, even if
-        // this effect was superseded meanwhile.
-        clearGuestBests(guest);
-        if (!live) return;
-        setAccountProgress(packId, result.bests);
-        if (result.added > 0) setMerged(true);
+    loadAccountBests(packId)
+      .then((bests) => {
+        if (live && bests) setAccountProgress(packId, bests);
       })
       .catch(() => {
-        // Server unreachable: keep showing this browser's scores.
+        // Server unreachable: no best scores show until a reload.
       });
     return () => {
       live = false;
     };
   }, [userId, isPending, packId]);
-
-  useEffect(() => {
-    if (!merged) return;
-    const t = window.setTimeout(() => setMerged(false), 3000);
-    return () => window.clearTimeout(t);
-  }, [merged]);
 
   const signIn = useCallback(async (provider: ProviderId) => {
     const { error } = await authClient.signIn.social({ provider, callbackURL: "/" });
@@ -123,14 +106,12 @@ export function useAccount(packId: string): Account {
 
   const signOut = useCallback(async () => {
     await authClient.signOut();
-    setMerged(false);
     setLinkResult(null);
   }, []);
 
   return {
     user: data?.user ? { id: data.user.id, name: data.user.name } : null,
     pending: isPending,
-    merged,
     linkResult,
     clearLinkResult,
     signIn,

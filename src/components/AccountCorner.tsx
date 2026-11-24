@@ -48,11 +48,6 @@ export function AccountCorner({ account, onOpenSignIn }: { account: Account; onO
           <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
         </svg>
       </button>
-      {account.merged && !menuOpen && (
-        <div className={a.notice} role="status">
-          {strings.account.merged}
-        </div>
-      )}
       {menuOpen && (
         <AccountMenu
           name={user.name}
