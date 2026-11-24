@@ -17,9 +17,10 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | --- | --- |
 | `src/config/game.ts` | Game name, active pack id, duel rules (hearts, fuse, scoring) |
 | `src/i18n/strings.ts` | All interface text |
-| `src/packs/<id>/` | A language pack: `meta.json`, `words.json`, `gaps.json`, `feedback.json`, `matching.json` |
-| `src/packs/types.ts` | Pack schema |
-| `src/packs/index.ts` | Pack registry and font loading |
+| `src/packs/<id>/` | A language pack: `meta.json`, `words.json`, `grammar.json`, `gaps.json`, `feedback.json`, `matching.json` |
+| `src/packs/schema.ts` | Pack schemas (zod); `src/packs/types.ts` infers the types from them |
+| `src/packs/index.ts` | Pack registry (the only way game code reads pack content) and font loading |
+| `scripts/` | `pnpm check:packs` validates every pack; `pnpm packs:ids` gives new entries an id |
 | `src/lib/matching.ts` | The one answer-matching function, driven by pack settings |
 | `src/game/duel.ts` | Pure duel reducer shared by every minigame |
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
@@ -30,18 +31,35 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/server/` | Server only: Drizzle schema, database, Better Auth, server actions for account data |
 | `drizzle/` | Generated SQL migrations |
 
+## Pack content
+
+A pack's content is **items** (what the player learns) and **prompts** (one way of asking about an item); see ADR 0007. Every entry has an envelope (`id`, `kind`, and `tests` on prompts) and a payload for its kind, one entry per line:
+
+| File | Kind | Payload |
+| --- | --- | --- |
+| `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first) |
+| `grammar.json` | item, `grammar` | `target` (e.g. `을/를`), `base` (short description) |
+| `gaps.json` | prompt, `gap` | `tests` (an item id), `sentence` with one `___`, `translation`, `answer`, `options` |
+
+A Word Strike round asks a word item directly; a gap tests the one item named by `tests`.
+
+- **Ids are forever.** Word history points at item ids, so never change or reuse one, even to fix a typo in the word. Homographs get one entry and id per meaning (`눈.eye`, `눈.snow`).
+- **Retire, don't delete.** Set `"retired": true` on an entry to stop asking it; prompts that test a retired item stop too.
+- **Adding entries:** write them without `id`/`kind`, run `pnpm packs:ids` (it only fills in missing ids), add `tests` to new gaps, then run `pnpm check:packs`.
+
+`pnpm check:packs` validates every pack against `src/packs/schema.ts`: no unknown fields, ids unique across the pack, every `tests` pointing to an item, the answer among the options, and exactly one `___` per sentence.
+
 ## Adding a language pack
 
-1. Copy `src/packs/ko-en/` to a new folder and replace the data.
+1. Copy `src/packs/ko-en/` to a new folder named after the pack id and replace the data (see Pack content).
 2. Pick one smooth, rounded Google font that covers both scripts, for every word in either language (`meta.json` → `fonts.words`). Interface text stays in the pixel font.
 3. Set `dir`, `wordBreak` and `nativeName` per language in `meta.json`.
 4. Register it in `src/packs/index.ts` and point `ACTIVE_PACK_ID` at it.
-
-Gap sentences mark the blank with `___`.
+5. Run `pnpm check:packs`.
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId` and `promptKind`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Accounts
 

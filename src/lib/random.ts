@@ -7,6 +7,12 @@ export function pickIndex(length: number, avoid: number | null): number {
   return i;
 }
 
+/** Random entry, never the one with id `avoidId` when there is a choice. */
+export function pickEntry<T extends { id: string }>(entries: readonly T[], avoidId: string | null): T {
+  const avoid = avoidId === null ? null : entries.findIndex((e) => e.id === avoidId);
+  return entries[pickIndex(entries.length, avoid)];
+}
+
 export function shuffle<T>(items: readonly T[]): T[] {
   const out = items.slice();
   for (let i = out.length - 1; i > 0; i--) {

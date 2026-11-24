@@ -18,9 +18,11 @@ export function langText(info: LanguageInfo, text: string): LangText {
  * scoring and effects need is here, so they never know which minigame runs.
  */
 export interface Round {
-  /** Unique per item (used for "never the same prompt twice in a row"). */
-  id: string;
-  itemIndex: number;
+  /** The item this round tests; word history is kept per item id. */
+  itemId: string;
+  /** The prompt asked: the word's id in Word Strike, the gap's id in Gap Guard. Never the same twice in a row. */
+  promptId: string;
+  promptKind: PromptKind;
   /** Short instruction for the round; Word Strike shows it as the input placeholder. */
   hint: string;
   prompt: LangText;
@@ -39,6 +41,9 @@ export interface Round {
 }
 
 export type Direction = "toTarget" | "toBase";
+
+/** How a prompt asks about its item: translate either way, or fill a gap. */
+export type PromptKind = Direction | "gap";
 
 export interface MinigameOptions {
   direction: Direction;

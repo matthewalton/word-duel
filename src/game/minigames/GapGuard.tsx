@@ -5,17 +5,18 @@ import styles from "@/components/game.module.css";
 import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
-import { pickIndex, shuffle } from "@/lib/random";
-import { GAP_MARKER, type LanguagePack } from "@/packs/types";
+import { pickEntry, shuffle } from "@/lib/random";
+import { askableGaps } from "@/packs";
+import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
 import { langText, type ControlsProps, type Minigame, type Round, type ShowcaseProps } from "../types";
 
-function buildRound(pack: LanguagePack, index: number, shuffleOptions: boolean): Round {
-  const gap = pack.gaps[index];
+function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean): Round {
   const { target, base } = pack.meta;
   const [before, after = ""] = gap.sentence.split(GAP_MARKER);
   return {
-    id: `gap-guard:${index}`,
-    itemIndex: index,
+    itemId: gap.tests,
+    promptId: gap.id,
+    promptKind: "gap",
     hint: strings.hintFillGap,
     prompt: langText(target, gap.sentence),
     gap: { before, after },
@@ -65,7 +66,7 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
       <div className={styles.choiceRow}>
         {options.map((option, i) => (
           <button
-            key={`${round.id}-${option}`}
+            key={`${round.promptId}-${option}`}
             type="button"
             className={`${styles.choiceButton} ${stateClass(option)}`}
             lang={round.answerLang.code}
@@ -90,7 +91,7 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
 }
 
 function GapGuardPreview({ pack }: ShowcaseProps) {
-  const round = buildRound(pack, 0, false);
+  const round = buildRound(pack, askableGaps(pack)[0], false);
   const { lang, dir } = round.prompt;
   return (
     <span className={t.preview}>
@@ -111,7 +112,7 @@ function GapGuardPreview({ pack }: ShowcaseProps) {
 }
 
 function GapGuardHowTo({ pack }: ShowcaseProps) {
-  const round = buildRound(pack, 0, false);
+  const round = buildRound(pack, askableGaps(pack)[0], false);
   const { lang, dir } = round.prompt;
   const steps = strings.minigameInfo["gap-guard"].steps;
   return (
@@ -144,9 +145,9 @@ function GapGuardHowTo({ pack }: ShowcaseProps) {
 export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
-  sampleRound: (pack) => buildRound(pack, 0, false),
+  sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
   nextRound: (pack, _opts, previous) =>
-    buildRound(pack, pickIndex(pack.gaps.length, previous?.itemIndex ?? null), true),
+    buildRound(pack, pickEntry(askableGaps(pack), previous?.promptId ?? null), true),
   Controls: GapGuardControls,
   Preview: GapGuardPreview,
   HowTo: GapGuardHowTo,

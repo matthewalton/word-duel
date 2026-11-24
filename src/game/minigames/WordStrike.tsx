@@ -6,9 +6,10 @@ import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToP
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
-import { pickIndex } from "@/lib/random";
+import { pickEntry } from "@/lib/random";
+import { askableWords } from "@/packs";
 import { normalizeAnswer } from "@/lib/matching";
-import type { LanguagePack, WordEntry } from "@/packs/types";
+import type { LanguagePack, WordItem } from "@/packs/types";
 import {
   langText,
   type ControlsProps,
@@ -29,29 +30,28 @@ function acceptedTargets(pack: LanguagePack, prompt: string): string[] {
   const lang = pack.meta.base.code;
   const key = normalizeAnswer(prompt, pack.matching, lang);
   return unique(
-    pack.words
+    askableWords(pack)
       .filter((w) => w.base.some((b) => normalizeAnswer(b, pack.matching, lang) === key))
       .flatMap((w) => [w.target, ...(w.targetAlt ?? [])]),
   );
 }
 
-function acceptedBases(pack: LanguagePack, word: WordEntry): string[] {
+function acceptedBases(pack: LanguagePack, word: WordItem): string[] {
   const forms = [word.target, ...(word.targetAlt ?? [])];
   return unique(
-    pack.words
+    askableWords(pack)
       .filter((w) => forms.includes(w.target) || (w.targetAlt ?? []).some((a) => forms.includes(a)))
       .flatMap((w) => w.base),
   );
 }
 
-function buildRound(pack: LanguagePack, opts: MinigameOptions, index: number): Round {
-  const word = pack.words[index];
+function buildRound(pack: LanguagePack, opts: MinigameOptions, word: WordItem): Round {
   const { target, base } = pack.meta;
-  const id = `word-strike:${index}`;
+  // A Word Strike prompt is the word item itself, asked in one direction.
+  const ids = { itemId: word.id, promptId: word.id, promptKind: opts.direction };
   if (opts.direction === "toTarget") {
     return {
-      id,
-      itemIndex: index,
+      ...ids,
       hint: fill(strings.hintTypeIn, { language: target.name }),
       prompt: langText(base, word.base[0]),
       accepted: acceptedTargets(pack, word.base[0]),
@@ -60,8 +60,7 @@ function buildRound(pack: LanguagePack, opts: MinigameOptions, index: number): R
     };
   }
   return {
-    id,
-    itemIndex: index,
+    ...ids,
     hint: fill(strings.hintTypeIn, { language: base.name }),
     prompt: langText(target, word.target),
     accepted: acceptedBases(pack, word),
@@ -72,9 +71,10 @@ function buildRound(pack: LanguagePack, opts: MinigameOptions, index: number): R
 
 /** Random round whose prompt text differs from the previous one. */
 function nextRound(pack: LanguagePack, opts: MinigameOptions, previous: Round | null): Round {
-  let round = buildRound(pack, opts, pickIndex(pack.words.length, previous?.itemIndex ?? null));
+  const words = askableWords(pack);
+  let round = buildRound(pack, opts, pickEntry(words, previous?.promptId ?? null));
   for (let tries = 0; previous && round.prompt.text === previous.prompt.text && tries < 20; tries++) {
-    round = buildRound(pack, opts, pickIndex(pack.words.length, round.itemIndex));
+    round = buildRound(pack, opts, pickEntry(words, round.promptId));
   }
   return round;
 }
@@ -103,7 +103,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
     if (phase !== "playing" || !inputRef.current) return;
     inputRef.current.value = "";
     inputRef.current.focus();
-  }, [round.id, phase]);
+  }, [round.promptId, phase]);
 
   useEffect(() => {
     if (phase === "gameOver") buttonRef.current?.focus();
@@ -159,7 +159,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
 
 /** The pack's first word as prompt and typed answer, in the chosen direction. */
 function sample(pack: LanguagePack, opts: MinigameOptions): { prompt: LangText; answer: LangText; answerName: string } {
-  const word = pack.words[0];
+  const word = askableWords(pack)[0];
   const { target, base } = pack.meta;
   return opts.direction === "toTarget"
     ? { prompt: langText(base, word.base[0]), answer: langText(target, word.target), answerName: target.name }
@@ -218,7 +218,7 @@ function WordStrikeHowTo({ pack, opts }: ShowcaseProps) {
 export const wordStrike: Minigame = {
   id: "word-strike",
   usesDirection: true,
-  sampleRound: (pack, opts) => buildRound(pack, opts, 0),
+  sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
   nextRound,
   Controls: WordStrikeControls,
   Preview: WordStrikePreview,

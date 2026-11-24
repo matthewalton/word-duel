@@ -1,115 +1,38 @@
 /**
- * Language pack schema.
+ * Language pack types, inferred from the schemas in `./schema.ts` (see there
+ * for field docs).
  *
  * A pack is a folder of JSON data files (see `src/packs/ko-en/`). Game code
  * only ever talks to the `LanguagePack` shape below, never to a specific
  * language, so adding a language means adding a folder and one registry line.
+ * Only types are imported from the schemas, so zod never reaches the browser.
  */
+import type { z } from "zod";
+import type {
+  feedbackPhrasesSchema,
+  gapPromptSchema,
+  grammarItemSchema,
+  languagePackSchema,
+  matchingSettingsSchema,
+  packMetaSchema,
+  wordItemSchema,
+} from "./schema";
 
 /** Marker used inside gap sentences to show where the blank goes. */
 export const GAP_MARKER = "___";
 
-export type TextDirection = "ltr" | "rtl";
+export type PackMeta = z.infer<typeof packMetaSchema>;
+export type LanguageInfo = PackMeta["target"];
+export type TextDirection = LanguageInfo["dir"];
+export type FeedbackPhrases = z.infer<typeof feedbackPhrasesSchema>;
+export type MatchingSettings = z.infer<typeof matchingSettingsSchema>;
 
-export interface LanguageInfo {
-  /** Display name in the interface language, e.g. "Korean". */
-  name: string;
-  /** The language's name for itself, e.g. "한국어". Shown on the direction toggle. */
-  nativeName: string;
-  /** BCP-47 code, e.g. "ko". */
-  code: string;
-  dir: TextDirection;
-  /**
-   * CSS `word-break` for prompts in this language. Korean wants "keep-all"
-   * (wrap at spaces); Japanese/Chinese want "normal". Defaults to "normal".
-   */
-  wordBreak?: "normal" | "keep-all" | "break-all";
-}
+/** Items: what the player learns. Word history is kept per item id. */
+export type WordItem = z.infer<typeof wordItemSchema>;
+export type GrammarItem = z.infer<typeof grammarItemSchema>;
+export type Item = WordItem | GrammarItem;
 
-export interface FontSpec {
-  /** CSS font-family name, e.g. "Jua". */
-  family: string;
-  /** Google Fonts family name to load; omit if the font is local/system. */
-  google?: string;
-  /** Generic fallback, e.g. "sans-serif". */
-  fallback: string;
-}
+/** Prompts: one way of asking about an item, named by `tests`. */
+export type GapPrompt = z.infer<typeof gapPromptSchema>;
 
-export interface Credit {
-  name: string;
-  author: string;
-  url: string;
-  licence: string;
-  /** How the source was used in this pack. */
-  usage: string;
-}
-
-export interface PackMeta {
-  id: string;
-  /** Attribution for third-party data used in the pack. */
-  credits?: Credit[];
-  /** The language being learned. */
-  target: LanguageInfo;
-  /** The language the learner already knows. */
-  base: LanguageInfo;
-  fonts: {
-    /**
-     * Every target- and base-language word: prompts, answers, choices and
-     * language names. Smooth and rounded, never pixelated, and covering both
-     * scripts. Interface text uses the pixel font instead.
-     */
-    words: FontSpec;
-  };
-}
-
-export interface WordEntry {
-  /** Main target-language form (shown as the prompt). */
-  target: string;
-  /** Other accepted target-language spellings, if any. */
-  targetAlt?: string[];
-  /** Accepted base-language answers; the first is the main one. */
-  base: string[];
-}
-
-export interface GapEntry {
-  /** Target-language sentence containing exactly one GAP_MARKER. */
-  sentence: string;
-  /** Base-language translation. */
-  translation: string;
-  answer: string;
-  /** Answer options including the correct one. */
-  options: string[];
-}
-
-export interface FeedbackPhrases {
-  /** Shown on a right answer, e.g. "맞아요!". */
-  correct: string;
-  /** Shown on the stage-clear banner. */
-  stageClear?: string;
-  /** Shown on the game-over banner. */
-  gameOver?: string;
-}
-
-export interface MatchingSettings {
-  /** Unicode normalisation form applied before comparison. Default "NFC". */
-  normalization?: "NFC" | "NFKC";
-  /** Default true. */
-  caseInsensitive?: boolean;
-  /** Strip combining accents (é → e). Default false. */
-  ignoreDiacritics?: boolean;
-  /** Ignore punctuation characters. Default false. */
-  ignorePunctuation?: boolean;
-  /**
-   * Leading words to ignore, keyed by BCP-47 code of the answer language,
-   * e.g. { "en": ["a", "an", "the"] } so "a cat" matches "cat".
-   */
-  ignoreLeadingWords?: Record<string, string[]>;
-}
-
-export interface LanguagePack {
-  meta: PackMeta;
-  words: WordEntry[];
-  gaps: GapEntry[];
-  feedback: FeedbackPhrases;
-  matching: MatchingSettings;
-}
+export type LanguagePack = z.infer<typeof languagePackSchema>;

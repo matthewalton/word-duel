@@ -15,7 +15,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 ### Run and check
 
 - Use pnpm, not npm: `pnpm install`, then `pnpm dev` → http://localhost:3000
-- Before committing: `pnpm exec eslint src && pnpm exec tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
+- Before committing: `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
 
 ### Read first
 
