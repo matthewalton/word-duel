@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { RULES } from "@/config/game";
 import { isAcceptedAnswer } from "@/lib/matching";
+import { newDuelId, sendDuel } from "@/lib/history";
 import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
@@ -12,8 +13,8 @@ import type { Minigame, MinigameOptions } from "./types";
 export const FUSE_SEGMENTS = 20;
 
 /**
- * Solo duel controller: wires the pure reducer to timers, the CPU rival and
- * best scores (accounts only). A versus controller would replace the fuse/CPU part
+ * Solo duel controller: wires the pure reducer to timers, the CPU rival, best
+ * scores and word history (accounts only). A versus controller would replace the fuse/CPU part
  * with server messages while reusing `duelReducer` and the same screen.
  */
 export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOptions) {
@@ -39,9 +40,43 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     }
   }, [state.phase, state.newBest, state.score, pack.meta.id, minigame.id]);
 
+  // Word history: each duel is sent once, at game over or when the player
+  // leaves it (ADR 0008). The id is set when the first prompt shows and
+  // cleared once sent.
+  const duelIdRef = useRef<string | null>(null);
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+  const send = useCallback(() => {
+    const id = duelIdRef.current;
+    if (!id) return;
+    duelIdRef.current = null;
+    sendDuel(
+      id,
+      { packId: pack.meta.id, minigameId: minigame.id, direction: minigame.usesDirection ? opts.direction : null },
+      stateRef.current,
+      performance.now(),
+    );
+  }, [pack.meta.id, minigame, opts.direction]);
+  const sendRef = useRef(send);
+  useEffect(() => {
+    sendRef.current = send;
+  }, [send]);
+
+  useEffect(() => {
+    if (state.phase === "gameOver") send();
+  }, [state.phase, send]);
+
+  // Leaving mid-duel (MENU) unmounts the duel; a closed tab loses it.
+  useEffect(() => {
+    const current = sendRef;
+    return () => current.current();
+  }, []);
+
   const advance = useCallback(() => {
     setFuseLit(FUSE_SEGMENTS);
-    dispatch({ type: "next", round: minigame.nextRound(pack, opts, roundRef.current) });
+    dispatch({ type: "next", round: minigame.nextRound(pack, opts, roundRef.current), at: performance.now() });
   }, [minigame, pack, opts]);
 
   // Fuse timer while a prompt is live.
@@ -54,7 +89,7 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
       if (left <= 0) {
         window.clearInterval(id);
         setFuseLit(0);
-        dispatch({ type: "resolve", loser: "you", reason: "timeout" });
+        dispatch({ type: "resolve", loser: "you", reason: "timeout", at: performance.now() });
       } else {
         setFuseLit(Math.ceil(left * FUSE_SEGMENTS));
       }
@@ -85,7 +120,8 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
           dispatch({ type: "tick" });
         } else {
           setFuseLit(FUSE_SEGMENTS);
-          dispatch({ type: "start", round: minigame.nextRound(pack, opts, roundRef.current) });
+          duelIdRef.current = newDuelId();
+          dispatch({ type: "start", round: minigame.nextRound(pack, opts, roundRef.current), at: performance.now() });
         }
       },
       count > 0 ? RULES.countdownBeatMs : RULES.countdownGoMs,
@@ -105,6 +141,7 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
         loser: correct ? "rival" : "you",
         reason: correct ? "correct" : "wrong",
         given: answer,
+        at: performance.now(),
       });
     },
     [pack.matching],

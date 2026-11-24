@@ -25,7 +25,7 @@ type View = { name: "title" } | { name: "duel"; run: number };
 export function GameScreen() {
   const pack = getPack(ACTIVE_PACK_ID);
   const [view, setView] = useState<View>({ name: "title" });
-  const [minigameId, setMinigameId] = useState(MINIGAMES[0].id);
+  const [minigameId, setMinigameId] = useState<string>(MINIGAMES[0].id);
   const [direction, setDirection] = useState<Direction>("toTarget");
   const account = useAccount(pack.meta.id);
   const [signInOpen, setSignInOpen] = useState(false);

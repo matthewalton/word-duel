@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { DuelState } from "@/game/duel";
+import { missesOf, type DuelState } from "@/game/duel";
 import type { Miss } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
@@ -21,6 +21,7 @@ export function GameOverPanel({
   extra?: ReactNode;
 }) {
   const target = pack.meta.target;
+  const misses = missesOf(state.rounds);
 
   return (
     <div className={styles.gameOver} role="status">
@@ -38,15 +39,15 @@ export function GameOverPanel({
         <span className={styles.bannerHint}>{strings.playAgain}</span>
       </div>
 
-      {(state.misses.length > 0 || extra) && (
+      {(misses.length > 0 || extra) && (
         <div className={styles.gameOverSide}>
-          {state.misses.length > 0 && (
+          {misses.length > 0 && (
             <section className={styles.review} aria-labelledby="review-heading">
               <h2 id="review-heading" className={styles.reviewHeading}>
                 {strings.toReview}
               </h2>
               <ol className={styles.reviewList}>
-                {state.misses.map((miss, i) => (
+                {misses.map((miss, i) => (
                   <MissRow key={i} miss={miss} />
                 ))}
               </ol>

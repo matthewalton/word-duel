@@ -6,7 +6,7 @@
  * (the rival answered first → loser: "you") through the same reducer.
  */
 import { RULES, fuseForStage } from "@/config/game";
-import type { Miss, Outcome, Phase, Reason, Round, Side } from "./types";
+import type { Miss, Outcome, Phase, PlayedRound, Reason, Round, Side } from "./types";
 
 export interface DuelState {
   phase: Phase;
@@ -25,18 +25,31 @@ export interface DuelState {
   fxKey: number;
   /** Beats left in the countdown; 0 shows GO. */
   count: number;
-  /** Rounds the player lost this duel, oldest first, for the review at game over. */
-  misses: Miss[];
+  /** Every round played this duel, oldest first: the round log, and the review list's source. */
+  rounds: PlayedRound[];
+  /** Controller clock (ms) when the first prompt showed, and when the current one did. */
+  startedAt: number;
+  roundShownAt: number;
 }
+
+/**
+ * Timed actions carry `at`, the controller's clock in ms (performance.now in
+ * solo), so the reducer stays pure.
+ */
 
 export type DuelAction =
   | { type: "loadBest"; best: number | null }
   | { type: "countdown" }
   | { type: "tick" }
-  | { type: "start"; round: Round }
-  | { type: "resolve"; loser: Side; reason: Reason; given?: string }
+  | { type: "start"; round: Round; at: number }
+  | { type: "resolve"; loser: Side; reason: Reason; given?: string; at: number }
   | { type: "gameOver" }
-  | { type: "next"; round: Round };
+  | { type: "next"; round: Round; at: number };
+
+/** The rounds the player lost, for the review list at game over. */
+export function missesOf(rounds: PlayedRound[]): Miss[] {
+  return rounds.filter((r): r is Miss => r.reason !== "correct");
+}
 
 export function initialDuel(sample: Round): DuelState {
   return {
@@ -53,7 +66,9 @@ export function initialDuel(sample: Round): DuelState {
     outcome: null,
     fxKey: 0,
     count: RULES.countdownFrom,
-    misses: [],
+    rounds: [],
+    startedAt: 0,
+    roundShownAt: 0,
   };
 }
 
@@ -83,6 +98,8 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
         best: state.best,
         phase: "playing",
         fxKey: state.fxKey,
+        startedAt: action.at,
+        roundShownAt: action.at,
       };
 
     case "resolve": {
@@ -104,16 +121,20 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       if (stageCleared) score += RULES.stageBonus;
       const gameOver = hearts.you === 0;
       const newBest = gameOver && state.best != null && score > state.best;
-      const misses =
-        action.reason === "correct"
-          ? state.misses
-          : [...state.misses, { round: state.round, reason: action.reason, given: action.given }];
+      const played: PlayedRound = {
+        round: state.round,
+        reason: action.reason,
+        given: action.given,
+        answerMs: action.reason === "timeout" ? null : Math.max(0, action.at - state.roundShownAt),
+        atMs: Math.max(0, action.at - state.startedAt),
+        stage: state.stage,
+      };
 
       // Even the last miss is held on screen first, so the player sees the answer.
       return {
         ...state,
         phase: "resolving",
-        misses,
+        rounds: [...state.rounds, played],
         hearts,
         score,
         combo,
@@ -140,7 +161,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "next": {
       if (state.phase !== "resolving" || state.outcome?.gameOver) return state;
       if (!state.outcome?.stageCleared) {
-        return { ...state, phase: "playing", round: action.round, outcome: null };
+        return { ...state, phase: "playing", round: action.round, outcome: null, roundShownAt: action.at };
       }
       const stage = state.stage + 1;
       return {
@@ -148,6 +169,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
         phase: "playing",
         round: action.round,
         outcome: null,
+        roundShownAt: action.at,
         stage,
         fuseMs: fuseForStage(stage),
         hearts: { ...state.hearts, rival: state.maxHearts },

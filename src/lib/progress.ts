@@ -48,3 +48,8 @@ export function recordBest(packId: string, minigameId: string, score: number) {
   });
   notify();
 }
+
+/** Whether a signed-in account's progress is loaded; false for a guest. */
+export function hasAccount(): boolean {
+  return account != null;
+}

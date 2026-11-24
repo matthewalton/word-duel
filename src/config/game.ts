@@ -28,3 +28,10 @@ export const RULES = {
 export function fuseForStage(stage: number): number {
   return Math.max(RULES.fuseMinMs, RULES.fuseStartMs - (stage - 1) * RULES.fuseStepMs);
 }
+
+/** Caps on a duel sent to word history; the server rejects anything larger. */
+export const HISTORY_LIMITS = {
+  maxRounds: 1_000,
+  /** Longest answer kept; longer answers are cut before sending. */
+  maxGivenLength: 200,
+} as const;
