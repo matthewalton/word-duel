@@ -47,7 +47,7 @@ The number of right answers in a row; it multiplies points up to a cap.
 _Avoid_: Streak
 
 **Best score**:
-The highest score reached, kept per language pack and per minigame.
+The highest score reached, kept per language pack and per minigame. An account keeps it; a guest's lasts only until the page closes.
 _Avoid_: High score
 
 ## Content
@@ -67,9 +67,17 @@ _Avoid_: Native language, L1
 **Direction**:
 Which way a Word Strike round is translated: base → target or target → base.
 
+**Item**:
+One thing the player learns in a language pack: a word, or a grammar point such as the object particle 을/를. Word history is kept per item, whichever minigame asked it.
+_Avoid_: Card, entry, vocab
+
 **Prompt**:
-The text the player must answer: a word or a gap sentence.
+One way of asking about an item, which the player must answer: a word to translate or a gap sentence. Each prompt tests exactly one item.
 _Avoid_: Card, question
+
+**Prompt kind**:
+How a prompt asks about its item: translate to the target language, translate to the base language, or fill a gap. An item's stats are kept separately for each prompt kind.
+_Avoid_: Mode (that word is avoided for minigames), skill
 
 **Accepted answer**:
 Any answer that counts as right for a prompt. Matching is strictly right or wrong.
@@ -119,13 +127,21 @@ The minigame in which the player picks the missing piece of a target-language se
 ## Accounts
 
 **Guest**:
-A player who has not signed in. Guests can play everything; their progress is kept in this browser only.
+A player who has not signed in. Guests can play everything, but nothing they do is kept after the page closes.
 _Avoid_: Anonymous user, logged-out user
 
 **Account**:
 A signed-in player's record, reached through one or more OAuth providers; more providers are linked from the account menu. Progress kept in an account follows the player across devices.
 _Avoid_: Profile, user (in interface text)
 
-**Guest merge**:
-Bringing a browser's guest progress into an account whenever the browser holds any while signed in: a guest best score only fills a minigame the account has no score for (an account best is never replaced), word history is added, and the browser's guest progress is then deleted.
-_Avoid_: Sync, import
+**Word history**:
+An account's record of every round it played, kept as the round log and item stats.
+_Avoid_: Mistakes, missed words
+
+**Round log**:
+Every round an account played, in order: the item and prompt, the outcome, what the player gave and how long they took.
+_Avoid_: Answer history, events
+
+**Item stats**:
+An account's running totals for one item and prompt kind: right, wrong and too slow, the current run of right answers, and when it was last seen and last missed.
+_Avoid_: Word score, mastery
