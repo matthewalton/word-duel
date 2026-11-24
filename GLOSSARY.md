@@ -8,6 +8,13 @@ A pixel-art vocabulary game in which the player fights a rival by answering prom
 One game from START to game over, made of rounds against a single rival.
 _Avoid_: Match, session
 
+**Ready screen**:
+The duel board before the first round: hearts and score are shown, the prompt is hidden, and a START button sits in the middle. Shown when a duel is opened from the title screen; play again after game over skips it.
+_Avoid_: Lobby, start screen (that is the title screen)
+
+**Countdown**:
+The 3, 2, 1, GO! after START and before the first round. It runs once per duel, not after a stage clear.
+
 **Rival**:
 The opponent whose hearts the player breaks. In solo play the rival is the CPU, and its hearts are drawn as stage progress rather than as hearts; in versus it would be the other player.
 _Avoid_: Enemy, opponent, mascot
@@ -29,7 +36,7 @@ The result of a round, expressed as whose heart broke and why (correct, wrong or
 
 **Fuse**:
 The time limit on a round, shown as a shrinking bar.
-_Avoid_: Timer, countdown
+_Avoid_: Timer, countdown (the countdown is the 3, 2, 1 before the first round)
 
 **Stage**:
 A level of the duel. Clearing all of the rival's hearts advances the stage and shortens the fuse.

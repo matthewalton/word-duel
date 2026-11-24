@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, type KeyboardEvent } from "react";
 import styles from "@/components/game.module.css";
 import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToParts";
 import { wordBreakStyle } from "@/components/LangSpan";
@@ -84,7 +84,18 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const composing = useRef(false);
 
-  const inGame = phase === "playing" || phase === "resolving" || phase === "stageClear";
+  const inGame = phase === "countdown" || phase === "playing" || phase === "resolving" || phase === "stageClear";
+  // Typing is allowed during the countdown so the input can hold focus, but
+  // nothing submits until the round is live (and the input is cleared then).
+  const editable = phase === "countdown" || phase === "playing";
+
+  // Focus while the START press is still being handled, so phones open the
+  // keyboard: a focus from the later timer would not count as a user gesture.
+  useLayoutEffect(() => {
+    if (phase !== "countdown" || !inputRef.current) return;
+    inputRef.current.value = "";
+    inputRef.current.focus();
+  }, [phase]);
 
   // Fresh, focused input for every new prompt. The input is uncontrolled so
   // IME composition is never interrupted by React re-renders.
@@ -123,7 +134,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         aria-label={strings.inputLabel}
         placeholder={round.hint}
         disabled={!inGame}
-        readOnly={phase !== "playing"}
+        readOnly={!editable}
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
@@ -137,10 +148,10 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         ref={buttonRef}
         type="button"
         className={styles.goldButton}
-        onClick={inGame ? submitNow : onStart}
-        disabled={inGame && phase !== "playing"}
+        onClick={phase === "gameOver" ? onStart : submitNow}
+        disabled={phase !== "gameOver" && phase !== "playing"}
       >
-        {inGame ? strings.go : strings.start}
+        {phase === "gameOver" ? strings.start : strings.go}
       </button>
     </div>
   );

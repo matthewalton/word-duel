@@ -21,6 +21,10 @@ export const RULES = {
   /** Short pause after a right answer so the effects can play. */
   hitPauseMs: 650,
   stageBannerMs: 1_100,
+  /** Countdown before the first round: 3, 2, 1, then GO. */
+  countdownFrom: 3,
+  countdownBeatMs: 700,
+  countdownGoMs: 500,
 } as const;
 
 export function fuseForStage(stage: number): number {

@@ -22,10 +22,14 @@ export interface DuelState {
   outcome: Outcome | null;
   /** Increments on every outcome; components key effects on it. */
   fxKey: number;
+  /** Beats left in the countdown; 0 shows GO. */
+  count: number;
 }
 
 export type DuelAction =
   | { type: "loadBest"; best: number }
+  | { type: "countdown" }
+  | { type: "tick" }
   | { type: "start"; round: Round }
   | { type: "resolve"; loser: Side; reason: Reason; given?: string }
   | { type: "stageBanner" }
@@ -45,6 +49,7 @@ export function initialDuel(sample: Round): DuelState {
     round: sample,
     outcome: null,
     fxKey: 0,
+    count: RULES.countdownFrom,
   };
 }
 
@@ -53,7 +58,22 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "loadBest":
       return { ...state, best: action.best };
 
+    // A fresh duel waits behind the countdown; the prompt stays hidden.
+    case "countdown":
+      if (state.phase !== "idle" && state.phase !== "gameOver") return state;
+      return {
+        ...initialDuel(state.round),
+        best: state.best,
+        phase: "countdown",
+        fxKey: state.fxKey,
+      };
+
+    case "tick":
+      if (state.phase !== "countdown" || state.count === 0) return state;
+      return { ...state, count: state.count - 1 };
+
     case "start":
+      if (state.phase !== "countdown") return state;
       return {
         ...initialDuel(action.round),
         best: state.best,
@@ -113,7 +133,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     }
 
     case "next":
-      if (state.phase === "gameOver" || state.phase === "idle") return state;
+      if (state.phase !== "resolving" && state.phase !== "stageClear") return state;
       return { ...state, phase: "playing", round: action.round, outcome: null };
   }
 }

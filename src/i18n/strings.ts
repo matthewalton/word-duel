@@ -12,6 +12,8 @@ export const strings = {
   modesLabel: "Minigame",
   directionAria: "Answer direction: {from} to {to}. Click to switch.",
   start: "START",
+  pressEnter: "OR PRESS ENTER",
+  countdownGo: "GO!",
   go: "GO",
   you: "YOU",
   best: "BEST {score}",

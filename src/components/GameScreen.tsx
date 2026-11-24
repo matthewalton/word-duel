@@ -99,7 +99,7 @@ function Duel({
   onMenu: () => void;
 }) {
   const opts: MinigameOptions = useMemo(() => ({ direction }), [direction]);
-  const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts, { autoStart: true });
+  const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts);
   const lost = state.outcome != null && state.outcome.reason !== "correct";
   const Controls = minigame.Controls;
 
@@ -114,7 +114,7 @@ function Duel({
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
         <Hud state={state} />
-        <PromptBoard state={state} pack={pack} fuseLit={fuseLit} />
+        <PromptBoard state={state} pack={pack} fuseLit={fuseLit} onStart={start} />
         <div className={styles.controlStrip}>
           <Controls
             pack={pack}

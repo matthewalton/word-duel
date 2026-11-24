@@ -44,7 +44,8 @@ export interface MinigameOptions {
   direction: Direction;
 }
 
-export type Phase = "idle" | "playing" | "resolving" | "stageClear" | "gameOver";
+/** "idle" is the ready screen with START; "countdown" runs 3, 2, 1, GO. */
+export type Phase = "idle" | "countdown" | "playing" | "resolving" | "stageClear" | "gameOver";
 
 export type Side = "you" | "rival";
 export type Reason = "correct" | "wrong" | "timeout";

@@ -16,20 +16,11 @@ export const FUSE_SEGMENTS = 20;
  * best-score storage. A versus controller would replace the fuse/CPU part
  * with server messages while reusing `duelReducer` and the same screen.
  */
-export function useDuel(
-  pack: LanguagePack,
-  minigame: Minigame,
-  opts: MinigameOptions,
-  { autoStart = false }: { autoStart?: boolean } = {},
-) {
-  // With autoStart the first prompt is live straight away. Only mount with
-  // autoStart on the client (after a click), since the first round is random.
-  const [state, dispatch] = useReducer(duelReducer, undefined, () => {
-    const idle = initialDuel(minigame.sampleRound(pack, opts));
-    return autoStart
-      ? duelReducer(idle, { type: "start", round: minigame.nextRound(pack, opts, null) })
-      : idle;
-  });
+export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOptions) {
+  // Opens on the ready screen; START runs the countdown, then the first round.
+  const [state, dispatch] = useReducer(duelReducer, undefined, () =>
+    initialDuel(minigame.sampleRound(pack, opts)),
+  );
   const [fuseLit, setFuseLit] = useState(FUSE_SEGMENTS);
 
   const roundRef = useRef(state.round);
@@ -89,10 +80,26 @@ export function useDuel(
     return () => window.clearTimeout(t);
   }, [phase, advance]);
 
-  const start = useCallback(() => {
-    setFuseLit(FUSE_SEGMENTS);
-    dispatch({ type: "start", round: minigame.nextRound(pack, opts, roundRef.current) });
-  }, [minigame, pack, opts]);
+  // Countdown: one beat per number, a shorter one on GO, then the first round.
+  const { count } = state;
+  useEffect(() => {
+    if (phase !== "countdown") return;
+    const t = window.setTimeout(
+      () => {
+        if (count > 0) {
+          dispatch({ type: "tick" });
+        } else {
+          setFuseLit(FUSE_SEGMENTS);
+          dispatch({ type: "start", round: minigame.nextRound(pack, opts, roundRef.current) });
+        }
+      },
+      count > 0 ? RULES.countdownBeatMs : RULES.countdownGoMs,
+    );
+    return () => window.clearTimeout(t);
+  }, [phase, count, minigame, pack, opts]);
+
+  /** START on the ready screen, or play again after game over. */
+  const start = useCallback(() => dispatch({ type: "countdown" }), []);
 
   const submit = useCallback(
     (answer: string) => {
