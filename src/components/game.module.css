@@ -309,6 +309,70 @@
   overflow: hidden;
 }
 
+/* ---------- Ready screen and countdown ---------- */
+
+.ready {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(18px * var(--s));
+}
+
+.startButton {
+  min-width: calc(260px * var(--s));
+  padding: calc(16px * var(--s)) calc(36px * var(--s));
+  font-size: calc(44px * var(--s));
+  letter-spacing: calc(4px * var(--s));
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.readyHint {
+  font-size: calc(14px * var(--s));
+  letter-spacing: calc(1px * var(--s));
+  color: var(--muted);
+}
+
+/* Touch screens have no Enter key to point at. */
+@media (hover: none) {
+  .readyHint {
+    display: none;
+  }
+}
+
+.countdownLive {
+  display: contents;
+}
+
+.countNumber,
+.countGo {
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+  animation: countBeat 240ms steps(3, end) both;
+}
+
+.countNumber {
+  font-size: clamp(calc(110px * var(--s)), 30vw, calc(200px * var(--s)));
+}
+
+.countGo {
+  padding: calc(10px * var(--s)) calc(32px * var(--s));
+  font-size: clamp(calc(76px * var(--s)), 22vw, calc(140px * var(--s)));
+  letter-spacing: calc(6px * var(--s));
+  background: var(--accent);
+  border: var(--border);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+@keyframes countBeat {
+  from {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 /* The one smooth, rounded face: never pixelated. */
 .prompt {
   margin: 0;
@@ -730,6 +794,14 @@
     padding-inline: 14px;
   }
 
+  .startButton {
+    min-width: 200px;
+    min-height: 64px;
+    font-size: 32px;
+    letter-spacing: 3px;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
   .choiceButton {
     font-size: 22px;
   }
@@ -757,7 +829,9 @@
 
   .band,
   .pointsTag,
-  .newBest {
+  .newBest,
+  .countNumber,
+  .countGo {
     animation: none;
   }
 }

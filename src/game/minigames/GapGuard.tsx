@@ -33,7 +33,10 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
   const startRef = useRef<HTMLButtonElement>(null);
   const options = round.options ?? NO_OPTIONS;
   const live = phase === "playing";
-  const showStart = phase === "idle" || phase === "gameOver";
+  // START on the ready screen lives on the board; this one is play again.
+  const showStart = phase === "gameOver";
+  // Before the first round the choices stay blank so they don't give the sample away.
+  const waiting = phase === "idle" || phase === "countdown";
 
   useEffect(() => {
     if (phase === "gameOver") startRef.current?.focus();
@@ -73,7 +76,7 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
             <span className={styles.choiceKey} aria-hidden="true">
               {i + 1}
             </span>
-            {option}
+            {waiting ? "\u00A0" : option}
           </button>
         ))}
       </div>
