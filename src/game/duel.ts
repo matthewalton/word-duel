@@ -16,6 +16,11 @@ export interface DuelState {
   /** The account's best score; null for a guest, who has none (ADR 0008). */
   best: number | null;
   newBest: boolean;
+  /**
+   * Ids of items whose last outcome for this duel's prompt kind was a miss,
+   * still open for a comeback this duel. Null for a guest, who gets none.
+   */
+  lastMissed: string[] | null;
   hearts: Record<Side, number>;
   maxHearts: number;
   fuseMs: number;
@@ -39,6 +44,7 @@ export interface DuelState {
 
 export type DuelAction =
   | { type: "loadBest"; best: number | null }
+  | { type: "loadLastMissed"; itemIds: string[] | null }
   | { type: "countdown" }
   | { type: "tick" }
   | { type: "start"; round: Round; at: number }
@@ -51,6 +57,20 @@ export function missesOf(rounds: PlayedRound[]): Miss[] {
   return rounds.filter((r): r is Miss => r.reason !== "correct");
 }
 
+/**
+ * The items last missed once these rounds are played, oldest first: a miss
+ * adds its item, a right answer takes it out. Lets play again carry on
+ * without reloading word history.
+ */
+function afterRounds(lastMissed: string[], rounds: PlayedRound[]): string[] {
+  const missed = new Set(lastMissed);
+  for (const r of rounds) {
+    if (r.reason === "correct") missed.delete(r.round.itemId);
+    else missed.add(r.round.itemId);
+  }
+  return [...missed];
+}
+
 export function initialDuel(sample: Round): DuelState {
   return {
     phase: "idle",
@@ -59,6 +79,7 @@ export function initialDuel(sample: Round): DuelState {
     combo: 0,
     best: null,
     newBest: false,
+    lastMissed: null,
     hearts: { you: RULES.startHearts, rival: RULES.startHearts },
     maxHearts: RULES.startHearts,
     fuseMs: fuseForStage(1),
@@ -77,12 +98,16 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "loadBest":
       return { ...state, best: action.best };
 
+    case "loadLastMissed":
+      return { ...state, lastMissed: action.itemIds };
+
     // A fresh duel waits behind the countdown; the prompt stays hidden.
     case "countdown":
       if (state.phase !== "idle" && state.phase !== "gameOver") return state;
       return {
         ...initialDuel(state.round),
         best: state.best,
+        lastMissed: state.lastMissed && afterRounds(state.lastMissed, state.rounds),
         phase: "countdown",
         fxKey: state.fxKey,
       };
@@ -96,6 +121,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       return {
         ...initialDuel(action.round),
         best: state.best,
+        lastMissed: state.lastMissed,
         phase: "playing",
         fxKey: state.fxKey,
         startedAt: action.at,
@@ -116,6 +142,10 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       } else {
         combo = 0;
       }
+
+      // One comeback per item per duel.
+      const comeback = action.loser === "rival" && !!state.lastMissed?.includes(state.round.itemId);
+      const lastMissed = comeback ? state.lastMissed!.filter((id) => id !== state.round.itemId) : state.lastMissed;
 
       const stageCleared = hearts.rival === 0;
       if (stageCleared) score += RULES.stageBonus;
@@ -140,11 +170,13 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
         combo,
         best: newBest ? score : state.best,
         newBest,
+        lastMissed,
         outcome: {
           loser: action.loser,
           reason: action.reason,
           points,
           stageCleared,
+          comeback,
           gameOver,
           given: action.given,
         },

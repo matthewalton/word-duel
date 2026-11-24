@@ -8,7 +8,8 @@ import { LangSpan } from "./LangSpan";
 /**
  * The band over the bottom of the prompt after an outcome: one pixel label
  * and one target- or base-language word. Nothing shows while playing.
- * The right answer that clears a stage shows the STAGE band instead of CORRECT.
+ * The right answer that clears a stage shows the STAGE band instead of CORRECT,
+ * and a comeback (an item last missed, now right) shows the COMEBACK band.
  */
 export function FeedbackBand({ state, pack }: { state: DuelState; pack: LanguagePack }) {
   const { outcome, phase, round, fxKey, stage } = state;
@@ -30,6 +31,16 @@ export function FeedbackBand({ state, pack }: { state: DuelState; pack: Language
         word: (
           <span lang={target.code} dir={target.dir}>
             {pack.feedback.stageClear ?? pack.feedback.correct}
+          </span>
+        ),
+      };
+    } else if (outcome.comeback) {
+      band = {
+        tone: styles.bandRight,
+        label: strings.comeback,
+        word: (
+          <span lang={target.code} dir={target.dir}>
+            {pack.feedback.comeback ?? pack.feedback.correct}
           </span>
         ),
       };

@@ -118,6 +118,8 @@ export const packMetaSchema = z.strictObject({
 export const feedbackPhrasesSchema = z.strictObject({
   /** Shown on a right answer, e.g. "맞아요!". */
   correct: text,
+  /** Shown on the comeback band, when an item last missed is answered right. */
+  comeback: text.optional(),
   /** Shown on the stage-clear banner. */
   stageClear: text.optional(),
   /** Shown on the game-over banner. */
