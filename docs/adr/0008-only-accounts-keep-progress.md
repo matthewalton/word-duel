@@ -1,6 +1,6 @@
 # Only accounts keep progress, recorded as duels, rounds and item stats
 
-Supersedes the guest data part of ADR 0006. Guests keep nothing: no best scores and no word history in the browser, and no guest merge on sign-in. A guest's best score lasts only until the page closes, and the game tells them to sign in to keep scores and word history. Keeping two stores (browser and account) and merging them cost more than it gave; guests can still play everything.
+Supersedes the guest data part of ADR 0006. Guests keep nothing: no best scores and no word history in the browser, and no guest merge on sign-in. A guest has no best score at all, not even for the page: the game shows none and never calls a score a new best, and the game-over screen tells them to sign in to track history. Keeping two stores (browser and account) and merging them cost more than it gave; guests can still play everything.
 
 For accounts, three tables hold progress, keyed by pack id and item id (pack content itself stays in the repo, ADR 0007):
 

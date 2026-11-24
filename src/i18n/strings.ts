@@ -77,13 +77,11 @@ export const strings = {
   account: {
     signIn: "SIGN IN",
     panelTitle: "SIGN IN",
-    panelBody: "Keep your best scores on any device. You don't need an account to play.",
+    panelBody: "Keep your best scores and word history on any device. You don't need an account to play.",
     continueWith: "CONTINUE WITH {provider}",
     providers: { google: "Google", github: "GitHub", discord: "Discord" },
-    mergeNote: "Your best scores from this browser come with you.",
     keepGuest: "KEEP PLAYING AS A GUEST",
     signInFailed: "Sign-in didn't start. Try again, or pick another option.",
-    merged: "THIS BROWSER'S PROGRESS IS IN YOUR ACCOUNT",
     accountAria: "Account: {name}",
     signInMethods: "SIGN-IN METHODS",
     linked: "LINKED",
@@ -93,7 +91,7 @@ export const strings = {
     linkFailed: "Linking {provider} didn't work. Try again.",
     savedNote: "Your best scores are saved to your account.",
     signOut: "SIGN OUT",
-    gameOverNudge: "Sign in to keep your best scores on any device.",
+    gameOverNudge: "Sign in to track history.",
   },
 } as const;
 

@@ -13,7 +13,7 @@ export const FUSE_SEGMENTS = 20;
 
 /**
  * Solo duel controller: wires the pure reducer to timers, the CPU rival and
- * best-score storage. A versus controller would replace the fuse/CPU part
+ * best scores (accounts only). A versus controller would replace the fuse/CPU part
  * with server messages while reusing `duelReducer` and the same screen.
  */
 export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOptions) {

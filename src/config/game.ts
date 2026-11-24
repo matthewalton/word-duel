@@ -1,9 +1,6 @@
 /** Display name of the game. Rename here. */
 export const GAME_NAME = "Word Duel";
 
-/** Stable key prefix for localStorage. Do not tie this to GAME_NAME. */
-export const STORAGE_NAMESPACE = "word-duel";
-
 /** Active language pack id. A language picker would replace this later. */
 export const ACTIVE_PACK_ID = "ko-en";
 

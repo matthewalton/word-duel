@@ -46,7 +46,8 @@ export function TitleScreen({
 }: {
   pack: LanguagePack;
   minigames: Minigame[];
-  best: Record<string, number>;
+  /** Null for a guest: no best scores are shown. */
+  best: Record<string, number> | null;
   initialId: string;
   direction: Direction;
   onDirection: (d: Direction) => void;
@@ -152,9 +153,9 @@ export function TitleScreen({
                   <div className={t.info}>
                     <div className={t.infoHead}>
                       <h2 className={t.infoName}>{name.toUpperCase()}</h2>
-                      <span className={t.best}>
-                        {fill(strings.best, { score: pad(best[m.id] ?? 0) })}
-                      </span>
+                      {best && (
+                        <span className={t.best}>{fill(strings.best, { score: pad(best[m.id] ?? 0) })}</span>
+                      )}
                     </div>
                     {info && (
                       <p className={t.description}>

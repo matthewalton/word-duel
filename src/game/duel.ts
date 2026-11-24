@@ -13,7 +13,8 @@ export interface DuelState {
   stage: number;
   score: number;
   combo: number;
-  best: number;
+  /** The account's best score; null for a guest, who has none (ADR 0008). */
+  best: number | null;
   newBest: boolean;
   hearts: Record<Side, number>;
   maxHearts: number;
@@ -29,7 +30,7 @@ export interface DuelState {
 }
 
 export type DuelAction =
-  | { type: "loadBest"; best: number }
+  | { type: "loadBest"; best: number | null }
   | { type: "countdown" }
   | { type: "tick" }
   | { type: "start"; round: Round }
@@ -43,7 +44,7 @@ export function initialDuel(sample: Round): DuelState {
     stage: 1,
     score: 0,
     combo: 0,
-    best: 0,
+    best: null,
     newBest: false,
     hearts: { you: RULES.startHearts, rival: RULES.startHearts },
     maxHearts: RULES.startHearts,
@@ -102,7 +103,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       const stageCleared = hearts.rival === 0;
       if (stageCleared) score += RULES.stageBonus;
       const gameOver = hearts.you === 0;
-      const newBest = gameOver && score > state.best;
+      const newBest = gameOver && state.best != null && score > state.best;
       const misses =
         action.reason === "correct"
           ? state.misses
