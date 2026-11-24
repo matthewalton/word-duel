@@ -21,3 +21,21 @@ export function saveBest(packId: string, minigameId: string, score: number): voi
     // Storage unavailable (private mode, blocked): best score just won't persist.
   }
 }
+
+/** Every best score kept in this browser, for the guest merge on sign-in. */
+export function listGuestBests(): { packId: string; minigameId: string; score: number }[] {
+  const prefix = `${STORAGE_NAMESPACE}:best:`;
+  const out: { packId: string; minigameId: string; score: number }[] = [];
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key?.startsWith(prefix)) continue;
+      const [packId, minigameId] = key.slice(prefix.length).split(":");
+      const score = packId && minigameId ? loadBest(packId, minigameId) : 0;
+      if (score > 0) out.push({ packId, minigameId, score });
+    }
+  } catch {
+    // Storage unavailable: nothing to merge.
+  }
+  return out;
+}

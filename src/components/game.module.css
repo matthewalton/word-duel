@@ -618,6 +618,12 @@
   white-space: nowrap;
 }
 
+.gameOverSide {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16px * var(--s));
+}
+
 .review {
   display: flex;
   flex-direction: column;

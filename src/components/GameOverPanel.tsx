@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { DuelState } from "@/game/duel";
 import type { Miss } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
@@ -9,7 +10,16 @@ import { LangSpan, wordBreakStyle } from "./LangSpan";
  * Game over: the score on one side, and every round the player lost this duel
  * with its answer, so they can see what to review.
  */
-export function GameOverPanel({ state, pack }: { state: DuelState; pack: LanguagePack }) {
+export function GameOverPanel({
+  state,
+  pack,
+  extra,
+}: {
+  state: DuelState;
+  pack: LanguagePack;
+  /** Shown under the review list, e.g. the sign-in nudge for guests. */
+  extra?: ReactNode;
+}) {
   const target = pack.meta.target;
 
   return (
@@ -28,17 +38,22 @@ export function GameOverPanel({ state, pack }: { state: DuelState; pack: Languag
         <span className={styles.bannerHint}>{strings.playAgain}</span>
       </div>
 
-      {state.misses.length > 0 && (
-        <section className={styles.review} aria-labelledby="review-heading">
-          <h2 id="review-heading" className={styles.reviewHeading}>
-            {strings.toReview}
-          </h2>
-          <ol className={styles.reviewList}>
-            {state.misses.map((miss, i) => (
-              <MissRow key={i} miss={miss} />
-            ))}
-          </ol>
-        </section>
+      {(state.misses.length > 0 || extra) && (
+        <div className={styles.gameOverSide}>
+          {state.misses.length > 0 && (
+            <section className={styles.review} aria-labelledby="review-heading">
+              <h2 id="review-heading" className={styles.reviewHeading}>
+                {strings.toReview}
+              </h2>
+              <ol className={styles.reviewList}>
+                {state.misses.map((miss, i) => (
+                  <MissRow key={i} miss={miss} />
+                ))}
+              </ol>
+            </section>
+          )}
+          {extra}
+        </div>
       )}
     </div>
   );

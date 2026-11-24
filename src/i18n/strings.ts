@@ -74,6 +74,22 @@ export const strings = {
     "Get {hearts} right to fill the stage bar and reach the next stage. Each stage gives you {step} second less to answer.",
   ],
   creditsLabel: "Word data:",
+  account: {
+    signIn: "SIGN IN",
+    panelTitle: "SIGN IN",
+    panelBody: "Keep your best scores on any device. You don't need an account to play.",
+    continueWith: "CONTINUE WITH {provider}",
+    providers: { google: "Google", github: "GitHub", discord: "Discord" },
+    mergeNote: "Your best scores from this browser come with you.",
+    keepGuest: "KEEP PLAYING AS A GUEST",
+    signInFailed: "Sign-in didn't start. Try again, or pick another option.",
+    merged: "THIS BROWSER'S PROGRESS IS IN YOUR ACCOUNT",
+    accountAria: "Account: {name}",
+    signedInWith: "Signed in with {provider}",
+    savedNote: "Your best scores are saved to your account.",
+    signOut: "SIGN OUT",
+    gameOverNudge: "Sign in to keep your best scores on any device.",
+  },
 } as const;
 
 /** Replace {name} placeholders with plain strings. */

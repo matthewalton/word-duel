@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { DuelState } from "@/game/duel";
 import { strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
@@ -17,11 +17,13 @@ export function PromptBoard({
   pack,
   fuseLit,
   onStart,
+  gameOverExtra,
 }: {
   state: DuelState;
   pack: LanguagePack;
   fuseLit: number;
   onStart: () => void;
+  gameOverExtra?: ReactNode;
 }) {
   const { round, outcome, phase, fxKey } = state;
   const waiting = phase === "idle" || phase === "countdown";
@@ -76,7 +78,7 @@ export function PromptBoard({
 
       <FeedbackBand state={state} pack={pack} />
 
-      {phase === "gameOver" && <GameOverPanel state={state} pack={pack} />}
+      {phase === "gameOver" && <GameOverPanel state={state} pack={pack} extra={gameOverExtra} />}
     </div>
   );
 }

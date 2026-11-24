@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { RULES } from "@/config/game";
 import { isAcceptedAnswer } from "@/lib/matching";
-import { loadBest, saveBest } from "@/lib/storage";
+import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
 import type { Minigame, MinigameOptions } from "./types";
@@ -30,12 +30,12 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
 
   // Best score for this pack + minigame.
   useEffect(() => {
-    dispatch({ type: "loadBest", best: loadBest(pack.meta.id, minigame.id) });
+    dispatch({ type: "loadBest", best: getBest(pack.meta.id, minigame.id) });
   }, [pack.meta.id, minigame.id]);
 
   useEffect(() => {
     if (state.phase === "gameOver" && state.newBest) {
-      saveBest(pack.meta.id, minigame.id, state.score);
+      recordBest(pack.meta.id, minigame.id, state.score);
     }
   }, [state.phase, state.newBest, state.score, pack.meta.id, minigame.id]);
 

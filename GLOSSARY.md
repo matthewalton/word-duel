@@ -115,3 +115,17 @@ _Avoid_: Help, tutorial
 
 **Gap Guard**:
 The minigame in which the player picks the missing piece of a target-language sentence from three options.
+
+## Accounts
+
+**Guest**:
+A player who has not signed in. Guests can play everything; their progress is kept in this browser only.
+_Avoid_: Anonymous user, logged-out user
+
+**Account**:
+A signed-in player's record, reached through one or more OAuth providers. Progress kept in an account follows the player across devices.
+_Avoid_: Profile, user (in interface text)
+
+**Guest merge**:
+Bringing a browser's guest progress into an account on sign-in: the higher best score wins and word history is added.
+_Avoid_: Sync, import
