@@ -28,8 +28,12 @@ function create() {
     database: drizzleAdapter(getDb(), { provider: "pg", schema }),
     socialProviders: socialProviders(),
     // Signing in with a second provider that has the same verified email
-    // joins the existing account instead of making a new one.
-    account: { accountLinking: { enabled: true, trustedProviders: [...PROVIDERS] } },
+    // joins the existing account instead of making a new one. A signed-in
+    // player can also link a provider with a different email from the account
+    // menu; one that already has its own user is refused (ADR 0006).
+    account: {
+      accountLinking: { enabled: true, trustedProviders: [...PROVIDERS], allowDifferentEmails: true },
+    },
   });
 }
 

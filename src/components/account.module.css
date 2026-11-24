@@ -74,6 +74,7 @@
 .cornerButton:focus-visible,
 .chip:focus-visible,
 .signOut:focus-visible,
+.linkButton:focus-visible,
 .provider:focus-visible,
 .guest:focus-visible,
 .nudgeButton:focus-visible {
@@ -118,14 +119,8 @@
   gap: 12px;
 }
 
-.menuWho {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .menuName {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -134,21 +129,100 @@
   letter-spacing: 1px;
 }
 
-.menuProvider,
-.menuNote {
-  font-family: var(--font-words);
-  color: var(--muted);
-}
-
-.menuProvider {
-  font-size: calc(15px * var(--s));
-}
-
 .menuNote {
   margin: 0;
+  font-family: var(--font-words);
   font-size: calc(16px * var(--s));
   line-height: 1.4;
   color: #4a4060;
+}
+
+.methods {
+  padding-top: calc(14px * var(--s));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 4px solid var(--track);
+}
+
+.methodsLabel {
+  font-size: calc(13px * var(--s));
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+.methodList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.method {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.methodName {
+  flex: 1;
+  font-size: calc(16px * var(--s));
+  letter-spacing: 1px;
+}
+
+.linked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: calc(13px * var(--s));
+  letter-spacing: 1px;
+  color: #1f7a6c;
+}
+
+.linked svg {
+  width: 12px;
+  height: 10px;
+}
+
+.linkButton {
+  min-height: 36px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: calc(14px * var(--s));
+  letter-spacing: 1px;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+
+.linkButton:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.linkButton:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.linkButton[aria-busy="true"] {
+  opacity: 1;
+  background: var(--track);
+}
+
+.linkError {
+  margin: 0;
+  padding: 10px 12px;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  line-height: 1.35;
+  color: #a31f3a;
+  background: #fde8ec;
+  border: 4px solid #a31f3a;
 }
 
 .signOut {
@@ -299,7 +373,8 @@ dialog.dialog {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .provider:active:not(:disabled) {
+  .provider:active:not(:disabled),
+  .linkButton:active:not(:disabled) {
     transform: none;
   }
 }

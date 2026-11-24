@@ -27,7 +27,7 @@ function isBestEntry(e: unknown): e is BestEntry {
   );
 }
 
-/** Upsert scores, keeping whichever is higher (the guest merge rule, ADR 0006). */
+/** Upsert scores, keeping whichever is higher: a new best the player just reached. */
 async function keepHigher(userId: string, entries: BestEntry[]) {
   if (entries.length === 0) return;
   await getDb()
@@ -42,6 +42,20 @@ async function keepHigher(userId: string, entries: BestEntry[]) {
     });
 }
 
+/**
+ * Insert scores only where the account has none yet (the guest merge rule, ADR 0006):
+ * an existing account best is never replaced. Returns how many were added.
+ */
+async function fillGaps(userId: string, entries: BestEntry[]): Promise<number> {
+  if (entries.length === 0) return 0;
+  const added = await getDb()
+    .insert(bestScore)
+    .values(entries.map((e) => ({ userId, ...e })))
+    .onConflictDoNothing({ target: [bestScore.userId, bestScore.packId, bestScore.minigameId] })
+    .returning({ minigameId: bestScore.minigameId });
+  return added.length;
+}
+
 async function bestsFor(userId: string, packId: string): Promise<Record<string, number>> {
   const rows = await getDb()
     .select({ minigameId: bestScore.minigameId, score: bestScore.score })
@@ -50,19 +64,20 @@ async function bestsFor(userId: string, packId: string): Promise<Record<string, 
   return Object.fromEntries(rows.map((r) => [r.minigameId, r.score]));
 }
 
+export type MergeResult = { bests: Record<string, number>; added: number };
+
 /**
- * Guest merge on sign-in: bring this browser's best scores into the account,
- * then return the account's best scores for `packId`. Null for a guest.
+ * Guest merge: bring this browser's best scores into the account where it has
+ * none yet, then return the account's best scores for `packId` and how many
+ * guest scores were added. Null for a guest. The browser deletes its guest
+ * scores once this resolves.
  */
-export async function mergeGuestBests(
-  entries: unknown,
-  packId: string,
-): Promise<Record<string, number> | null> {
+export async function mergeGuestBests(entries: unknown, packId: string): Promise<MergeResult | null> {
   const userId = await currentUserId();
   if (!userId) return null;
   const valid = Array.isArray(entries) ? entries.filter(isBestEntry).slice(0, MAX_ENTRIES) : [];
-  await keepHigher(userId, valid);
-  return bestsFor(userId, packId);
+  const added = await fillGaps(userId, valid);
+  return { bests: await bestsFor(userId, packId), added };
 }
 
 /** Save a best score to the signed-in account. Does nothing for a guest. */

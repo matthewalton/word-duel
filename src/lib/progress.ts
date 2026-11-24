@@ -6,7 +6,8 @@ import { loadBest, saveBest } from "./storage";
 /**
  * Where best scores are read from and written to: this browser's storage for
  * a guest, the account while signed in (ADR 0006). The account's scores are
- * held here after the guest merge; writes also go to the server.
+ * held here after the guest merge; writes go to the server, never to this
+ * browser, while signed in.
  */
 type Mode = { kind: "guest" } | { kind: "account"; packId: string; bests: Record<string, number> };
 
@@ -41,8 +42,9 @@ export function getBest(packId: string, minigameId: string): number {
 }
 
 export function recordBest(packId: string, minigameId: string, score: number) {
-  if (mode.kind === "account" && mode.packId === packId) {
-    mode = { ...mode, bests: { ...mode.bests, [minigameId]: Math.max(score, mode.bests[minigameId] ?? 0) } };
+  if (mode.kind === "account") {
+    if (mode.packId === packId)
+      mode = { ...mode, bests: { ...mode.bests, [minigameId]: Math.max(score, mode.bests[minigameId] ?? 0) } };
     saveAccountBest({ packId, minigameId, score }).catch(() => {
       // Offline or signed out elsewhere: the score shows this session only.
     });
