@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fill, strings } from "@/i18n/strings";
 import { authClient } from "@/lib/auth-client";
 import { PROVIDERS, type ProviderId } from "@/lib/providers";
 import type { Account, LinkResult } from "@/lib/useAccount";
+import { countMissed } from "@/server/wordbook";
 import a from "./account.module.css";
+import { BookIcon } from "./BookIcon";
 import { ProviderMark } from "./ProviderMark";
 
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
@@ -15,7 +18,15 @@ const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly stri
  * with a menu to link sign-in methods and sign out. Shows nothing while the
  * session loads. The menu opens by itself on return from linking a provider.
  */
-export function AccountCorner({ account, onOpenSignIn }: { account: Account; onOpenSignIn: () => void }) {
+export function AccountCorner({
+  account,
+  packId,
+  onOpenSignIn,
+}: {
+  account: Account;
+  packId: string;
+  onOpenSignIn: () => void;
+}) {
   const [menuOpenState, setMenuOpen] = useState(false);
   const { user, linkResult, clearLinkResult } = account;
   const menuOpen = menuOpenState || linkResult != null;
@@ -51,6 +62,7 @@ export function AccountCorner({ account, onOpenSignIn }: { account: Account; onO
       {menuOpen && (
         <AccountMenu
           name={user.name}
+          packId={packId}
           linkResult={linkResult}
           onLink={account.linkProvider}
           onClose={closeMenu}
@@ -75,12 +87,14 @@ function Initial({ name, large }: { name: string; large?: boolean }) {
 
 function AccountMenu({
   name,
+  packId,
   linkResult,
   onLink,
   onClose,
   onSignOut,
 }: {
   name: string;
+  packId: string;
   linkResult: LinkResult | null;
   onLink: (provider: ProviderId) => Promise<boolean>;
   onClose: () => void;
@@ -89,6 +103,20 @@ function AccountMenu({
   const ref = useRef<HTMLDivElement>(null);
   const [linked, setLinked] = useState<ProviderId[] | null>(null);
   const [linking, setLinking] = useState<ProviderId | null>(null);
+  const [missed, setMissed] = useState<number | null>(null);
+
+  // How many items the wordbook lists as missed, for its row.
+  useEffect(() => {
+    let live = true;
+    countMissed(packId)
+      .then((n) => {
+        if (live) setMissed(n);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [packId]);
 
   // Which providers reach this account, for the sign-in methods list.
   useEffect(() => {
@@ -133,6 +161,12 @@ function AccountMenu({
         <Initial name={name} large />
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
+      <Link href="/wordbook" className={a.menuWordbook}>
+        <BookIcon className={a.wordbookIcon} />
+        <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
+        {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
+        <span aria-hidden="true">&gt;</span>
+      </Link>
       <p className={a.menuNote}>{strings.account.savedNote}</p>
       {linked && (
         <div className={a.methods}>

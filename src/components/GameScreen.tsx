@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import Link from "next/link";
+import { useMemo, useState, type ReactNode } from "react";
 import { ACTIVE_PACK_ID, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES } from "@/game/minigames";
 import type { Direction, Minigame, MinigameOptions } from "@/game/types";
@@ -8,12 +9,14 @@ import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import { useAccount } from "@/lib/useAccount";
 import { useBestScores } from "@/lib/useBestScores";
-import { fontStack, getPack, packFontsHref } from "@/packs";
+import { getPack } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
 import { AccountCorner } from "./AccountCorner";
+import { BookIcon } from "./BookIcon";
 import styles from "./game.module.css";
 import { Hud } from "./Hud";
+import { PackFonts, packVars } from "./PackFonts";
 import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
 import t from "./title.module.css";
@@ -34,11 +37,6 @@ export function GameScreen() {
     pack.meta.id,
     MINIGAMES.map((m) => m.id),
   );
-  const fontsHref = packFontsHref(pack);
-
-  const vars = {
-    "--font-words": fontStack(pack.meta.fonts.words),
-  } as CSSProperties;
 
   const play = (id: string) => {
     setMinigameId(id);
@@ -61,14 +59,8 @@ export function GameScreen() {
   ) : null;
 
   return (
-    <div className={styles.page} style={vars}>
-      {fontsHref && (
-        <>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-          <link rel="stylesheet" href={fontsHref} precedence="default" />
-        </>
-      )}
+    <div className={styles.page} style={packVars(pack)}>
+      <PackFonts pack={pack} />
       {view.name === "title" ? (
         <TitleScreen
           pack={pack}
@@ -79,7 +71,13 @@ export function GameScreen() {
           onDirection={setDirection}
           onPlay={play}
           gameName={GAME_NAME}
-          corner={<AccountCorner account={account} onOpenSignIn={openSignIn} />}
+          lead={
+            <Link href="/wordbook" className={t.wordbookLink}>
+              <BookIcon className={t.wordbookIcon} />
+              <span className={t.wordbookLabel}>{strings.wordbook.title}</span>
+            </Link>
+          }
+          corner={<AccountCorner account={account} packId={pack.meta.id} onOpenSignIn={openSignIn} />}
           footer={credits}
         />
       ) : (
@@ -90,14 +88,22 @@ export function GameScreen() {
           direction={direction}
           onMenu={() => setView({ name: "title" })}
           gameOverExtra={
-            !account.pending && !account.user ? (
+            account.pending ? null : account.user ? (
+              <div className={a.wordbookNudge}>
+                <Link href="/wordbook" className={a.wordbookButton}>
+                  <BookIcon className={a.wordbookIcon} />
+                  {strings.wordbook.gameOverLink}
+                </Link>
+                <p className={a.nudgeText}>{strings.wordbook.gameOverNote}</p>
+              </div>
+            ) : (
               <div className={a.nudge}>
                 <p className={a.nudgeText}>{strings.account.gameOverNudge}</p>
                 <button type="button" className={a.nudgeButton} onClick={openSignIn}>
                   {strings.account.signIn}
                 </button>
               </div>
-            ) : null
+            )
           }
         />
       )}

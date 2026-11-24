@@ -41,6 +41,7 @@ export function TitleScreen({
   onDirection,
   onPlay,
   gameName,
+  lead,
   corner,
   footer,
 }: {
@@ -53,6 +54,8 @@ export function TitleScreen({
   onDirection: (d: Direction) => void;
   onPlay: (id: string) => void;
   gameName: string;
+  /** Top-left slot: the wordbook link. */
+  lead?: ReactNode;
   /** Top-right slot: sign-in or the account chip. */
   corner?: ReactNode;
   footer?: ReactNode;
@@ -109,6 +112,7 @@ export function TitleScreen({
   return (
     <div className={t.titleScreen}>
       <div className={t.top}>
+        <div className={t.lead}>{lead}</div>
         <div className={t.brand}>
           <Heart color="var(--player)" />
           <h1 className={t.brandName}>{gameName.toUpperCase()}</h1>
