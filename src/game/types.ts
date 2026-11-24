@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { LanguageInfo, LanguagePack, TextDirection } from "@/packs/types";
+import type { MinigameId } from "./minigames/ids";
 
 /** A piece of text plus the language attributes it must be rendered with. */
 export interface LangText {
@@ -70,13 +71,21 @@ export interface Outcome {
   given?: string;
 }
 
-/** A round the player lost, kept for the review list at game over. */
-export interface Miss {
+/** One round played this duel, kept for the round log and the review list. */
+export interface PlayedRound {
   round: Round;
-  reason: Exclude<Reason, "correct">;
+  reason: Reason;
   /** What the player typed or picked; absent on a timeout. */
   given?: string;
+  /** Time from the prompt showing to the answer; null on a timeout. */
+  answerMs: number | null;
+  /** When the round resolved, in ms since the duel's first prompt showed. */
+  atMs: number;
+  stage: number;
 }
+
+/** A round the player lost, shown in the review list at game over. */
+export type Miss = PlayedRound & { reason: Exclude<Reason, "correct"> };
 
 /** Props for a minigame's title-screen preview and how-to steps. */
 export interface ShowcaseProps {
@@ -98,7 +107,7 @@ export interface ControlsProps {
  * hearts, scoring, fuse and effects are shared and live in the duel engine.
  */
 export interface Minigame {
-  id: string;
+  id: MinigameId;
   /** Whether the base/target direction toggle applies. */
   usesDirection: boolean;
   /** Deterministic sample shown on the idle screen. */
