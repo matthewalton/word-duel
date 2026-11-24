@@ -1,0 +1,74 @@
+/**
+ * Validates every language pack in `src/packs/` (ADR 0007):
+ *
+ * - each file matches its schema (`src/packs/schema.ts`), with no unknown
+ *   fields, exactly one blank per gap sentence and the answer among the options;
+ * - ids are unique across the whole pack;
+ * - every prompt's `tests` names an item (word or grammar), and a prompt that
+ *   is still asked doesn't test a retired item.
+ *
+ *   pnpm check:packs
+ */
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { languagePackSchema } from "../src/packs/schema.ts";
+import { PACKS_DIR, readJson } from "./pack-json.mts";
+
+const FILES = ["meta", "words", "grammar", "gaps", "feedback", "matching"] as const;
+
+let failed = false;
+const fail = (pack: string, message: string) => {
+  failed = true;
+  console.error(`✗ ${pack}: ${message}`);
+};
+
+for (const dir of readdirSync(PACKS_DIR, { withFileTypes: true }).filter((d) => d.isDirectory())) {
+  const name = dir.name;
+  const raw: Record<string, unknown> = {};
+  for (const file of FILES) {
+    const path = join(PACKS_DIR, name, `${file}.json`);
+    if (existsSync(path)) raw[file] = readJson(path);
+    else fail(name, `missing ${file}.json`);
+  }
+
+  const parsed = languagePackSchema.safeParse(raw);
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      const [file, index, ...rest] = issue.path;
+      const entry = typeof index === "number" ? (raw[file as string] as { id?: string }[])[index] : undefined;
+      const where = [`${String(file)}.json`, typeof index === "number" ? `[${index}]${entry?.id ? ` ${entry.id}` : ""}` : index, ...rest]
+        .filter((p) => p !== undefined)
+        .join(" ");
+      fail(name, `${where}: ${issue.message}`);
+    }
+    continue;
+  }
+
+  const pack = parsed.data;
+  if (pack.meta.id !== name) fail(name, `meta.json id "${pack.meta.id}" doesn't match the folder name`);
+
+  const seen = new Map<string, string>();
+  const entries = [
+    ...pack.words.map((e) => ["words", e] as const),
+    ...pack.grammar.map((e) => ["grammar", e] as const),
+    ...pack.gaps.map((e) => ["gaps", e] as const),
+  ];
+  for (const [file, e] of entries) {
+    const first = seen.get(e.id);
+    if (first) fail(name, `duplicate id "${e.id}" in ${first}.json and ${file}.json`);
+    else seen.set(e.id, file);
+  }
+
+  const items = new Map([...pack.words, ...pack.grammar].map((i) => [i.id, i]));
+  for (const gap of pack.gaps) {
+    const item = items.get(gap.tests);
+    if (!item) fail(name, `gaps.json ${gap.id}: tests "${gap.tests}", which is not an item`);
+    else if (item.retired && !gap.retired) fail(name, `gaps.json ${gap.id}: tests retired item "${gap.tests}"`);
+  }
+
+  if (!failed) {
+    console.log(`✓ ${name}: ${pack.words.length} words, ${pack.grammar.length} grammar items, ${pack.gaps.length} gaps`);
+  }
+}
+
+if (failed) process.exit(1);

@@ -47,7 +47,7 @@ export function PromptBoard({
       {!waiting && (
         <>
           <p
-            key={`${round.id}-${fxKey}`}
+            key={`${round.promptId}-${fxKey}`}
             className={`${styles.prompt} ${round.gap ? styles.promptSentence : ""} ${fxClass}`}
             lang={round.prompt.lang}
             dir={round.prompt.dir}

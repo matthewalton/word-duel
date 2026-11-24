@@ -1,0 +1,7 @@
+[
+  { "id": "grammar.subject-particle", "kind": "grammar", "target": "이/가", "base": "subject particle" },
+  { "id": "grammar.object-particle", "kind": "grammar", "target": "을/를", "base": "object particle" },
+  { "id": "grammar.place-particle", "kind": "grammar", "target": "에/에서", "base": "place particle (to, at)" },
+  { "id": "grammar.and-particle", "kind": "grammar", "target": "와/과", "base": "and, with" },
+  { "id": "grammar.copula", "kind": "grammar", "target": "예요/이에요", "base": "to be (polite)" }
+]
