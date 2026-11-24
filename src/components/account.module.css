@@ -1,0 +1,305 @@
+/*
+ * Sign-in: the title screen's corner (SIGN IN or the account chip and menu),
+ * the sign-in panel and the game-over nudge. Same pixel rules as the rest:
+ * 4px borders, square corners, unblurred offset shadows.
+ */
+
+/* ---------- Corner ---------- */
+
+.corner {
+  position: relative;
+}
+
+.cornerButton,
+.chip {
+  min-height: 44px;
+  font: inherit;
+  font-size: calc(16px * var(--s));
+  letter-spacing: 1px;
+  color: var(--board);
+  background: transparent;
+  border: 4px solid var(--line);
+  cursor: pointer;
+}
+
+.cornerButton {
+  padding: 4px calc(14px * var(--s));
+}
+
+.chip {
+  max-width: calc(260px * var(--s));
+  padding: 4px calc(12px * var(--s)) 4px 4px;
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--s));
+}
+
+.chipOpen {
+  background: #4e4670;
+}
+
+.chipName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  flex: none;
+  width: 10px;
+  height: 6px;
+  color: var(--line);
+}
+
+.initial {
+  flex: none;
+  width: calc(28px * var(--s));
+  height: calc(28px * var(--s));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--player);
+}
+
+.initialLarge {
+  width: calc(44px * var(--s));
+  height: calc(44px * var(--s));
+  font-size: calc(26px * var(--s));
+}
+
+.cornerButton:focus-visible,
+.chip:focus-visible,
+.signOut:focus-visible,
+.provider:focus-visible,
+.guest:focus-visible,
+.nudgeButton:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+.notice,
+.menu {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 12px);
+  right: 0;
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.notice {
+  padding: 8px 14px;
+  font-size: calc(14px * var(--s));
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--accent);
+}
+
+.menu {
+  width: calc(320px * var(--s));
+  max-width: calc(100vw - 32px);
+  padding: calc(18px * var(--s));
+  display: flex;
+  flex-direction: column;
+  gap: calc(14px * var(--s));
+  color: var(--ink);
+  background: var(--board);
+  box-shadow: 8px 8px 0 #000;
+}
+
+.menuHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuWho {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.menuProvider,
+.menuNote {
+  font-family: var(--font-words);
+  color: var(--muted);
+}
+
+.menuProvider {
+  font-size: calc(15px * var(--s));
+}
+
+.menuNote {
+  margin: 0;
+  font-size: calc(16px * var(--s));
+  line-height: 1.4;
+  color: #4a4060;
+}
+
+.signOut {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 4px calc(14px * var(--s));
+  font: inherit;
+  font-size: calc(16px * var(--s));
+  letter-spacing: 1px;
+  color: var(--ink);
+  background: transparent;
+  border: 4px solid var(--ink);
+  cursor: pointer;
+}
+
+/* ---------- Sign-in panel ---------- */
+
+dialog.dialog {
+  width: min(calc(520px * var(--s)), calc(100% - 32px));
+}
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: calc(18px * var(--s));
+}
+
+.body,
+.note,
+.error {
+  margin: 0;
+  font-family: var(--font-words);
+  line-height: 1.45;
+}
+
+.body {
+  font-size: calc(18px * var(--s));
+  color: #4a4060;
+}
+
+.note {
+  font-size: calc(15px * var(--s));
+  color: var(--muted);
+}
+
+.error {
+  font-size: calc(15px * var(--s));
+  color: var(--rival-ink);
+}
+
+.providers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.provider {
+  min-height: calc(56px * var(--s));
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font: inherit;
+  font-size: calc(18px * var(--s));
+  letter-spacing: 1px;
+  text-align: start;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+}
+
+.provider:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.provider:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.provider[aria-busy="true"] {
+  opacity: 1;
+  background: var(--track);
+}
+
+.mark {
+  flex: none;
+  width: calc(24px * var(--s));
+  height: calc(24px * var(--s));
+}
+
+.guest {
+  align-self: center;
+  min-height: 44px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: calc(15px * var(--s));
+  letter-spacing: 1px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* ---------- Game-over nudge (guests only) ---------- */
+
+.nudge {
+  margin-top: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 4px dashed #6b5f7d;
+}
+
+.nudgeText {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(17px * var(--s));
+  line-height: 1.35;
+  color: var(--line);
+}
+
+.nudgeButton {
+  composes: cornerButton;
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  dialog.dialog {
+    width: 100%;
+    max-width: 100%;
+    margin: auto 0 0;
+    border-width: 4px 0 0;
+    border-top-color: var(--accent);
+    box-shadow: none;
+  }
+
+  .nudge {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .provider:active:not(:disabled) {
+    transform: none;
+  }
+}

@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Project: Word Duel
 
-Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. It runs locally only: Next.js App Router + TypeScript, no backend, no accounts yet. The player opens on a **title screen**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing particle), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean (learned from English) is the only **language pack**; more packs, accounts, weak-word tracking and a two-player versus mode are planned.
+Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. Next.js App Router + TypeScript; fully playable as a **guest**, with optional OAuth sign-in (Better Auth, Postgres on Neon, Drizzle; ADR 0006) that keeps best scores in an **account**. The player opens on a **title screen**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing particle), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean (learned from English) is the only **language pack**; more packs, weak-word tracking and a two-player versus mode are planned.
 
 ### Run and check
 
@@ -35,6 +35,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 - **Answers are strictly right or wrong** via `src/lib/matching.ts`; no partial credit.
 - **Sizing** scales in steps through `--s` and `--px` in `src/app/globals.css`; the dark grid background covers the whole page. Respect `prefers-reduced-motion`.
 - **Outcomes are "whose heart broke"** (ADR 0002) so versus mode can reuse the duel reducer.
+- **Guest first** (ADR 0006): nothing may require signing in. Account data goes through `src/server/` server actions that read the session themselves; the title page stays static and reads the session in the browser.
 
 ### Commits and pull requests
 
