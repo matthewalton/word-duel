@@ -4,6 +4,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { RULES } from "@/config/game";
 import { isAcceptedAnswer } from "@/lib/matching";
 import { newDuelId, sendDuel } from "@/lib/history";
+import { loadLastMissed } from "@/server/history";
 import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
@@ -33,6 +34,23 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
   useEffect(() => {
     dispatch({ type: "loadBest", best: getBest(pack.meta.id, minigame.id) });
   }, [pack.meta.id, minigame.id]);
+
+  // Items last missed in this prompt kind, for comebacks (accounts only).
+  // Play again carries the list on from the duel's rounds instead of reloading.
+  const promptKind = minigame.usesDirection ? opts.direction : "gap";
+  useEffect(() => {
+    let live = true;
+    loadLastMissed(pack.meta.id, promptKind)
+      .then((itemIds) => {
+        if (live) dispatch({ type: "loadLastMissed", itemIds });
+      })
+      .catch(() => {
+        // Offline: no comebacks this time.
+      });
+    return () => {
+      live = false;
+    };
+  }, [pack.meta.id, promptKind]);
 
   useEffect(() => {
     if (state.phase === "gameOver" && state.newBest) {

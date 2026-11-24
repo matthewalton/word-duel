@@ -186,6 +186,26 @@
   background: var(--accent);
 }
 
+/* A comeback: the chunk that just broke flashes white and teal, then settles gold. */
+.stageProgress > .stageChunkGlint {
+  animation: chunkGlint 480ms steps(1, end);
+}
+
+@keyframes chunkGlint {
+  0% {
+    background: #fff;
+  }
+  33% {
+    background: var(--player);
+  }
+  66% {
+    background: #fff;
+  }
+  100% {
+    background: var(--accent);
+  }
+}
+
 /* ---------- Hearts ---------- */
 
 .heartRow {
@@ -444,6 +464,63 @@
   100% {
     transform: translateX(0);
     color: var(--rival-ink);
+  }
+}
+
+/* ---------- Comeback sparks ---------- */
+
+/* Sparks sit at the prompt's centre and fly out in steps; offsets are in em
+   so they spread with the prompt's size. */
+.promptComeback {
+  position: relative;
+}
+
+.sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  width: calc(14px * var(--s));
+  height: calc(14px * var(--s));
+  background: var(--accent);
+  opacity: 0;
+  animation: spark 480ms steps(4, end);
+}
+
+.spark:nth-child(even) {
+  width: calc(10px * var(--s));
+  height: calc(10px * var(--s));
+}
+
+.spark:nth-child(3n + 1) {
+  background: var(--player);
+}
+
+.spark:nth-child(1) { --dx: -2.5em; --dy: -0.85em; }
+.spark:nth-child(2) { --dx: -2.9em; --dy: 0.1em; }
+.spark:nth-child(3) { --dx: -2.2em; --dy: 0.85em; }
+.spark:nth-child(4) { --dx: 2.5em; --dy: -0.85em; }
+.spark:nth-child(5) { --dx: 2.9em; --dy: 0.1em; }
+.spark:nth-child(6) { --dx: 2.2em; --dy: 0.85em; }
+.spark:nth-child(7) { --dx: -0.4em; --dy: -1.15em; }
+.spark:nth-child(8) { --dx: 0.4em; --dy: 1.15em; }
+
+@keyframes spark {
+  0% {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)));
+    opacity: 0;
   }
 }
 
@@ -1007,6 +1084,14 @@
   .promptMiss {
     animation: none;
     color: var(--rival-ink);
+  }
+
+  .sparks {
+    display: none;
+  }
+
+  .stageProgress > .stageChunkGlint {
+    animation: none;
   }
 
   .band,

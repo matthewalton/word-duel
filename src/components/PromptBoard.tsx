@@ -30,6 +30,7 @@ export function PromptBoard({
   const hit = outcome?.reason === "correct";
   const lost = outcome != null && !hit;
   const fxClass = hit ? styles.promptHit : lost ? styles.promptMiss : "";
+  const comeback = phase === "resolving" && outcome?.comeback;
   const fuseActive = phase === "playing" || phase === "resolving";
 
   return (
@@ -48,7 +49,7 @@ export function PromptBoard({
         <>
           <p
             key={`${round.promptId}-${fxKey}`}
-            className={`${styles.prompt} ${round.gap ? styles.promptSentence : ""} ${fxClass}`}
+            className={`${styles.prompt} ${round.gap ? styles.promptSentence : ""} ${fxClass} ${comeback ? styles.promptComeback : ""}`}
             lang={round.prompt.lang}
             dir={round.prompt.dir}
             style={wordBreakStyle(round.prompt)}
@@ -64,6 +65,7 @@ export function PromptBoard({
             ) : (
               round.prompt.text
             )}
+            {comeback && <ComebackSparks />}
           </p>
 
           {round.translation && (
@@ -80,6 +82,19 @@ export function PromptBoard({
 
       {phase === "gameOver" && <GameOverPanel state={state} pack={pack} extra={gameOverExtra} />}
     </div>
+  );
+}
+
+const SPARKS = 8;
+
+/** Pixel sparks that burst off the prompt on a comeback; placed by the stylesheet. */
+function ComebackSparks() {
+  return (
+    <span className={styles.sparks} aria-hidden="true">
+      {Array.from({ length: SPARKS }, (_, i) => (
+        <span key={i} className={styles.spark} />
+      ))}
+    </span>
   );
 }
 

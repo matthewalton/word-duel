@@ -25,6 +25,7 @@ export const strings = {
   wrong: "THE ANSWER WAS",
   tooSlow: "TOO SLOW · IT WAS",
   stageUp: "STAGE {stage}",
+  comeback: "COMEBACK",
   gameOver: "GAME OVER",
   finalScore: "SCORE {score}",
   newBest: "NEW BEST!",

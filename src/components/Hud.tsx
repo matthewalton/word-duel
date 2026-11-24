@@ -56,6 +56,8 @@ export function Hud({ state }: { state: DuelState }) {
 function StageProgress({ state, stage }: { state: DuelState; stage: number }) {
   const max = state.maxHearts;
   const done = max - state.hearts.rival;
+  // On a comeback the chunk that just broke glints before it settles.
+  const glint = state.phase === "resolving" && state.outcome?.comeback ? done - 1 : -1;
   return (
     <div
       className={styles.stageProgress}
@@ -66,7 +68,10 @@ function StageProgress({ state, stage }: { state: DuelState; stage: number }) {
       aria-valuenow={done}
     >
       {Array.from({ length: max }, (_, i) => (
-        <span key={i} className={i < done ? styles.stageChunkOn : undefined} />
+        <span
+          key={i === glint ? `glint-${state.fxKey}` : i}
+          className={i === glint ? `${styles.stageChunkOn} ${styles.stageChunkGlint}` : i < done ? styles.stageChunkOn : undefined}
+        />
       ))}
     </div>
   );

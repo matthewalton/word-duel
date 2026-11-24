@@ -90,6 +90,13 @@ _Avoid_: Toast, message bar
 **Stage band**:
 The feedback band shown instead of CORRECT on the right answer that clears a stage: STAGE and the new stage number, with the pack's stage-clear phrase.
 
+**Comeback**:
+A right answer, by an account, to an item whose last outcome in this prompt kind was a miss before the duel began. It shows the comeback band in place of CORRECT (the stage band still wins), sparks burst off the prompt and the breaking stage chunk glints. Each item makes one comeback per duel; guests never see one.
+_Avoid_: Redemption, revenge, fixed
+
+**Comeback band**:
+The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
+
 **Review list**:
 The rounds the player lost in a duel, each with its accepted answer and what they gave (or "too slow"), shown at game over. Kept in memory for the duel only.
 _Avoid_: Missed-words list, mistakes

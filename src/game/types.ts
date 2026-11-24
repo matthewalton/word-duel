@@ -66,6 +66,8 @@ export interface Outcome {
   /** Points gained by this outcome (0 on a loss), excluding stage bonus. */
   points: number;
   stageCleared: boolean;
+  /** A right answer to an item the account last missed (a comeback). */
+  comeback: boolean;
   gameOver: boolean;
   /** What the player picked/typed, for choice highlighting. */
   given?: string;

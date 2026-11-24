@@ -1,6 +1,6 @@
 "use server";
 
-import { sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import { HISTORY_LIMITS } from "@/config/game";
 import { MINIGAME_PROMPT_KINDS, type MinigameId } from "@/game/minigames/ids";
@@ -203,4 +203,27 @@ export async function recordDuel(input: unknown): Promise<void> {
     if (isDuplicate(error)) return;
     throw error;
   }
+}
+
+/**
+ * Ids of the signed-in account's items whose last outcome for this prompt
+ * kind wasn't right, for comebacks. Null for a guest.
+ */
+export async function loadLastMissed(packId: unknown, promptKind: unknown): Promise<string[] | null> {
+  const userId = await currentUserId();
+  if (!userId) return null;
+  const kind = z.enum(PROMPT_KINDS).safeParse(promptKind);
+  if (!kind.success || typeof packId !== "string" || !listPacks().some((p) => p.id === packId)) return [];
+  const rows = await getDb()
+    .select({ itemId: itemStat.itemId })
+    .from(itemStat)
+    .where(
+      and(
+        eq(itemStat.userId, userId),
+        eq(itemStat.packId, packId),
+        eq(itemStat.promptKind, kind.data),
+        ne(itemStat.lastOutcome, "correct"),
+      ),
+    );
+  return rows.map((r) => r.itemId);
 }
