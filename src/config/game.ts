@@ -29,6 +29,18 @@ export function fuseForStage(stage: number): number {
   return Math.max(RULES.fuseMinMs, RULES.fuseStartMs - (stage - 1) * RULES.fuseStepMs);
 }
 
+/** The wordbook page. */
+export const WORDBOOK = {
+  /** Answers an item needs before it can show under BEST. */
+  bestMinAnswers: 5,
+  /** Most items listed under BEST. */
+  bestLimit: 20,
+  /** Most distinct wrong answers shown for one item. */
+  wrongAnswersShown: 6,
+  /** Newest rounds read for one item's details. */
+  roundsRead: 2_000,
+} as const;
+
 /** Caps on a duel sent to word history; the server rejects anything larger. */
 export const HISTORY_LIMITS = {
   maxRounds: 1_000,

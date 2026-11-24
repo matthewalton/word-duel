@@ -90,7 +90,8 @@ export function useAccount(packId: string): Account {
   }, [userId, isPending, packId]);
 
   const signIn = useCallback(async (provider: ProviderId) => {
-    const { error } = await authClient.signIn.social({ provider, callbackURL: "/" });
+    // Back to the page the player signed in from (the title screen or the wordbook).
+    const { error } = await authClient.signIn.social({ provider, callbackURL: window.location.pathname });
     return !error;
   }, []);
 
