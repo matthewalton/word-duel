@@ -145,3 +145,7 @@ _Avoid_: Answer history, events
 **Item stats**:
 An account's running totals for one item and prompt kind: right, wrong and too slow, the current run of right answers, and when it was last seen and last missed.
 _Avoid_: Word score, mastery
+
+**Wordbook**:
+The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the title bar, the account menu and game over; a guest who opens it is asked to sign in.
+_Avoid_: Word history page (word history is the data), mistakes, review list (that is game over's list)
