@@ -9,7 +9,7 @@ import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
 import { askableGaps, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
-import { langText, type ControlsProps, type Minigame, type Round, type ShowcaseProps } from "../types";
+import { langText, type ControlsProps, type Minigame, type Round, type RoundDraw, type ShowcaseProps } from "../types";
 
 function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean): Round {
   const { target, base } = pack.meta;
@@ -162,9 +162,15 @@ export const gapGuard: Minigame = {
   usesDirection: false,
   usesDifficulty: false,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
-  startDraw: (pack) => {
-    const next = drawOrder(askableGaps(pack));
-    return () => buildRound(pack, next(), true);
+  startDraw: (pack): RoundDraw => {
+    const draw = drawOrder(askableGaps(pack));
+    return {
+      next: () => buildRound(pack, draw.next(), true),
+      workIn: (missedItemIds) => {
+        const missed = new Set(missedItemIds);
+        draw.workIn((gap) => missed.has(gap.tests));
+      },
+    };
   },
   Controls: GapGuardControls,
   Preview: GapGuardPreview,

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "check:packs": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-packs.mts",
     "packs:ids": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/add-pack-ids.mts",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/**/*.test.mts\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "prepare": "git config core.hooksPath .githooks || true"

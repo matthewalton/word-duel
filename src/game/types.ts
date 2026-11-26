@@ -110,6 +110,14 @@ export interface ControlsProps {
   onStart: () => void;
 }
 
+/** A duel's draw order of rounds. */
+export interface RoundDraw {
+  /** Deals the next round. */
+  next: () => Round;
+  /** Works these missed items (ids) in early from now on; see `drawOrder`. */
+  workIn: (missedItemIds: readonly string[]) => void;
+}
+
 /**
  * A minigame module. It only produces rounds and renders its own controls;
  * hearts, scoring, fuse and effects are shared and live in the duel engine.
@@ -123,10 +131,10 @@ export interface Minigame {
   /** Deterministic sample shown on the idle screen. */
   sampleRound: (pack: LanguagePack, opts: MinigameOptions) => Round;
   /**
-   * Starts a duel's draw order and returns a function that deals its next
-   * round. No prompt comes back until the whole pool has been dealt.
+   * Starts a duel's draw order. No prompt comes back until the whole pool has
+   * been dealt; an account's missed items are worked in early (ADR 0010).
    */
-  startDraw: (pack: LanguagePack, opts: MinigameOptions) => () => Round;
+  startDraw: (pack: LanguagePack, opts: MinigameOptions) => RoundDraw;
   Controls: ComponentType<ControlsProps>;
   /** Static picture of a round, shown on the title screen. */
   Preview: ComponentType<ShowcaseProps>;
