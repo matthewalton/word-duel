@@ -1,0 +1,1063 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-23T20:30:00Z"
+ },
+ "title": "Word Duel start screens",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 760,
+   "h": 640,
+   "title": "A · How-to card · Word Strike"
+  },
+  "AttractStrike.dc.html": {
+   "x": 840,
+   "y": 0,
+   "w": 760,
+   "h": 640,
+   "title": "B · Attract demo · Word Strike"
+  },
+  "TitleStrike.dc.html": {
+   "x": 1680,
+   "y": 0,
+   "w": 760,
+   "h": 640,
+   "title": "C · Title + mode cards · Word Strike"
+  },
+  "HowToGap.dc.html": {
+   "x": 0,
+   "y": 1060,
+   "w": 760,
+   "h": 640,
+   "title": "A · How-to card · Gap Guard"
+  },
+  "AttractGap.dc.html": {
+   "x": 840,
+   "y": 1060,
+   "w": 760,
+   "h": 640,
+   "title": "B · Attract demo · Gap Guard"
+  },
+  "TitleGap.dc.html": {
+   "x": 1680,
+   "y": 1060,
+   "w": 760,
+   "h": 640,
+   "title": "C · Title + mode cards · Gap Guard"
+  },
+  "MinSplit.dc.html": {
+   "x": 0,
+   "y": 2100,
+   "w": 1280,
+   "h": 800,
+   "title": "C1 · Minimal split"
+  },
+  "MinExplain.dc.html": {
+   "x": 1360,
+   "y": 2100,
+   "w": 1280,
+   "h": 800,
+   "title": "C1 · Explain more open"
+  },
+  "MinFocus.dc.html": {
+   "x": 2720,
+   "y": 2100,
+   "w": 1280,
+   "h": 800,
+   "title": "C2 · Minimal single focus"
+  },
+  "MinPhone.dc.html": {
+   "x": 4080,
+   "y": 2100,
+   "w": 390,
+   "h": 844,
+   "title": "C1 · Phone"
+  },
+  "StartSplit.dc.html": {
+   "x": 0,
+   "y": 3350,
+   "w": 1280,
+   "h": 800,
+   "title": "C3 · Split, Word Strike active (try it)",
+   "is_interactive": true
+  },
+  "StartSplitGap.dc.html": {
+   "x": 1360,
+   "y": 3350,
+   "w": 1280,
+   "h": 800,
+   "title": "C3 · Split, Gap Guard active",
+   "is_interactive": true
+  },
+  "StartCarousel.dc.html": {
+   "x": 2720,
+   "y": 3350,
+   "w": 390,
+   "h": 844,
+   "title": "C3 · Phone carousel (try it)",
+   "is_interactive": true
+  },
+  "InactiveName.dc.html": {
+   "x": 0,
+   "y": 4600,
+   "w": 1280,
+   "h": 800,
+   "title": "Inactive 1 · Big name",
+   "is_interactive": true
+  },
+  "InactiveSpine.dc.html": {
+   "x": 1360,
+   "y": 4600,
+   "w": 1280,
+   "h": 800,
+   "title": "Inactive 2 · Narrow spine",
+   "is_interactive": true
+  },
+  "InactiveDark.dc.html": {
+   "x": 2720,
+   "y": 4600,
+   "w": 1280,
+   "h": 800,
+   "title": "Inactive 3 · Lights off",
+   "is_interactive": true
+  },
+  "InactiveTeaser.dc.html": {
+   "x": 4080,
+   "y": 4600,
+   "w": 1280,
+   "h": 800,
+   "title": "Inactive 4 · Teaser",
+   "is_interactive": true
+  },
+  "TypeSplit.dc.html": {
+   "x": 0,
+   "y": 5850,
+   "w": 1280,
+   "h": 800,
+   "title": "Type A · Pixel names, Jua for reading",
+   "is_interactive": true
+  },
+  "TypeB.dc.html": {
+   "x": 1360,
+   "y": 5850,
+   "w": 1280,
+   "h": 800,
+   "title": "Type B · Pixel only for controls and scores",
+   "is_interactive": true
+  },
+  "TypeC.dc.html": {
+   "x": 2720,
+   "y": 5850,
+   "w": 1280,
+   "h": 800,
+   "title": "Type C · Pixel for all game text",
+   "is_interactive": true
+  },
+  "TypeSwap.dc.html": {
+   "x": 4080,
+   "y": 5850,
+   "w": 1280,
+   "h": 800,
+   "title": "Type A · one swap button instead of two",
+   "is_interactive": true
+  },
+  "ToggleOutline.dc.html": {
+   "x": 0,
+   "y": 7100,
+   "w": 1280,
+   "h": 800,
+   "title": "Toggle 1 · Outlined, arrow only",
+   "is_interactive": true
+  },
+  "ToggleSplit.dc.html": {
+   "x": 1360,
+   "y": 7100,
+   "w": 1280,
+   "h": 800,
+   "title": "Toggle 2 · Swap key in the middle",
+   "is_interactive": true
+  },
+  "ToggleKey.dc.html": {
+   "x": 2720,
+   "y": 7100,
+   "w": 1280,
+   "h": 800,
+   "title": "Toggle 3 · Swap key between plain names",
+   "is_interactive": true
+  },
+  "DuelCabinet.dc.html": {
+   "x": 0,
+   "y": 8350,
+   "w": 1280,
+   "h": 800,
+   "title": "Duel A · One cabinet, fuse under the HUD"
+  },
+  "DuelTower.dc.html": {
+   "x": 1360,
+   "y": 8350,
+   "w": 1280,
+   "h": 800,
+   "title": "Duel B · Stage tower, fuse on the input"
+  },
+  "DuelPath.dc.html": {
+   "x": 2720,
+   "y": 8350,
+   "w": 1280,
+   "h": 800,
+   "title": "Duel C · Stage path, fuse is the top edge"
+  },
+  "DuelCabinetPhone.dc.html": {
+   "x": 4080,
+   "y": 8350,
+   "w": 390,
+   "h": 844,
+   "title": "Duel A · Phone"
+  },
+  "DuelTimerDrain.dc.html": {
+   "x": 0,
+   "y": 9600,
+   "w": 1280,
+   "h": 800,
+   "title": "Timer 1 · Prompt area drains · progress in the separator",
+   "is_interactive": true
+  },
+  "DuelTimerHeader.dc.html": {
+   "x": 1360,
+   "y": 9600,
+   "w": 1280,
+   "h": 800,
+   "title": "Timer 2 · Countdown in the header · progress pips by score",
+   "is_interactive": true
+  },
+  "DuelTimerWord.dc.html": {
+   "x": 2720,
+   "y": 9600,
+   "w": 1280,
+   "h": 800,
+   "title": "Timer 3 · Burns in under the word · progress up the left edge",
+   "is_interactive": true
+  },
+  "DuelTimerEdge.dc.html": {
+   "x": 4080,
+   "y": 9600,
+   "w": 1280,
+   "h": 800,
+   "title": "Timer 4 · Strip above the feedback · progress in the separator",
+   "is_interactive": true
+  },
+  "DuelStateHit.dc.html": {
+   "x": 0,
+   "y": 10850,
+   "w": 1280,
+   "h": 800,
+   "title": "Right answer",
+   "is_interactive": true
+  },
+  "DuelStateMiss.dc.html": {
+   "x": 1360,
+   "y": 10850,
+   "w": 1280,
+   "h": 800,
+   "title": "Wrong answer",
+   "is_interactive": true
+  },
+  "DuelStateStage.dc.html": {
+   "x": 2720,
+   "y": 10850,
+   "w": 1280,
+   "h": 800,
+   "title": "Next stage",
+   "is_interactive": true
+  },
+  "DuelFinalPlaying.dc.html": {
+   "x": 0,
+   "y": 12100,
+   "w": 1280,
+   "h": 800,
+   "title": "Final · Playing",
+   "is_interactive": true
+  },
+  "DuelFinalHit.dc.html": {
+   "x": 1360,
+   "y": 12100,
+   "w": 1280,
+   "h": 800,
+   "title": "Final · Right answer",
+   "is_interactive": true
+  },
+  "DuelFinalMiss.dc.html": {
+   "x": 2720,
+   "y": 12100,
+   "w": 1280,
+   "h": 800,
+   "title": "Final · Wrong answer",
+   "is_interactive": true
+  },
+  "DuelFinalStage.dc.html": {
+   "x": 4080,
+   "y": 12100,
+   "w": 1280,
+   "h": 800,
+   "title": "Final · Next stage",
+   "is_interactive": true
+  },
+  "DuelPhonePlaying.dc.html": {
+   "x": 0,
+   "y": 13350,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Playing",
+   "is_interactive": true
+  },
+  "DuelPhoneHit.dc.html": {
+   "x": 470,
+   "y": 13350,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Right answer",
+   "is_interactive": true
+  },
+  "DuelPhoneMiss.dc.html": {
+   "x": 940,
+   "y": 13350,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Wrong answer",
+   "is_interactive": true
+  },
+  "DuelPhoneStage.dc.html": {
+   "x": 1410,
+   "y": 13350,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Next stage",
+   "is_interactive": true
+  },
+  "DuelGapPlaying.dc.html": {
+   "x": 0,
+   "y": 14600,
+   "w": 1280,
+   "h": 800,
+   "title": "Gap Guard · Playing",
+   "is_interactive": true
+  },
+  "DuelGapPhonePlaying.dc.html": {
+   "x": 0,
+   "y": 15850,
+   "w": 390,
+   "h": 844,
+   "title": "Gap Guard phone · Playing",
+   "is_interactive": true
+  },
+  "DuelGapHit.dc.html": {
+   "x": 1360,
+   "y": 14600,
+   "w": 1280,
+   "h": 800,
+   "title": "Gap Guard · Right answer",
+   "is_interactive": true
+  },
+  "DuelGapPhoneHit.dc.html": {
+   "x": 470,
+   "y": 15850,
+   "w": 390,
+   "h": 844,
+   "title": "Gap Guard phone · Right answer",
+   "is_interactive": true
+  },
+  "DuelGapMiss.dc.html": {
+   "x": 2720,
+   "y": 14600,
+   "w": 1280,
+   "h": 800,
+   "title": "Gap Guard · Wrong answer",
+   "is_interactive": true
+  },
+  "DuelGapPhoneMiss.dc.html": {
+   "x": 940,
+   "y": 15850,
+   "w": 390,
+   "h": 844,
+   "title": "Gap Guard phone · Wrong answer",
+   "is_interactive": true
+  },
+  "DuelGapStage.dc.html": {
+   "x": 4080,
+   "y": 14600,
+   "w": 1280,
+   "h": 800,
+   "title": "Gap Guard · Next stage",
+   "is_interactive": true
+  },
+  "DuelGapPhoneStage.dc.html": {
+   "x": 1410,
+   "y": 15850,
+   "w": 390,
+   "h": 844,
+   "title": "Gap Guard phone · Next stage",
+   "is_interactive": true
+  },
+  "ReadyBare.dc.html": {
+   "x": 0,
+   "y": 17100,
+   "w": 1280,
+   "h": 800,
+   "title": "Ready A · Bare START (try it)",
+   "is_interactive": true
+  },
+  "ReadyRule.dc.html": {
+   "x": 1360,
+   "y": 17100,
+   "w": 1280,
+   "h": 800,
+   "title": "Ready B · Direction + one rule line (try it)",
+   "is_interactive": true
+  },
+  "ReadyCount.dc.html": {
+   "x": 2720,
+   "y": 17100,
+   "w": 1280,
+   "h": 800,
+   "title": "Countdown · held on 2",
+   "is_interactive": true
+  },
+  "ReadyPhoneBare.dc.html": {
+   "x": 4080,
+   "y": 17100,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Ready A (try it)",
+   "is_interactive": true
+  },
+  "ReadyPhoneRule.dc.html": {
+   "x": 4550,
+   "y": 17100,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Ready B (try it)",
+   "is_interactive": true
+  },
+  "ReadyPhoneCount.dc.html": {
+   "x": 5020,
+   "y": 17100,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Countdown on GO!",
+   "is_interactive": true
+  },
+  "EndLastMiss.dc.html": {
+   "x": 0,
+   "y": 18500,
+   "w": 1280,
+   "h": 800,
+   "title": "1 · Last heart breaks: the answer is held for 1.5s"
+  },
+  "EndOver.dc.html": {
+   "x": 1360,
+   "y": 18500,
+   "w": 1280,
+   "h": 800,
+   "title": "2 · Then game over, with the misses to review"
+  },
+  "EndOverGap.dc.html": {
+   "x": 2720,
+   "y": 18500,
+   "w": 1280,
+   "h": 800,
+   "title": "Gap Guard · Game over with review"
+  },
+  "EndPhoneOver.dc.html": {
+   "x": 4080,
+   "y": 18500,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Game over with review"
+  },
+  "EndPhoneOverGap.dc.html": {
+   "x": 4550,
+   "y": 18500,
+   "w": 390,
+   "h": 844,
+   "title": "Gap Guard phone · Game over with review"
+  },
+  "StageCard.dc.html": {
+   "x": 0,
+   "y": 19810,
+   "w": 1280,
+   "h": 800,
+   "title": "After the CORRECT band: the stage card"
+  },
+  "StageCardPhone.dc.html": {
+   "x": 1360,
+   "y": 19810,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Stage card"
+  },
+  "StageA.dc.html": {
+   "x": 0,
+   "y": 21010,
+   "w": 1280,
+   "h": 800,
+   "title": "Option 1 · Bar and header only (plays on a loop)",
+   "is_interactive": true
+  },
+  "StageB.dc.html": {
+   "x": 1360,
+   "y": 21010,
+   "w": 1280,
+   "h": 800,
+   "title": "Option 2 · One STAGE band instead of CORRECT (plays on a loop)",
+   "is_interactive": true
+  },
+  "StageC.dc.html": {
+   "x": 2720,
+   "y": 21010,
+   "w": 1280,
+   "h": 800,
+   "title": "Option 3 · Nothing extra (plays on a loop)",
+   "is_interactive": true
+  },
+  "SignIn.dc.html": {
+   "x": 0,
+   "y": 22410,
+   "w": 1280,
+   "h": 800,
+   "title": "1 · Guest: SIGN IN in the corner (try the whole flow)",
+   "is_interactive": true
+  },
+  "SignInPanel.dc.html": {
+   "x": 1360,
+   "y": 22410,
+   "w": 1280,
+   "h": 800,
+   "title": "2 · Sign-in panel: three providers, guest stays an option",
+   "is_interactive": true
+  },
+  "SignInMenu.dc.html": {
+   "x": 2720,
+   "y": 22410,
+   "w": 1280,
+   "h": 800,
+   "title": "3 · Signed in: your progress came with you; menu to sign out",
+   "is_interactive": true
+  },
+  "EndOverGuest.dc.html": {
+   "x": 4080,
+   "y": 22410,
+   "w": 1280,
+   "h": 800,
+   "title": "4 · Game over as a guest: offer to keep these words"
+  },
+  "SignInPhone.dc.html": {
+   "x": 5440,
+   "y": 22410,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Guest (try it)",
+   "is_interactive": true
+  },
+  "SignInPhonePanel.dc.html": {
+   "x": 5910,
+   "y": 22410,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Sign-in panel",
+   "is_interactive": true
+  },
+  "AccountLink.dc.html": {
+   "x": 0,
+   "y": 23810,
+   "w": 1280,
+   "h": 800,
+   "title": "A · Linked ones in the 'Signed in with' line, LINK buttons below (try it)",
+   "is_interactive": true
+  },
+  "AccountLinkError.dc.html": {
+   "x": 1360,
+   "y": 23810,
+   "w": 1280,
+   "h": 800,
+   "title": "A · GitHub already has its own account: refused (click LINK GITHUB)",
+   "is_interactive": true
+  },
+  "AccountLinkList.dc.html": {
+   "x": 2720,
+   "y": 23810,
+   "w": 1280,
+   "h": 800,
+   "title": "B · One list of sign-in methods, LINKED or LINK (try it)",
+   "is_interactive": true
+  },
+  "AccountLinkListError.dc.html": {
+   "x": 4080,
+   "y": 23810,
+   "w": 1280,
+   "h": 800,
+   "title": "B · GitHub already has its own account: refused (click LINK)",
+   "is_interactive": true
+  },
+  "Wordbook.dc.html": {
+   "x": 0,
+   "y": 25210,
+   "w": 1280,
+   "h": 800,
+   "title": "1 · MISSED tab, newest first (try the tabs and ORDER)",
+   "is_interactive": true
+  },
+  "WordbookBest.dc.html": {
+   "x": 1360,
+   "y": 25210,
+   "w": 1280,
+   "h": 800,
+   "title": "2 · BEST tab: most accurate, 5+ answers",
+   "is_interactive": true
+  },
+  "WordbookGuest.dc.html": {
+   "x": 2720,
+   "y": 25210,
+   "w": 1280,
+   "h": 800,
+   "title": "3 · Guest: sign in to keep a wordbook",
+   "is_interactive": true
+  },
+  "WordbookEmpty.dc.html": {
+   "x": 4080,
+   "y": 25210,
+   "w": 1280,
+   "h": 800,
+   "title": "4 · Signed in, nothing played yet",
+   "is_interactive": true
+  },
+  "WordbookPhone.dc.html": {
+   "x": 5440,
+   "y": 25210,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · MISSED (try it)",
+   "is_interactive": true
+  },
+  "WordbookPhoneBest.dc.html": {
+   "x": 5910,
+   "y": 25210,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · BEST",
+   "is_interactive": true
+  },
+  "TitleWordbook.dc.html": {
+   "x": 0,
+   "y": 26610,
+   "w": 1280,
+   "h": 800,
+   "title": "A · Title bar: WORDBOOK on the left, for everyone (guest shown, click it)",
+   "is_interactive": true
+  },
+  "TitleWordbookMenu.dc.html": {
+   "x": 1360,
+   "y": 26610,
+   "w": 1280,
+   "h": 800,
+   "title": "B · Signed in: WORDBOOK also heads the account menu",
+   "is_interactive": true
+  },
+  "EndOverWordbook.dc.html": {
+   "x": 2720,
+   "y": 26610,
+   "w": 1280,
+   "h": 800,
+   "title": "C · Game over with an account: OPEN WORDBOOK under the misses",
+   "is_interactive": true
+  },
+  "TitleWordbookPhone.dc.html": {
+   "x": 4080,
+   "y": 26610,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Title bar: book button left of the name",
+   "is_interactive": true
+  },
+  "WordbookRowBar.dc.html": {
+   "x": 0,
+   "y": 28010,
+   "w": 1280,
+   "h": 800,
+   "title": "Row 1 · One pixel bar per word: right and missed, no breakdown",
+   "is_interactive": true
+  },
+  "WordbookRowWords.dc.html": {
+   "x": 1360,
+   "y": 28010,
+   "w": 1280,
+   "h": 800,
+   "title": "Row 2 · Plain sentence, plus which way it goes wrong only when it matters",
+   "is_interactive": true
+  },
+  "WordbookRowExpand.dc.html": {
+   "x": 2720,
+   "y": 28010,
+   "w": 1280,
+   "h": 800,
+   "title": "Row 3 · Accordion: word and misses in the header, stats inside (try it)",
+   "is_interactive": true
+  },
+  "WordbookRowExpandPhone.dc.html": {
+   "x": 4080,
+   "y": 28010,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Row 3 (try it)",
+   "is_interactive": true
+  },
+  "ComebackDark.dc.html": {
+   "x": 0,
+   "y": 29410,
+   "w": 1280,
+   "h": 800,
+   "title": "A · Dark COMEBACK band with twinkling pixels (plays on a loop)",
+   "is_interactive": true
+  },
+  "ComebackSparks.dc.html": {
+   "x": 1360,
+   "y": 29410,
+   "w": 1280,
+   "h": 800,
+   "title": "B · COMEBACK band, sparks burst off the word, the stage chunk glints (plays on a loop)",
+   "is_interactive": true
+  },
+  "ComebackStamp.dc.html": {
+   "x": 2720,
+   "y": 29410,
+   "w": 1280,
+   "h": 800,
+   "title": "C · COMEBACK band plus a FIXED! stamp by the word (plays on a loop)",
+   "is_interactive": true
+  },
+  "ComebackPhone.dc.html": {
+   "x": 4080,
+   "y": 29410,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · A, switch option in Tweaks",
+   "is_interactive": true
+  },
+  "DifficultyRow.dc.html": {
+   "x": 0,
+   "y": 30810,
+   "w": 1280,
+   "h": 800,
+   "title": "A · Three-way switch above PLAY, one line on what it asks (try it)",
+   "is_interactive": true
+  },
+  "DifficultyCycle.dc.html": {
+   "x": 1360,
+   "y": 30810,
+   "w": 1280,
+   "h": 800,
+   "title": "B · One button beside the language toggle, click to cycle (try it)",
+   "is_interactive": true
+  },
+  "DifficultyTabs.dc.html": {
+   "x": 2720,
+   "y": 30810,
+   "w": 1280,
+   "h": 800,
+   "title": "C · Tabs on the preview, which shows a word from that level (try it)",
+   "is_interactive": true
+  },
+  "DifficultyPhone.dc.html": {
+   "x": 4080,
+   "y": 30810,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · A (try it)",
+   "is_interactive": true
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "AttractStrike.dc.html",
+  "TitleStrike.dc.html",
+  "HowToGap.dc.html",
+  "AttractGap.dc.html",
+  "TitleGap.dc.html",
+  "MinSplit.dc.html",
+  "MinExplain.dc.html",
+  "MinFocus.dc.html",
+  "MinPhone.dc.html",
+  "StartSplit.dc.html",
+  "StartSplitGap.dc.html",
+  "StartCarousel.dc.html",
+  "InactiveName.dc.html",
+  "InactiveSpine.dc.html",
+  "InactiveDark.dc.html",
+  "InactiveTeaser.dc.html",
+  "TypeSplit.dc.html",
+  "TypeB.dc.html",
+  "TypeC.dc.html",
+  "TypeSwap.dc.html",
+  "ToggleOutline.dc.html",
+  "ToggleSplit.dc.html",
+  "ToggleKey.dc.html",
+  "DuelCabinet.dc.html",
+  "DuelTower.dc.html",
+  "DuelPath.dc.html",
+  "DuelCabinetPhone.dc.html",
+  "DuelTimerDrain.dc.html",
+  "DuelTimerHeader.dc.html",
+  "DuelTimerWord.dc.html",
+  "DuelTimerEdge.dc.html",
+  "DuelStateHit.dc.html",
+  "DuelStateMiss.dc.html",
+  "DuelStateStage.dc.html",
+  "DuelFinalPlaying.dc.html",
+  "DuelFinalHit.dc.html",
+  "DuelFinalMiss.dc.html",
+  "DuelFinalStage.dc.html",
+  "DuelPhonePlaying.dc.html",
+  "DuelPhoneHit.dc.html",
+  "DuelPhoneMiss.dc.html",
+  "DuelPhoneStage.dc.html",
+  "DuelGapPlaying.dc.html",
+  "DuelGapPhonePlaying.dc.html",
+  "DuelGapHit.dc.html",
+  "DuelGapPhoneHit.dc.html",
+  "DuelGapMiss.dc.html",
+  "DuelGapPhoneMiss.dc.html",
+  "DuelGapStage.dc.html",
+  "DuelGapPhoneStage.dc.html",
+  "ReadyBare.dc.html",
+  "ReadyRule.dc.html",
+  "ReadyCount.dc.html",
+  "ReadyPhoneBare.dc.html",
+  "ReadyPhoneRule.dc.html",
+  "ReadyPhoneCount.dc.html",
+  "EndLastMiss.dc.html",
+  "EndOver.dc.html",
+  "EndOverGap.dc.html",
+  "EndPhoneOver.dc.html",
+  "EndPhoneOverGap.dc.html",
+  "StageCard.dc.html",
+  "StageCardPhone.dc.html",
+  "StageA.dc.html",
+  "StageB.dc.html",
+  "StageC.dc.html",
+  "SignIn.dc.html",
+  "SignInPanel.dc.html",
+  "SignInMenu.dc.html",
+  "EndOverGuest.dc.html",
+  "SignInPhone.dc.html",
+  "SignInPhonePanel.dc.html",
+  "AccountLink.dc.html",
+  "AccountLinkError.dc.html",
+  "AccountLinkList.dc.html",
+  "AccountLinkListError.dc.html",
+  "Wordbook.dc.html",
+  "WordbookBest.dc.html",
+  "WordbookGuest.dc.html",
+  "WordbookEmpty.dc.html",
+  "WordbookPhone.dc.html",
+  "WordbookPhoneBest.dc.html",
+  "TitleWordbook.dc.html",
+  "TitleWordbookMenu.dc.html",
+  "EndOverWordbook.dc.html",
+  "TitleWordbookPhone.dc.html",
+  "WordbookRowBar.dc.html",
+  "WordbookRowWords.dc.html",
+  "WordbookRowExpand.dc.html",
+  "WordbookRowExpandPhone.dc.html",
+  "ComebackDark.dc.html",
+  "ComebackSparks.dc.html",
+  "ComebackStamp.dc.html",
+  "ComebackPhone.dc.html",
+  "DifficultyRow.dc.html",
+  "DifficultyCycle.dc.html",
+  "DifficultyTabs.dc.html",
+  "DifficultyPhone.dc.html"
+ ],
+ "notes": {
+  "rowStrike": {
+   "x": 0,
+   "y": -300,
+   "text": "Word Strike: before START",
+   "kind": "title1",
+   "maxW": 2440
+  },
+  "rowGap": {
+   "x": 0,
+   "y": 760,
+   "text": "Gap Guard: before START",
+   "kind": "title1",
+   "maxW": 2440
+  },
+  "rowMinimal": {
+   "x": 0,
+   "y": 1800,
+   "text": "Round 2: minimal, full screen, explain on demand",
+   "kind": "title1",
+   "maxW": 4470
+  },
+  "rowActive": {
+   "x": 0,
+   "y": 3050,
+   "text": "Round 3: split with an active card that expands",
+   "kind": "title1",
+   "maxW": 3110
+  },
+  "rowInactive": {
+   "x": 0,
+   "y": 4300,
+   "text": "Round 4: what the inactive card shows",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowType": {
+   "x": 0,
+   "y": 5550,
+   "text": "Round 5: two fonts, quieter language picker",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowToggle": {
+   "x": 0,
+   "y": 6800,
+   "text": "Round 6: type C, smaller controls, one toggle",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "rowDuel": {
+   "x": 0,
+   "y": 8050,
+   "text": "Round 7: duel screen in one box, climb stages instead of CPU hearts",
+   "kind": "title1",
+   "maxW": 4470
+  },
+  "rowDuel8": {
+   "x": 0,
+   "y": 9300,
+   "text": "Round 8: C header and input, A feedback band, four places for the fuse",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowDuel8States": {
+   "x": 0,
+   "y": 10550,
+   "text": "Round 8: the same frame on a right answer, a wrong answer and a new stage",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "rowDuel9": {
+   "x": 0,
+   "y": 11800,
+   "text": "Round 9: thin progress bar, fuse under the word, no language toggle",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowDuel9Phone": {
+   "x": 0,
+   "y": 13050,
+   "text": "Round 9: phone",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "rowGap9": {
+   "x": 0,
+   "y": 14300,
+   "text": "Round 9: Gap Guard in the same frame",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowGap9Phone": {
+   "x": 0,
+   "y": 15550,
+   "text": "Round 9: Gap Guard on a phone",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "rowReady10": {
+   "x": 0,
+   "y": 16800,
+   "text": "Round 10: ready screen, START, then 3 · 2 · 1 · GO! before the first round",
+   "kind": "title1",
+   "maxW": 5410
+  },
+  "rowEnd11": {
+   "x": 0,
+   "y": 18200,
+   "text": "Round 11: see the last answer, then review your misses at game over",
+   "kind": "title1",
+   "maxW": 4940
+  },
+  "rowStage11": {
+   "x": 0,
+   "y": 19510,
+   "text": "Round 11: CORRECT, then a stage card on its own",
+   "kind": "title1",
+   "maxW": 1750
+  },
+  "rowStage12": {
+   "x": 0,
+   "y": 20710,
+   "text": "Round 12: three ways to clear a stage, playing on a loop",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "rowSignIn13": {
+   "x": 0,
+   "y": 22110,
+   "text": "Round 13: optional sign-in, guest play stays first",
+   "kind": "title1",
+   "maxW": 6300
+  },
+  "rowLink14": {
+   "x": 0,
+   "y": 23510,
+   "text": "Round 14: link Google, GitHub and Discord into one account",
+   "kind": "title1",
+   "maxW": 5360
+  },
+  "rowWordbook15": {
+   "x": 0,
+   "y": 24910,
+   "text": "Round 15: WORDBOOK, your missed and best words in two tabs",
+   "kind": "title1",
+   "maxW": 6300
+  },
+  "rowWordbookLinks15": {
+   "x": 0,
+   "y": 26310,
+   "text": "Round 15: three ways in: title bar, account menu, game over",
+   "kind": "title1",
+   "maxW": 4470
+  },
+  "rowWordbookRows16": {
+   "x": 0,
+   "y": 27710,
+   "text": "Round 16: calmer wordbook rows, no GAP or EN > 한 chips",
+   "kind": "title1",
+   "maxW": 4470
+  },
+  "rowComeback17": {
+   "x": 0,
+   "y": 29110,
+   "text": "Round 17: COMEBACK, a right answer on a word you last missed",
+   "kind": "title1",
+   "maxW": 4470
+  },
+  "rowDifficulty18": {
+   "x": 0,
+   "y": 30510,
+   "kind": "title1",
+   "maxW": 4470,
+   "text": "Round 18: pick a difficulty for Word Strike"
+  }
+ },
+ "designSystems": []
+}

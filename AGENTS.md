@@ -23,7 +23,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 - `docs/adr/`: decisions and why. ADR 0004 lists directions that were tried and rejected.
 - `README.md`: code layout, how to add a language pack or a minigame.
 - GitHub issues: planned work (see Agent skills below).
-- Visual design is explored on a private Claude Design canvas: https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis (the built title screen is round 4, "Lights off").
+- `design/`: every mock-up from the design canvas as files, indexed round by round in `design/README.md` (the built title screen is round 4, "Lights off"). Read the agreed board before building a screen. The live canvas is https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis (private).
 
 ### Rules that bite
 
@@ -47,7 +47,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 1. Find or open a GitHub issue for it.
 2. Shape it with `/grill-with-docs`, which updates `GLOSSARY.md` and adds ADRs as decisions land.
 3. For bigger work, `/to-spec` then `/to-tickets` to break it into issues.
-4. Visual changes: mock them up on the design canvas and agree before building.
+4. Visual changes: mock them up on the design canvas and agree before building, then export the round's boards into `design/` (see `design/README.md`).
 
 ## Agent skills
 

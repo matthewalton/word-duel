@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Comeback, right answer on a past miss</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:#8A7FA6}
+@keyframes bandIn{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
+.bandIn{animation:bandIn 160ms steps(2) both}
+@keyframes twinkle{0%{opacity:1}50%{opacity:0}}
+.twinkle{animation:twinkle 320ms steps(1) infinite}
+.twinkleLate{animation:twinkle 320ms steps(1) 160ms infinite}
+@keyframes spark{0%{transform:translate(-50%,-50%);opacity:1}75%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)));opacity:0}}
+.spark{animation:spark 480ms steps(4) both}
+@keyframes chunkGlint{0%{background:#FFFFFF}33%{background:#3DD6C0}66%{background:#FFFFFF}100%{background:#FFD23F}}
+.chunkGlint{animation:chunkGlint 480ms steps(1) both}
+@keyframes stamp{0%{transform:rotate(-6deg) scale(1.8)}100%{transform:rotate(-6deg) scale(1)}}
+.stamp{animation:stamp 200ms steps(3) both}
+@media (prefers-reduced-motion: reduce){.bandIn,.twinkle,.twinkleLate,.spark,.chunkGlint,.stamp{animation:none}.spark{display:none}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 64px 36px; display: flex; flex-direction: column; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button style="padding: 6px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+    <span style="margin-left: auto; font-size: 14px; letter-spacing: 1px; color: #D6C9DD;">{{caption}}</span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 8px 8px 0 #000; color: #2A2440;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 24px 14px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #1E9C8A;">YOU</span>
+        <span role="img" aria-label="You: 2 of 3 hearts" style="display: flex; gap: 4px;">
+          <sc-for list="{{hearts}}" as="h" hint-placeholder-count="3">
+            <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="{{h.fill}}" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="{{h.hl}}"></rect></svg>
+          </sc-for>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+        <span style="font-size: 12px; color: #6B5F7D; margin-bottom: 4px;">BEST 1210</span>
+        <span style="display: flex; align-items: center; gap: 10px;">
+          <sc-if value="{{hasPoints}}" hint-placeholder-val="{{ false }}">
+            <span style="padding: 3px 8px; font-size: 20px; font-weight: 700; color: #2A2440; background: #3DD6C0;">+20</span>
+          </sc-if>
+          <span style="font-size: 32px; font-weight: 700;">{{score}}</span>
+        </span>
+      </div>
+    </div>
+
+    <div role="img" aria-label="{{stepsDone}} of 3 right answers to the next stage" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: 6px;">
+      <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+        <span class="{{s.cls}}" style="background: {{s.bg}};"></span>
+      </sc-for>
+    </div>
+
+    <div style="position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;">
+      <span style="position: relative; font-family: 'Jua', sans-serif; font-size: 104px; line-height: 1.1; color: {{promptColor}};">
+        {{prompt}}
+        <sc-if value="{{showSparks}}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{sparks}}" as="p" hint-placeholder-count="8">
+            <span class="spark" aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: {{p.size}}; height: {{p.size}}; background: {{p.bg}}; --dx: {{p.dx}}; --dy: {{p.dy}};"></span>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{showStamp}}" hint-placeholder-val="{{ false }}">
+          <span class="stamp" style="position: absolute; right: -150px; top: -6px; padding: 4px 10px; font-family: 'Pixelify Sans', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; line-height: 1.2; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440;">FIXED!</span>
+        </sc-if>
+      </span>
+      <div role="meter" aria-label="Time left" aria-valuemin="0" aria-valuemax="20" aria-valuenow="{{lit}}" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; width: 440px; height: 12px;">
+        <sc-for list="{{fuse}}" as="f" hint-placeholder-count="20">
+          <span style="background: {{f.bg}};"></span>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{hasBand}}" hint-placeholder-val="{{ false }}">
+        <div role="status" class="bandIn" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 64px; padding: 8px 24px; box-sizing: border-box; color: {{bandInk}}; background: {{bandBg}}; border-top: 4px solid #2A2440;">
+          <sc-if value="{{bandStars}}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" style="display: flex; gap: 6px;"><span class="twinkle" style="width: 8px; height: 8px; background: #FFD23F;"></span><span class="twinkleLate" style="width: 8px; height: 8px; background: #3DD6C0;"></span></span>
+          </sc-if>
+          <span style="font-size: 20px; font-weight: 700; letter-spacing: 2px; color: {{labelInk}};">{{bandLabel}}</span>
+          <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 32px; line-height: 1;">{{bandWord}}</span>
+          <sc-if value="{{bandStars}}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" style="display: flex; gap: 6px;"><span class="twinkleLate" style="width: 8px; height: 8px; background: #3DD6C0;"></span><span class="twinkle" style="width: 8px; height: 8px; background: #FFD23F;"></span></span>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display: flex; gap: 12px; padding: 16px 24px 20px; background: #EFE6F2; border-top: 4px solid #2A2440;">
+      <label for="ComebackStamp-answer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);">Your answer</label>
+      <input id="ComebackStamp-answer" readonly value="{{typed}}" placeholder="Type it in Korean" lang="ko" style="flex-grow: 1; min-width: 0; padding: 12px 18px; font-family: 'Jua', sans-serif; font-size: 28px; color: #2A2440; background: #FFFFFF; border: 4px solid #2A2440; outline: none;">
+      <button style="min-width: 150px; padding: 0 28px; font-family: 'Pixelify Sans', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440; cursor: pointer;">GO</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"option":{"editor":"enum","options":["dark","sparks","stamp"],"default":"stamp"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { step: 'playing' }; this.timer = null; }
+componentDidMount() { this.run('playing'); }
+componentWillUnmount() { clearTimeout(this.timer); }
+run(step) {
+this.setState({ step: step });
+const nextStep = step === 'playing' ? 'hit' : step === 'hit' ? 'next' : 'playing';
+const ms = { playing: 1500, hit: 1600, next: 1100 };
+this.timer = setTimeout(() => this.run(nextStep), ms[step]);
+}
+renderVals() {
+const o = this.props.option || 'stamp';
+const step = this.state.step || 'playing';
+const hit = step === 'hit';
+const next = step === 'next';
+const done = step === 'playing' ? 1 : 2;
+const lit = next ? 20 : 11;
+const dark = o === 'dark';
+const sparkPos = [[-260,-90],[-300,10],[-230,90],[260,-90],[300,10],[230,90],[-40,-120],[40,120]];
+return {
+caption: step === 'playing' ? 'you missed picnic last duel' : hit ? 'right this time: comeback' : 'next prompt, back to normal',
+hasPoints: hit,
+score: step === 'playing' ? '0040' : '0060',
+stepsDone: done,
+steps: [0, 1, 2].map((i) => ({ bg: i < done ? '#FFD23F' : '#EFE6F2', cls: hit && i === 1 && o === 'sparks' ? 'chunkGlint' : '' })),
+prompt: next ? 'river' : 'picnic',
+promptColor: hit ? '#1E9C8A' : '#2A2440',
+lit: lit,
+fuse: Array.from({ length: 20 }, (_, i) => ({ bg: Math.abs(i - 9.5) < lit / 2 ? '#FFD23F' : '#EFE6F2' })),
+showSparks: hit && o === 'sparks',
+sparks: sparkPos.map((p, i) => ({ dx: p[0] + 'px', dy: p[1] + 'px', size: i % 2 ? '10px' : '14px', bg: i % 3 === 0 ? '#3DD6C0' : '#FFD23F' })),
+showStamp: hit && o === 'stamp',
+hasBand: hit,
+bandBg: dark ? '#2A2440' : '#3DD6C0',
+bandInk: dark ? '#FBF7FC' : '#2A2440',
+labelInk: dark ? '#3DD6C0' : '#2A2440',
+bandStars: dark,
+bandLabel: 'COMEBACK',
+bandWord: '해냈어요!',
+typed: next ? '' : '소풍',
+hearts: [0, 1, 2].map((i) => ({ fill: i < 2 ? '#3DD6C0' : '#D6C9DD', hl: i < 2 ? '#FFFFFF' : '#D6C9DD' }))
+};
+}
+}
+</script>
+</body>
+</html>

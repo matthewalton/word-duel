@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Duel screen, one cabinet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 64px 36px; display: flex; flex-direction: column; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button style="padding: 6px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+    <span style="margin-left: auto; display: flex; align-items: center; gap: 7px; padding: 4px 10px; font-family: 'Jua', sans-serif; font-size: 15px; color: #3DD6C0; border: 3px solid #3DD6C0;">English <svg width="10" height="10" viewBox="0 0 5 5" shape-rendering="crispEdges" role="img" aria-label="to"><path fill="currentColor" d="M0 2h4v1h-4zM2 0h1v1h-1zM3 1h1v1h-1zM4 2h1v1h-1zM3 3h1v1h-1zM2 4h1v1h-1z"></path></svg> <span lang="ko">한국어</span></span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 8px 8px 0 #000;">
+
+    <div style="background: #2A2440;">
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; padding: 14px 24px 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #3DD6C0;">YOU</span>
+          <span role="img" aria-label="You: {{heartsLeft}} of 3 hearts" style="display: flex; gap: 4px;">
+            <sc-for list="{{hearts}}" as="h" hint-placeholder-count="3">
+              <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="{{h.fill}}" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="{{h.hl}}"></rect></svg>
+            </sc-for>
+          </span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; line-height: 1;">
+          <span style="font-size: 12px; color: #D6C9DD; margin-bottom: 4px;">BEST 1210</span>
+          <span style="font-size: 32px; font-weight: 700; color: #FFD23F;">{{score}}</span>
+        </div>
+        <div style="display: flex; align-items: flex-end; justify-content: flex-end; gap: 12px;">
+          <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1; gap: 4px;">
+            <span style="font-size: 18px; font-weight: 700; letter-spacing: 1px;">STAGE 2</span>
+            <span style="font-size: 12px; color: #D6C9DD;">{{stepsLeft}} TO STAGE 3</span>
+          </div>
+          <span role="img" aria-label="{{stepsDone}} of 3 steps to stage 3" style="display: flex; align-items: flex-end; gap: 3px; height: 34px;">
+            <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+              <span style="width: 18px; height: {{s.h}}; box-sizing: border-box; background: {{s.bg}}; border: 3px solid {{s.border}};"></span>
+            </sc-for>
+            <svg width="20" height="24" viewBox="0 0 5 6" shape-rendering="crispEdges" aria-hidden="true" style="margin-left: 3px;"><path fill="#D6C9DD" d="M0 0h1v6h-1z"></path><path fill="#FF4D6D" d="M1 0h4v3h-4z"></path></svg>
+          </span>
+        </div>
+      </div>
+      <div role="meter" aria-label="Fuse" aria-valuemin="0" aria-valuemax="20" aria-valuenow="{{lit}}" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; height: 14px; padding: 0 24px 10px;">
+        <sc-for list="{{fuse}}" as="f" hint-placeholder-count="20">
+          <span style="background: {{f.bg}};"></span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #2A2440;">
+      <span style="font-size: 13px; letter-spacing: 2px; color: #6B5F7D;">TYPE IT IN KOREAN</span>
+      <span style="font-family: 'Jua', sans-serif; font-size: 96px; line-height: 1.2; color: {{promptColor}};">picnic</span>
+    </div>
+
+    <div role="status" style="display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; padding: 8px 24px; box-sizing: border-box; font-size: 17px; letter-spacing: 1px; color: #2A2440; background: {{feedBg}}; border-top: 4px solid #2A2440;">
+      <sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}">
+        <span style="color: #6B5F7D;">ENTER TO HIT</span>
+      </sc-if>
+      <sc-if value="{{isMiss}}" hint-placeholder-val="{{ true }}">
+        <span>NOT QUITE. THE ANSWER WAS</span>
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 28px; line-height: 1; color: #FBF7FC; background: #2A2440; padding: 4px 10px;">소풍</span>
+      </sc-if>
+      <sc-if value="{{isHit}}" hint-placeholder-val="{{ false }}">
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 22px;">잘했어요!</span>
+        <span>RIGHT · +20</span>
+      </sc-if>
+    </div>
+
+    <div style="display: flex; border-top: 4px solid #2A2440;">
+      <label for="cab-answer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);">Your answer</label>
+      <input id="cab-answer" readonly value="{{typed}}" placeholder="Type in Korean" lang="ko" style="flex-grow: 1; min-width: 0; padding: 14px 24px; font-family: 'Jua', sans-serif; font-size: 28px; color: #2A2440; background: #FFFFFF; border: 0; outline: none;">
+      <button style="padding: 0 44px; font-family: 'Pixelify Sans', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F; border: 0; border-left: 4px solid #2A2440; cursor: pointer;">HIT</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"moment":{"editor":"enum","options":["miss","playing","hit"],"default":"miss"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+const m = this.props.moment || 'miss';
+const heartsLeft = m === 'miss' ? 1 : 2;
+const stepsDone = m === 'hit' ? 2 : 1;
+const lit = m === 'playing' ? 13 : m === 'hit' ? 9 : 0;
+return {
+isMiss: m === 'miss', isPlaying: m === 'playing', isHit: m === 'hit',
+heartsLeft: heartsLeft, stepsDone: stepsDone, stepsLeft: 3 - stepsDone, lit: lit,
+hearts: [0, 1, 2].map((i) => ({ fill: i < heartsLeft ? '#3DD6C0' : '#4E4670', hl: i < heartsLeft ? '#FFFFFF' : '#4E4670' })),
+steps: [0, 1, 2].map((i) => ({ h: (14 + i * 10) + 'px', bg: i < stepsDone ? '#FFD23F' : 'transparent', border: i < stepsDone ? '#FFD23F' : '#6B5F7D' })),
+fuse: Array.from({ length: 20 }, (_, i) => ({ bg: i < lit ? '#FFD23F' : '#3A3358' })),
+score: m === 'hit' ? '0060' : '0040',
+promptColor: m === 'miss' ? '#E0284A' : m === 'hit' ? '#1E9C8A' : '#2A2440',
+feedBg: m === 'miss' ? '#FF4D6D' : m === 'hit' ? '#3DD6C0' : '#EFE6F2',
+typed: m === 'miss' ? '소퐁' : m === 'hit' ? '소풍' : ''
+};
+}
+}
+</script>
+</body>
+</html>
