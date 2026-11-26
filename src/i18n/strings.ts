@@ -51,6 +51,9 @@ export const strings = {
   title: {
     navHint: "← → or click to choose · Enter to play",
     navHintDifficulty: "← → choose · ↑ ↓ difficulty · Enter to play",
+    /** When the pack has content for only one minigame. */
+    navHintOne: "Enter to play",
+    navHintOneDifficulty: "↑ ↓ difficulty · Enter to play",
     play: "PLAY",
     choose: "Choose {name}",
     playName: "Play {name}",
@@ -85,6 +88,10 @@ export const strings = {
     "Get {hearts} right to fill the stage bar and reach the next stage. Each stage gives you {step} second less to answer.",
   ],
   creditsLabel: "Word data:",
+  languagePicker: {
+    buttonAria: "Language: {language}. Choose another language",
+    menuLabel: "Language",
+  },
   account: {
     signIn: "SIGN IN",
     panelTitle: "SIGN IN",

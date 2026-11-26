@@ -10,6 +10,8 @@ For the Korean pack, tiers come from the grade in the list the words were alread
 
 Verbs and adjectives come from the same list by the same rule (grade A, B, C → tier 1, 2, 3): frequent ones with a clear English equivalent, leaving out noun + 하다 verbs whose noun is already in the pack and words that need context to translate. The Korean is the dictionary form (먹다, 크다). Verbs' English answers are written with "to" ("to eat") so a base → target prompt reads as a verb; adjectives' are bare ("big"). The pack's matching settings ignore a leading "to", "be" or "to be" when checking an answer, so "eat", "to eat", "big" and "be big" all count, but keep it when grouping words by prompt, so the verb "to sleep" (자다) and the noun "sleep" (잠) stay different prompts.
 
+For the Spanish pack, no openly licensed graded list exists, so tiers come from frequency bands in an openly licensed frequency list: hermitdave's FrequencyWords (Spanish, from OpenSubtitles 2018, CC BY-SA 4.0). The list counts word forms, not lemmas, so a word's rank is the rank of its most frequent form (the infinitive or a common conjugation for a verb, the singular or plural for a noun, any gender or number for an adjective), skipping forms that are also another common word ("camino" for caminar, "cara" for caro). A rank in the top 1,000 is tier 1, 1,001–3,000 tier 2, 3,001–6,000 tier 3. Words are picked from each band for a clear English equivalent, about 250, 150 and 100 of them. Nouns are shown with their article (el gato), verbs as the infinitive (comer) with English answers written "to eat", adjectives in the masculine singular (rojo).
+
 For now only Word Strike offers a difficulty. Gap Guard has ten gap sentences, too few to split; it keeps drawing from all of them until there are enough to tier.
 
 ## Considered options
@@ -19,4 +21,6 @@ For now only Word Strike offers a difficulty. Gap Guard has ten gap sentences, t
 - **One best score per difficulty.** Rejected: weighting points by tier keeps one best meaningful, and needs no change to how bests are stored.
 - **Splitting the existing grade-A words by the list's frequency rank.** Rejected: "hard" words would still be beginner nouns.
 - **Word length as difficulty.** Rejected: a poor proxy (물 and 고양이 are both beginner words).
+- **Spanish tiers by the dictionary form's own rank.** Rejected: an infinitive is rarer than its conjugations, so everyday verbs such as gustar would land in tier 3.
+- **Spanish tiers by summing every form of a word.** Rejected: a verb has dozens of forms and a noun two, so verbs would crowd tier 1.
 - **Weighting draws toward past misses.** Out of scope here; difficulty comes from pack data only.

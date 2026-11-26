@@ -15,7 +15,7 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 
 | Path | What lives there |
 | --- | --- |
-| `src/config/game.ts` | Game name, active pack id, duel rules (hearts, fuse, scoring) |
+| `src/config/game.ts` | Game name, default pack id, duel rules (hearts, fuse, scoring) |
 | `src/i18n/strings.ts` | All interface text |
 | `src/packs/<id>/` | A language pack: `meta.json`, `words.json`, `grammar.json`, `gaps.json`, `feedback.json`, `matching.json` |
 | `src/packs/schema.ts` | Pack schemas (zod); `src/packs/types.ts` infers the types from them |
@@ -54,7 +54,7 @@ A Word Strike round asks a word item directly; a gap tests the one item named by
 1. Copy `src/packs/ko-en/` to a new folder named after the pack id and replace the data (see Pack content).
 2. Pick one smooth, rounded Google font that covers both scripts, for every word in either language (`meta.json` → `fonts.words`). Interface text stays in the pixel font.
 3. Set `dir`, `wordBreak` and `nativeName` per language in `meta.json`.
-4. Register it in `src/packs/index.ts` and point `ACTIVE_PACK_ID` at it.
+4. Register it in `src/packs/index.ts`. The language picker lists it by itself, and a minigame's card shows only if the pack has content for it.
 5. Run `pnpm check:packs`.
 
 ## Adding a minigame
@@ -89,3 +89,10 @@ The reducer takes outcomes as *whose heart broke* (`loser: "you" | "rival"`), no
 - English answers: hand-edited, using glosses from [kengdic](https://github.com/garfieldnate/kengdic) (Joe Speigle and contributors) as reference. LGPL 2.0 or later; the repo README also offers MPL 2.0, and its `datapackage.json` lists CC BY-SA 3.0.
 
 Credits are also in `src/packs/ko-en/meta.json` and shown under the game screen.
+
+## Credits (Spanish pack)
+
+- Word selection and tiers: Hermit Dave, [FrequencyWords](https://github.com/hermitdave/FrequencyWords) (Spanish, OpenSubtitles 2018): each word's most frequent form ranked in the top 1,000, 3,000 or 6,000 sets tiers 1, 2 and 3 (ADR 0009). CC BY-SA 4.0.
+- English answers: written by hand, with [English Wiktionary](https://en.wiktionary.org/) as reference. CC BY-SA 4.0.
+
+Credits are also in `src/packs/es-en/meta.json` and shown under the game screen.

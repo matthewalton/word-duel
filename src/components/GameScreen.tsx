@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
-import { ACTIVE_PACK_ID, DEFAULT_DIFFICULTY, GAME_NAME } from "@/config/game";
-import { getMinigame, MINIGAMES } from "@/game/minigames";
+import { DEFAULT_DIFFICULTY, GAME_NAME } from "@/config/game";
+import { getMinigame, MINIGAMES, minigamesFor } from "@/game/minigames";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import { useAccount } from "@/lib/useAccount";
+import { choosePack, useChosenPack } from "@/lib/packChoice";
 import { useBestScores } from "@/lib/useBestScores";
-import { getPack } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
 import { AccountCorner } from "./AccountCorner";
 import { BookIcon } from "./BookIcon";
 import styles from "./game.module.css";
 import { Hud } from "./Hud";
+import { LanguagePicker } from "./LanguagePicker";
 import { PackFonts, packVars } from "./PackFonts";
 import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
@@ -24,9 +25,10 @@ import { TitleScreen } from "./TitleScreen";
 
 type View = { name: "title" } | { name: "duel"; run: number };
 
-/** Top level: loads the pack, switches between the title screen and a duel. */
+/** Top level: loads the chosen pack, switches between the title screen and a duel. */
 export function GameScreen() {
-  const pack = getPack(ACTIVE_PACK_ID);
+  const pack = useChosenPack();
+  const minigames = minigamesFor(pack);
   const [view, setView] = useState<View>({ name: "title" });
   const [minigameId, setMinigameId] = useState<string>(MINIGAMES[0].id);
   const [direction, setDirection] = useState<Direction>("toTarget");
@@ -36,7 +38,7 @@ export function GameScreen() {
   const openSignIn = () => setSignInOpen(true);
   const best = useBestScores(
     pack.meta.id,
-    MINIGAMES.map((m) => m.id),
+    minigames.map((m) => m.id),
   );
 
   const play = (id: string) => {
@@ -64,8 +66,9 @@ export function GameScreen() {
       <PackFonts pack={pack} />
       {view.name === "title" ? (
         <TitleScreen
+          key={pack.meta.id}
           pack={pack}
-          minigames={MINIGAMES}
+          minigames={minigames}
           best={best}
           initialId={minigameId}
           direction={direction}
@@ -75,10 +78,13 @@ export function GameScreen() {
           onPlay={play}
           gameName={GAME_NAME}
           lead={
-            <Link href="/wordbook" className={t.wordbookLink}>
-              <BookIcon className={t.wordbookIcon} />
-              <span className={t.wordbookLabel}>{strings.wordbook.title}</span>
-            </Link>
+            <>
+              <Link href="/wordbook" className={t.wordbookLink}>
+                <BookIcon className={t.wordbookIcon} />
+                <span className={t.wordbookLabel}>{strings.wordbook.title}</span>
+              </Link>
+              <LanguagePicker pack={pack} onChoose={choosePack} />
+            </>
           }
           corner={<AccountCorner account={account} packId={pack.meta.id} onOpenSignIn={openSignIn} />}
           footer={credits}

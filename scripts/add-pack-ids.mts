@@ -6,7 +6,8 @@
  *
  *   pnpm packs:ids
  *
- * Word ids are `<target>.<first base answer>` (눈.eye, 눈.snow); gap ids are
+ * Word ids are `<target>.<first base answer>` (눈.eye, 눈.snow), with spaces in
+ * the target as hyphens (el-gato.cat); gap ids are
  * `gap.<key words of the translation>` (gap.cat-sleeping). A clash gets a
  * numeric suffix.
  */
@@ -26,7 +27,7 @@ const slug = (words: string[]) =>
     .replace(/^-+|-+$/g, "");
 
 const files: { name: string; kind: string; makeId: (e: Entry) => string }[] = [
-  { name: "words.json", kind: "word", makeId: (e) => `${e.target}.${slug([(e.base as string[])[0]])}` },
+  { name: "words.json", kind: "word", makeId: (e) => `${String(e.target).replace(/\s+/g, "-")}.${slug([(e.base as string[])[0]])}` },
   { name: "grammar.json", kind: "grammar", makeId: (e) => `grammar.${slug([e.base as string])}` },
   {
     name: "gaps.json",

@@ -128,6 +128,8 @@ export interface Minigame {
   usesDirection: boolean;
   /** Whether the difficulty switch applies. */
   usesDifficulty: boolean;
+  /** Whether the pack has anything for this minigame to ask; its card hides otherwise. */
+  hasContent: (pack: LanguagePack) => boolean;
   /** Deterministic sample shown on the idle screen. */
   sampleRound: (pack: LanguagePack, opts: MinigameOptions) => Round;
   /**

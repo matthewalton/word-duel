@@ -14,6 +14,12 @@ import koEnGrammar from "./ko-en/grammar.json";
 import koEnGaps from "./ko-en/gaps.json";
 import koEnFeedback from "./ko-en/feedback.json";
 import koEnMatching from "./ko-en/matching.json";
+import esEnMeta from "./es-en/meta.json";
+import esEnWords from "./es-en/words.json";
+import esEnGrammar from "./es-en/grammar.json";
+import esEnGaps from "./es-en/gaps.json";
+import esEnFeedback from "./es-en/feedback.json";
+import esEnMatching from "./es-en/matching.json";
 
 /**
  * Pack registry: game code reads pack content only through here. To add a
@@ -30,6 +36,14 @@ const PACKS: Record<string, LanguagePack> = {
     gaps: koEnGaps as GapPrompt[],
     feedback: koEnFeedback as FeedbackPhrases,
     matching: koEnMatching as MatchingSettings,
+  },
+  "es-en": {
+    meta: esEnMeta as PackMeta,
+    words: esEnWords as WordItem[],
+    grammar: esEnGrammar as GrammarItem[],
+    gaps: esEnGaps as GapPrompt[],
+    feedback: esEnFeedback as FeedbackPhrases,
+    matching: esEnMatching as MatchingSettings,
   },
 };
 
