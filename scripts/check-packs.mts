@@ -2,7 +2,8 @@
  * Validates every language pack in `src/packs/` (ADR 0007):
  *
  * - each file matches its schema (`src/packs/schema.ts`), with no unknown
- *   fields, exactly one blank per gap sentence and the answer among the options;
+ *   fields, exactly one blank per gap sentence, exactly three different options per
+ *   gap and the answer among them;
  * - ids are unique across the whole pack;
  * - every prompt's `tests` names an item (word or grammar), and a prompt that
  *   is still asked doesn't test a retired item.
