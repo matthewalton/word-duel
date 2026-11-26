@@ -1,5 +1,6 @@
 {
   "normalization": "NFC",
   "caseInsensitive": true,
-  "ignoreLeadingWords": { "en": ["a", "an", "the"] }
+  "ignoreLeadingWords": { "en": ["a", "an", "the"] },
+  "ignoreWordClassMarkers": { "en": ["to be", "to", "be"] }
 }

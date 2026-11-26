@@ -147,6 +147,14 @@ export const matchingSettingsSchema = z.strictObject({
    * e.g. { "en": ["a", "an", "the"] } so "a cat" matches "cat".
    */
   ignoreLeadingWords: z.record(z.string(), z.array(text)).optional(),
+  /**
+   * Leading words that mark a verb or adjective, keyed like
+   * `ignoreLeadingWords`, e.g. { "en": ["to be", "to", "be"] } so "eat",
+   * "to eat", "big" and "be big" all match. They are ignored when checking an
+   * answer, but kept when grouping words by prompt, so the verb "to sleep"
+   * and the noun "sleep" stay different prompts.
+   */
+  ignoreWordClassMarkers: z.record(z.string(), z.array(text)).optional(),
 });
 
 /** One pack's files, as the registry and the check script see them. */
