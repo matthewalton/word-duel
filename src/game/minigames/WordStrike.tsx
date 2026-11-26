@@ -24,15 +24,22 @@ import {
 const unique = (items: string[]) => items.filter((x, i) => items.indexOf(x) === i);
 
 /**
+ * Groups words by the prompt text they show. Word-class markers are kept, so
+ * the verb "to sleep" (자다) and the noun "sleep" (잠) are different prompts.
+ */
+const promptKey = (text: string, pack: LanguagePack, lang: string) =>
+  normalizeAnswer(text, pack.matching, lang, { keepWordClassMarkers: true });
+
+/**
  * Accepted answers are gathered across the whole pack, so homographs work:
  * 눈 accepts "eye" and "snow", and "teacher" accepts 선생님 and 선생.
  */
 function acceptedTargets(pack: LanguagePack, prompt: string): string[] {
   const lang = pack.meta.base.code;
-  const key = normalizeAnswer(prompt, pack.matching, lang);
+  const key = promptKey(prompt, pack, lang);
   return unique(
     askableWords(pack)
-      .filter((w) => w.base.some((b) => normalizeAnswer(b, pack.matching, lang) === key))
+      .filter((w) => w.base.some((b) => promptKey(b, pack, lang) === key))
       .flatMap((w) => [w.target, ...(w.targetAlt ?? [])]),
   );
 }
@@ -80,7 +87,7 @@ function promptCards(pack: LanguagePack, opts: MinigameOptions): WordItem[][] {
   const cards = new Map<string, WordItem[]>();
   for (const word of wordsUpToTier(pack, MAX_TIER[opts.difficulty])) {
     const text = opts.direction === "toTarget" ? word.base[0] : word.target;
-    const key = normalizeAnswer(text, pack.matching, lang);
+    const key = promptKey(text, pack, lang);
     cards.set(key, [...(cards.get(key) ?? []), word]);
   }
   return [...cards.values()];

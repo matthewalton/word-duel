@@ -8,6 +8,8 @@ Difficulty does not change the fuse; the fuse still shortens only by stage.
 
 For the Korean pack, tiers come from the grade in the list the words were already chosen from, 국립국어원's *한국어 학습용 어휘 목록* (2003): grade A is tier 1, B is tier 2, C is tier 3. The pack's existing 424 words are all grade A, so tier 2 and 3 words are added from grades B and C: frequent nouns with a clear English equivalent, leaving out abstract or awkward ones (-적 adjective-nouns, homographs that need context). Their English answers are drafted by hand and reviewed.
 
+Verbs and adjectives come from the same list by the same rule (grade A, B, C → tier 1, 2, 3): frequent ones with a clear English equivalent, leaving out noun + 하다 verbs whose noun is already in the pack and words that need context to translate. The Korean is the dictionary form (먹다, 크다). Verbs' English answers are written with "to" ("to eat") so a base → target prompt reads as a verb; adjectives' are bare ("big"). The pack's matching settings ignore a leading "to", "be" or "to be" when checking an answer, so "eat", "to eat", "big" and "be big" all count, but keep it when grouping words by prompt, so the verb "to sleep" (자다) and the noun "sleep" (잠) stay different prompts.
+
 For now only Word Strike offers a difficulty. Gap Guard has ten gap sentences, too few to split; it keeps drawing from all of them until there are enough to tier.
 
 ## Considered options
