@@ -12,6 +12,11 @@
 
 set -u
 
+# Never let git stop to ask for a login: a hung prompt would block Orca's
+# workspace deletion.
+export GIT_TERMINAL_PROMPT=0
+export GCM_INTERACTIVE=never
+
 REPO="matthewalton/word-duel"
 DEMOS_BRANCH="demos"
 LOCAL_ROOT="$HOME/word-duel-demos"
@@ -88,8 +93,14 @@ clear_remote() {
   local url clone remaining
   url="https://github.com/$REPO.git"
 
-  if ! git ls-remote --exit-code --heads "$url" "$DEMOS_BRANCH" >/dev/null 2>&1; then
+  # --exit-code exits 2 when the ref is missing; anything else is a failure.
+  local status=0
+  git ls-remote --exit-code --heads "$url" "$DEMOS_BRANCH" >/dev/null 2>&1 || status=$?
+  if [ "$status" -eq 2 ]; then
     say "no $DEMOS_BRANCH branch on GitHub, nothing to remove there"
+    return 0
+  elif [ "$status" -ne 0 ]; then
+    warn "could not reach GitHub, leaving the demos alone"
     return 0
   fi
 
