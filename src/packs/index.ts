@@ -79,9 +79,18 @@ export const askableWords = (pack: LanguagePack): WordItem[] => askableEntries(p
 export const wordsUpToTier = (pack: LanguagePack, maxTier: number): WordItem[] =>
   askableWords(pack).filter((w) => w.tier <= maxTier);
 
-/** An item's tier; items without one (grammar points) count as tier 1. */
+const tiers = new WeakMap<LanguagePack, Map<string, number>>();
+
+/** An item's tier, word or grammar point (ADR 0009). */
 export function itemTier(pack: LanguagePack, itemId: string): number {
-  return pack.words.find((w) => w.id === itemId)?.tier ?? 1;
+  let byId = tiers.get(pack);
+  if (!byId) {
+    byId = new Map([...pack.words, ...pack.grammar].map((i) => [i.id, i.tier]));
+    tiers.set(pack, byId);
+  }
+  const tier = byId.get(itemId);
+  if (tier === undefined) throw new Error(`Unknown item: ${itemId}`);
+  return tier;
 }
 export const askableGaps = (pack: LanguagePack): GapPrompt[] => askableEntries(pack).gaps;
 
