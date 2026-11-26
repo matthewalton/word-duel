@@ -161,6 +161,7 @@ export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
   usesDifficulty: false,
+  hasContent: (pack) => askableGaps(pack).length > 0,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
   startDraw: (pack) => {
     const next = drawOrder(askableGaps(pack));

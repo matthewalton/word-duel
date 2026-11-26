@@ -1,0 +1,67 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+import { DEFAULT_PACK_ID } from "@/config/game";
+import { getPack, listPacks } from "@/packs";
+import type { LanguagePack } from "@/packs/types";
+
+/**
+ * The language pack the player picked, remembered in this browser only, not
+ * on the account (ADR 0011). Storage can be missing or blocked, so every read
+ * and write is guarded and falls back to the default pack.
+ */
+const STORAGE_KEY = "word-duel:pack";
+
+const listeners = new Set<() => void>();
+/** The choice made this page load, kept in case storage refuses the write. */
+let chosen: string | null = null;
+
+const isPackId = (id: string | null): id is string => id != null && listPacks().some((p) => p.id === id);
+
+function readStored(): string | null {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function currentPackId(): string {
+  const id = chosen ?? readStored();
+  return isPackId(id) ? id : DEFAULT_PACK_ID;
+}
+
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  // Another tab picking a language changes this one too.
+  const onStorage = (e: StorageEvent) => {
+    if (e.key !== STORAGE_KEY) return;
+    chosen = null;
+    onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    listeners.delete(onChange);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+export function choosePack(id: string) {
+  if (!isPackId(id)) return;
+  chosen = id;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, id);
+  } catch {
+    // Private window or blocked storage: the choice lasts until the page closes.
+  }
+  for (const l of listeners) l();
+}
+
+/**
+ * The chosen pack. The server snapshot is the default pack, so the static
+ * page hydrates without a mismatch and then switches to the stored choice.
+ */
+export function useChosenPack(): LanguagePack {
+  const id = useSyncExternalStore(subscribe, currentPackId, () => DEFAULT_PACK_ID);
+  return getPack(id);
+}

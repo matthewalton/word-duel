@@ -1,8 +1,8 @@
 /** Display name of the game. Rename here. */
 export const GAME_NAME = "Word Duel";
 
-/** Active language pack id. A language picker would replace this later. */
-export const ACTIVE_PACK_ID = "ko-en";
+/** Language pack on a first visit, and whenever the remembered choice is missing or unknown (ADR 0011). */
+export const DEFAULT_PACK_ID = "ko-en";
 
 /** Solo duel rules. */
 export const RULES = {

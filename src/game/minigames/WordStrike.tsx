@@ -242,6 +242,7 @@ export const wordStrike: Minigame = {
   id: "word-strike",
   usesDirection: true,
   usesDifficulty: true,
+  hasContent: (pack) => askableWords(pack).length > 0,
   sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
   startDraw,
   Controls: WordStrikeControls,

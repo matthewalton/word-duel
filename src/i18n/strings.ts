@@ -85,6 +85,10 @@ export const strings = {
     "Get {hearts} right to fill the stage bar and reach the next stage. Each stage gives you {step} second less to answer.",
   ],
   creditsLabel: "Word data:",
+  languagePicker: {
+    buttonAria: "Language: {language}. Choose another language",
+    menuLabel: "Language",
+  },
   account: {
     signIn: "SIGN IN",
     panelTitle: "SIGN IN",
