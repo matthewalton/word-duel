@@ -59,6 +59,10 @@ GitHub Issues on `matthewalton/word-duel` (private), via the `gh` CLI. See `docs
 
 Default five roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
 
+### Orca bot
+
+The build bot's lifecycle, decision rules and build loop: `docs/agents/orca-bot.md`.
+
 ### Domain docs
 
 Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
