@@ -60,6 +60,10 @@ _Avoid_: High score
 A self-contained set of data for one target language learned from one base language: words, gap sentences, fonts, feedback phrases and matching settings.
 _Avoid_: Language, course, deck
 
+**Language picker**:
+The button in the title screen's top bar that names the current language pack's target language in its own words and opens a menu of every pack. The choice is remembered in this browser, not on the account; it shows only when there are two or more packs.
+_Avoid_: Language switcher, language menu, settings
+
 **Target language**:
 The language being learned.
 _Avoid_: Foreign language, L2
