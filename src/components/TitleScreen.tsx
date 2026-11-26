@@ -138,8 +138,8 @@ export function TitleScreen({
       </div>
 
       <div
-        className={t.cards}
-        style={{ "--cards": minigames.length } as CSSProperties}
+        className={`${t.cards} ${minigames.length === 1 ? t.cardsOne : ""}`}
+        style={{ "--cards": Math.max(2, minigames.length) } as CSSProperties}
       >
         {minigames.map((m, i) => {
           const on = i === activeIndex;
@@ -247,40 +247,50 @@ export function TitleScreen({
         })}
       </div>
 
-      <p className={t.navHint}>{active.usesDifficulty ? strings.title.navHintDifficulty : strings.title.navHint}</p>
+      <p className={t.navHint}>
+        {minigames.length > 1
+          ? active.usesDifficulty
+            ? strings.title.navHintDifficulty
+            : strings.title.navHint
+          : active.usesDifficulty
+            ? strings.title.navHintOneDifficulty
+            : strings.title.navHintOne}
+      </p>
 
-      <div className={t.carouselBar}>
-        <button
-          type="button"
-          className={t.navButton}
-          aria-label={strings.title.previous}
-          onClick={() => step(-1)}
-        >
-          &lt;
-        </button>
-        <span
-          className={t.dots}
-          aria-label={fill(strings.title.pageOf, {
-            n: activeIndex + 1,
-            total: minigames.length,
-          })}
-        >
-          {minigames.map((m, i) => (
-            <span
-              key={m.id}
-              className={`${t.dot} ${i === activeIndex ? t.dotOn : ""}`}
-            />
-          ))}
-        </span>
-        <button
-          type="button"
-          className={t.navButton}
-          aria-label={strings.title.next}
-          onClick={() => step(1)}
-        >
-          &gt;
-        </button>
-      </div>
+      {minigames.length > 1 && (
+        <div className={t.carouselBar}>
+          <button
+            type="button"
+            className={t.navButton}
+            aria-label={strings.title.previous}
+            onClick={() => step(-1)}
+          >
+            &lt;
+          </button>
+          <span
+            className={t.dots}
+            aria-label={fill(strings.title.pageOf, {
+              n: activeIndex + 1,
+              total: minigames.length,
+            })}
+          >
+            {minigames.map((m, i) => (
+              <span
+                key={m.id}
+                className={`${t.dot} ${i === activeIndex ? t.dotOn : ""}`}
+              />
+            ))}
+          </span>
+          <button
+            type="button"
+            className={t.navButton}
+            aria-label={strings.title.next}
+            onClick={() => step(1)}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
 
       {footer}
 

@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState, type KeyboardEvent, type ReactNode } from "react";
-import { ACTIVE_PACK_ID, WORDBOOK } from "@/config/game";
+import { WORDBOOK } from "@/config/game";
 import { langText, type PromptKind } from "@/game/types";
 import { fill, strings, UI_LANG } from "@/i18n/strings";
+import { useChosenPack } from "@/lib/packChoice";
 import { useAccount } from "@/lib/useAccount";
-import { getPack } from "@/packs";
 import type { Item, LanguagePack } from "@/packs/types";
 import {
   loadWordbook,
@@ -35,7 +35,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * only read when a row opens. A guest is asked to sign in.
  */
 export function WordbookScreen() {
-  const pack = getPack(ACTIVE_PACK_ID);
+  const pack = useChosenPack();
   const packId = pack.meta.id;
   const account = useAccount(packId);
   const userId = account.user?.id ?? null;
@@ -45,13 +45,13 @@ export function WordbookScreen() {
   // retry shows LOADING without resetting state inside the effect.
   const [attempt, setAttempt] = useState(0);
   const [loaded, setLoaded] = useState<{ key: string; book: Wordbook | null; failed: boolean } | null>(null);
-  const key = `${userId}:${attempt}`;
+  const key = `${userId}:${packId}:${attempt}`;
 
   useEffect(() => {
     if (!userId) return;
     let live = true;
     const done = (book: Wordbook | null, failed: boolean) => {
-      if (live) setLoaded({ key: `${userId}:${attempt}`, book, failed });
+      if (live) setLoaded({ key: `${userId}:${packId}:${attempt}`, book, failed });
     };
     loadWordbook(packId).then(
       (book) => done(book, book == null),
