@@ -779,6 +779,94 @@
    "h": 844,
    "title": "Phone · A (try it)",
    "is_interactive": true
+  },
+  "VersusTitleBar.dc.html": {
+   "x": 0,
+   "y": 32210,
+   "w": 1280,
+   "h": 800,
+   "title": "A · VERSUS in the title bar opens a room panel (try it)",
+   "is_interactive": true
+  },
+  "VersusOnCard.dc.html": {
+   "x": 1360,
+   "y": 32210,
+   "w": 1280,
+   "h": 800,
+   "title": "B · VS FRIEND beside PLAY on Word Strike's card (try it)",
+   "is_interactive": true
+  },
+  "VersusThirdCard.dc.html": {
+   "x": 2720,
+   "y": 32210,
+   "w": 1280,
+   "h": 800,
+   "title": "C · A third card, VERSUS, beside the two games (try it)",
+   "is_interactive": true
+  },
+  "VersusWaitCode.dc.html": {
+   "x": 0,
+   "y": 33610,
+   "w": 1280,
+   "h": 800,
+   "title": "1 · Waiting in the duel frame: the code fills the board (joined in Tweaks)"
+  },
+  "VersusWaitSlots.dc.html": {
+   "x": 1360,
+   "y": 33610,
+   "w": 1280,
+   "h": 800,
+   "title": "2 · Waiting: two player cards face off, code below (joined in Tweaks)"
+  },
+  "VersusDuel.dc.html": {
+   "x": 0,
+   "y": 35010,
+   "w": 1280,
+   "h": 800,
+   "title": "Versus duel: the rival's hearts come back on the right (moments in Tweaks)"
+  },
+  "VersusOverPanel.dc.html": {
+   "x": 1360,
+   "y": 35010,
+   "w": 1280,
+   "h": 800,
+   "title": "1 · Game over in the duel frame, REMATCH in the answer bar (win or lose in Tweaks)"
+  },
+  "VersusOverCards.dc.html": {
+   "x": 2720,
+   "y": 35010,
+   "w": 1280,
+   "h": 800,
+   "title": "2 · Game over: the winner's card rises, REMATCH under both (win or lose in Tweaks)"
+  },
+  "VersusTitleBarPhone.dc.html": {
+   "x": 4080,
+   "y": 32210,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · A, VS in the title bar (try it)",
+   "is_interactive": true
+  },
+  "VersusWaitSlotsPhone.dc.html": {
+   "x": 2720,
+   "y": 33610,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · 2, player cards stacked (joined in Tweaks)"
+  },
+  "VersusDuelPhone.dc.html": {
+   "x": 4080,
+   "y": 35010,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Versus duel (moments in Tweaks)"
+  },
+  "VersusOverPanelPhone.dc.html": {
+   "x": 4550,
+   "y": 35010,
+   "w": 390,
+   "h": 844,
+   "title": "Phone · Game over 1 (win or lose in Tweaks)"
   }
  },
  "order": [
@@ -880,7 +968,19 @@
   "DifficultyRow.dc.html",
   "DifficultyCycle.dc.html",
   "DifficultyTabs.dc.html",
-  "DifficultyPhone.dc.html"
+  "DifficultyPhone.dc.html",
+  "VersusTitleBar.dc.html",
+  "VersusOnCard.dc.html",
+  "VersusThirdCard.dc.html",
+  "VersusWaitCode.dc.html",
+  "VersusWaitSlots.dc.html",
+  "VersusDuel.dc.html",
+  "VersusOverPanel.dc.html",
+  "VersusOverCards.dc.html",
+  "VersusTitleBarPhone.dc.html",
+  "VersusWaitSlotsPhone.dc.html",
+  "VersusDuelPhone.dc.html",
+  "VersusOverPanelPhone.dc.html"
  ],
  "notes": {
   "rowStrike": {
@@ -1057,6 +1157,27 @@
    "kind": "title1",
    "maxW": 4470,
    "text": "Round 18: pick a difficulty for Word Strike"
+  },
+  "rowVersusIn19": {
+   "x": 0,
+   "y": 31910,
+   "text": "Round 19: versus, how you get into a room",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "rowVersusWait19": {
+   "x": 0,
+   "y": 33310,
+   "text": "Round 19: waiting for your friend",
+   "kind": "title1",
+   "maxW": 2640
+  },
+  "rowVersusDuel19": {
+   "x": 0,
+   "y": 34710,
+   "text": "Round 19: the versus duel and who won",
+   "kind": "title1",
+   "maxW": 4000
   }
  },
  "designSystems": []

@@ -33,6 +33,7 @@ The code in `src/` is the source of truth for what shipped; these boards show th
 | 16 · wordbook rows | 3 · accordion (`WordbookRowExpand`) | |
 | 17 · COMEBACK | B · band, sparks off the word, the stage chunk glints (`ComebackSparks`) | |
 | 18 · difficulty | A · three-way switch (`DifficultyRow`, `DifficultyPhone`) | |
+| 19 · versus | A · VERSUS in the title bar (`VersusTitleBar`), waiting 2 · player cards (`VersusWaitSlots`), the versus duel (`VersusDuel`), game over 1 · in the duel frame (`VersusOverPanel`), and their phone boards | REMATCH and LEAVE come with #36 |
 
 ## Keeping it current
 
@@ -264,3 +265,19 @@ This is a copy, not a sync. New mock-ups still go on the canvas first (AGENTS.md
 | [DifficultyTabs.dc.html](canvas/DifficultyTabs.dc.html) | C · Tabs on the preview, which shows a word from that level (try it) | 1280×800 |
 | [DifficultyPhone.dc.html](canvas/DifficultyPhone.dc.html) | Phone · A (try it) | 390×844 |
 
+### Round 19: versus, rooms and the race
+
+| File | What it shows | Size |
+| --- | --- | --- |
+| [VersusTitleBar.dc.html](canvas/VersusTitleBar.dc.html) | A · VERSUS in the title bar opens a room panel (try it) | 1280×800 |
+| [VersusOnCard.dc.html](canvas/VersusOnCard.dc.html) | B · VS FRIEND beside PLAY on Word Strike's card (try it) | 1280×800 |
+| [VersusThirdCard.dc.html](canvas/VersusThirdCard.dc.html) | C · A third card, VERSUS, beside the two games (try it) | 1280×800 |
+| [VersusTitleBarPhone.dc.html](canvas/VersusTitleBarPhone.dc.html) | Phone · A, VS in the title bar (try it) | 390×844 |
+| [VersusWaitCode.dc.html](canvas/VersusWaitCode.dc.html) | 1 · Waiting in the duel frame: the code fills the board (joined in Tweaks) | 1280×800 |
+| [VersusWaitSlots.dc.html](canvas/VersusWaitSlots.dc.html) | 2 · Waiting: two player cards face off, code below (joined in Tweaks) | 1280×800 |
+| [VersusWaitSlotsPhone.dc.html](canvas/VersusWaitSlotsPhone.dc.html) | Phone · 2, player cards stacked (joined in Tweaks) | 390×844 |
+| [VersusDuel.dc.html](canvas/VersusDuel.dc.html) | Versus duel: the rival's hearts come back on the right (moments in Tweaks) | 1280×800 |
+| [VersusDuelPhone.dc.html](canvas/VersusDuelPhone.dc.html) | Phone · Versus duel (moments in Tweaks) | 390×844 |
+| [VersusOverPanel.dc.html](canvas/VersusOverPanel.dc.html) | 1 · Game over in the duel frame, REMATCH in the answer bar (win or lose in Tweaks) | 1280×800 |
+| [VersusOverCards.dc.html](canvas/VersusOverCards.dc.html) | 2 · Game over: the winner's card rises, REMATCH under both (win or lose in Tweaks) | 1280×800 |
+| [VersusOverPanelPhone.dc.html](canvas/VersusOverPanelPhone.dc.html) | Phone · Game over 1 (win or lose in Tweaks) | 390×844 |

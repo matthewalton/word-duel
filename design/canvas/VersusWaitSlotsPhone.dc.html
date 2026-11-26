@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone · Versus waiting 2 · Player cards stacked</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0.3}}
+.blink{animation:blink 1s steps(1) infinite}
+@media (prefers-reduced-motion: reduce){.blink{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 12px 16px 20px; display: flex; flex-direction: column; align-items: stretch; gap: 14px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button style="min-height: 44px; padding: 4px 10px; font-family: 'Pixelify Sans', sans-serif; font-size: 14px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 15px; font-weight: 700; letter-spacing: 2px;">VERSUS</span>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+    <div style="height: 190px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #2A2440; background: #FBF7FC; border: 4px solid #3DD6C0; box-shadow: 8px 8px 0 #3DD6C0;">
+      <span style="font-size: 14px; font-weight: 700; letter-spacing: 3px; color: #1E9C8A;">PLAYER 1</span>
+      <span style="font-size: 38px; font-weight: 700; letter-spacing: 3px;">YOU</span>
+      <span role="img" aria-label="3 hearts" style="display: flex; gap: 5px;">
+        <sc-for list="{{three}}" as="h" hint-placeholder-count="3">
+          <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#3DD6C0" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="#FFFFFF"></rect></svg>
+        </sc-for>
+      </span>
+    </div>
+
+    <span style="align-self: center; font-size: 40px; font-weight: 700; letter-spacing: 4px; color: #FFD23F;">VS</span>
+
+    <sc-if value="{{isWaiting}}" hint-placeholder-val="{{ true }}">
+      <div style="height: 190px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #D6C9DD; border: 4px dashed #6B5F7D;">
+        <span style="font-size: 14px; font-weight: 700; letter-spacing: 3px; color: #8A7FA6;">PLAYER 2</span>
+        <span class="blink" style="font-size: 30px; font-weight: 700; letter-spacing: 3px;">WAITING…</span>
+        <span role="img" aria-label="Empty slot" style="display: flex; gap: 5px;">
+          <sc-for list="{{three}}" as="h" hint-placeholder-count="3">
+            <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#4E4670" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+          </sc-for>
+        </span>
+      </div>
+    </sc-if>
+    <sc-if value="{{isJoined}}" hint-placeholder-val="{{ false }}">
+      <div style="height: 190px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #2A2440; background: #FBF7FC; border: 4px solid #FF4D6D; box-shadow: 8px 8px 0 #FF4D6D;">
+        <span style="font-size: 14px; font-weight: 700; letter-spacing: 3px; color: #E0284A;">PLAYER 2</span>
+        <span style="font-size: 38px; font-weight: 700; letter-spacing: 3px;">GUEST</span>
+        <span role="img" aria-label="3 hearts" style="display: flex; gap: 5px;">
+          <sc-for list="{{three}}" as="h" hint-placeholder-count="3">
+            <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#FF4D6D" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="#FFFFFF"></rect></svg>
+          </sc-for>
+        </span>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{isWaiting}}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+      <span style="font-size: 14px; font-weight: 700; letter-spacing: 3px; color: #D6C9DD;">ROOM CODE</span>
+      <span role="img" aria-label="Room code B K T R" style="display: flex; gap: 8px;">
+        <sc-for list="{{code}}" as="c" hint-placeholder-count="4">
+          <span aria-hidden="true" style="width: 56px; height: 64px; display: flex; align-items: center; justify-content: center; font-size: 44px; font-weight: 700; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440;">{{c}}</span>
+        </sc-for>
+      </span>
+      <button style="align-self: stretch; min-height: 50px; font-family: 'Pixelify Sans', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #000; cursor: pointer;">SHARE LINK</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{isJoined}}" hint-placeholder-val="{{ false }}">
+    <span role="status" style="align-self: center; font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #FFD23F;">GET READY · 3</span>
+  </sc-if>
+
+  <span style="align-self: center; font-size: 13px; letter-spacing: 1px; color: #D6C9DD;">Word Strike · EN &gt; <span lang="ko">한</span> · NORMAL</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"moment":{"editor":"enum","options":["waiting","joined"],"default":"waiting"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const joined = (this.props.moment ?? 'waiting') === 'joined';
+return {
+isWaiting: !joined, isJoined: joined,
+three: [0, 1, 2],
+code: ['B', 'K', 'T', 'R']
+};
+}
+}
+</script>
+</body>
+</html>
