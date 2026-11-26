@@ -8,7 +8,7 @@ import { loadLastMissed } from "@/server/history";
 import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
-import type { Minigame, MinigameOptions, Round } from "./types";
+import type { Minigame, MinigameOptions, RoundDraw } from "./types";
 
 /** Number of segments in the fuse bar (5% steps). */
 export const FUSE_SEGMENTS = 20;
@@ -35,14 +35,24 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     dispatch({ type: "loadBest", best: getBest(pack.meta.id, minigame.id) });
   }, [pack.meta.id, minigame.id]);
 
-  // Items last missed in this prompt kind, for comebacks (accounts only).
-  // Play again carries the list on from the duel's rounds instead of reloading.
+  // The duel's draw order; each duel, play again included, starts a fresh one.
+  const drawRef = useRef<RoundDraw | null>(null);
+  // The missed list as loaded, until the reducer's copy is in state.
+  const loadedMissedRef = useRef<string[] | null>(null);
+
+  // Items last missed in this prompt kind, for comebacks and the draw order
+  // (accounts only). Play again carries the list on from the duel's rounds
+  // instead of reloading. If it arrives after the first round, the draw
+  // works the missed items in from then on.
   const promptKind = minigame.usesDirection ? opts.direction : "gap";
   useEffect(() => {
     let live = true;
     loadLastMissed(pack.meta.id, promptKind)
       .then((itemIds) => {
-        if (live) dispatch({ type: "loadLastMissed", itemIds });
+        if (!live) return;
+        loadedMissedRef.current = itemIds;
+        if (itemIds?.length) drawRef.current?.workIn(itemIds);
+        dispatch({ type: "loadLastMissed", itemIds });
       })
       .catch(() => {
         // Offline: no comebacks this time.
@@ -92,14 +102,19 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     return () => current.current();
   }, []);
 
-  // The duel's draw order; each duel, play again included, starts a fresh shuffle.
-  const drawRef = useRef<(() => Round) | null>(null);
+  /** A fresh draw order for a new duel, with the missed items fixed as the duel starts. */
+  const startDraw = useCallback(() => {
+    const draw = minigame.startDraw(pack, opts);
+    const missed = stateRef.current.lastMissed ?? loadedMissedRef.current;
+    if (missed?.length) draw.workIn(missed);
+    return draw;
+  }, [minigame, pack, opts]);
 
   const advance = useCallback(() => {
     setFuseLit(FUSE_SEGMENTS);
-    drawRef.current ??= minigame.startDraw(pack, opts);
-    dispatch({ type: "next", round: drawRef.current(), at: performance.now() });
-  }, [minigame, pack, opts]);
+    drawRef.current ??= startDraw();
+    dispatch({ type: "next", round: drawRef.current.next(), at: performance.now() });
+  }, [startDraw]);
 
   // Fuse timer while a prompt is live.
   useEffect(() => {
@@ -143,14 +158,14 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
         } else {
           setFuseLit(FUSE_SEGMENTS);
           duelIdRef.current = newDuelId();
-          drawRef.current = minigame.startDraw(pack, opts);
-          dispatch({ type: "start", round: drawRef.current(), at: performance.now() });
+          drawRef.current = startDraw();
+          dispatch({ type: "start", round: drawRef.current.next(), at: performance.now() });
         }
       },
       count > 0 ? RULES.countdownBeatMs : RULES.countdownGoMs,
     );
     return () => window.clearTimeout(t);
-  }, [phase, count, minigame, pack, opts]);
+  }, [phase, count, startDraw]);
 
   /** START on the ready screen, or play again after game over. */
   const start = useCallback(() => dispatch({ type: "countdown" }), []);
