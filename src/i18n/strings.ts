@@ -51,6 +51,9 @@ export const strings = {
   title: {
     navHint: "← → or click to choose · Enter to play",
     navHintDifficulty: "← → choose · ↑ ↓ difficulty · Enter to play",
+    /** When the pack has content for only one minigame. */
+    navHintOne: "Enter to play",
+    navHintOneDifficulty: "↑ ↓ difficulty · Enter to play",
     play: "PLAY",
     choose: "Choose {name}",
     playName: "Play {name}",
