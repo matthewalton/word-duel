@@ -73,7 +73,7 @@ Each run:
    - For each `in-progress` issue, look at its worker or PR.
    - For each open PR labelled `ready-for-agent`, Matt has asked for changes. Remove the label, then send his unresolved review comments to the worker that opened it (`orchestration send` reopens a closed worker). If that worker is gone, start a new one on the PR's worktree. The worker pushes the fixes to the same branch, records the demo again, and replies to each comment.
    - For each `needs-info` issue, read the newest comments. If Matt answered, apply the answer (step 4 above).
-   - For each PR of yours that has been merged or closed, remove its worktree with `orca worktree rm`.
+   - For each PR of yours that has been merged or closed, remove its worktree with `orca worktree rm --worktree <selector> --run-hooks --delete-branch`. From the command line, the deletion script (`scripts/orca-archive.sh`, which clears the branch's demos) only runs with `--run-hooks`.
 3. Pick work: the `ready-for-agent` issues with no open blocker, oldest first, unless Matt set an order on the issue or in chat. Run at most **3** issues at once. Don't run two issues at the same time if they're likely to touch the same files. Put the second one in the queue instead.
 4. For each picked issue, add the `in-progress` label and start an Orca worker in a new top-level worktree named `issue-<n>-<slug>`. Give the worker a self-contained spec: the issue body and its decisions, this playbook's "What you decide" and "Never" sections, and what counts as done (below).
 5. When a worker reports back, check its evidence. Then remove `in-progress`. The PR closes the issue when Matt merges it.
@@ -103,6 +103,8 @@ Matt reviews by watching the demo first, so it has to show the real flow working
 6. Publish them to the `demos` branch: an orphan branch that holds only recordings, one folder per PR branch. Commit `<branch>/desktop.{mp4,gif}`, `<branch>/phone.{mp4,gif}` and the contact sheets there, then push. Never merge `demos` into anything.
 7. Embed the GIFs at the top of the PR body with `![desktop](https://github.com/matthewalton/word-duel/blob/demos/<branch>/desktop.gif?raw=true)`. Link the MP4s below them.
 8. Keep a copy in `~/word-duel-demos/<branch>/` as well, and put that path in the PR.
+
+The deletion script (`scripts/orca-archive.sh`) clears a branch's demos, locally and on `demos`, when its workspace is deleted once the PR is merged or closed.
 
 The demo runs as a **guest** by default. Only sign in if the Demo flow says to, and only if Orca's browser is already signed in. Never type a password. Anything done as an account writes to the production database, so say in the PR what the demo wrote.
 - If something comes up that's on the "ask Matt" list, the worker asks you and waits. It doesn't guess.
