@@ -35,6 +35,13 @@
   justify-content: flex-start;
   gap: calc(12px * var(--s));
   min-width: 0;
+  /* A size container, so the wordbook link can drop its label when the
+     language picker leaves too little room. Em thresholds follow --s. */
+  container-type: inline-size;
+  font-size: calc(16px * var(--s));
+  /* Containment makes a stacking context: keep the picker's menu above the cards. */
+  position: relative;
+  z-index: 6;
 }
 
 /* The wordbook link: a book and its name; a phone shows the book alone. */
@@ -66,6 +73,23 @@
   width: calc(21px * var(--s));
   height: calc(18px * var(--s));
   color: var(--line);
+}
+
+@container (max-width: 17em) {
+  .wordbookLink {
+    width: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .wordbookLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* The language picker: the target language's own name, opening a menu of packs. */
@@ -280,6 +304,18 @@
   flex-grow: var(--grow-on);
   border-color: var(--accent);
   box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--accent);
+}
+
+/* A pack with content for one minigame: its card keeps the width it would
+   have beside another (--cards is at least 2), centred. */
+@media (min-width: 641px) {
+  .cardsOne {
+    justify-content: center;
+  }
+
+  .cardsOne .card {
+    flex: 0 0 var(--width-on);
+  }
 }
 
 /* Lights off: the preview stays, drawn in dim outline colours. */
