@@ -7,6 +7,8 @@ pnpm install  # also enables the repo's git hooks (.githooks/)
 pnpm dev      # http://localhost:3000
 ```
 
+CI (`.github/workflows/checks.yml`, **Checks**) runs on every pull request and push to `main`: pack check, eslint, tsc, `pnpm test` and `pnpm build`, on the Node version in `.nvmrc`.
+
 Rename the game in `src/config/game.ts` (`GAME_NAME`).
 
 Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't complete. To work on accounts, see [Accounts](#accounts).
