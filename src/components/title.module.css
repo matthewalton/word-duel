@@ -905,9 +905,11 @@
     justify-self: center;
   }
 
+  /* The column sizes to its content here, which a size container can't do. */
   .lead {
     grid-column: 1;
     grid-row: 1;
+    container-type: normal;
   }
 
   .corner {
