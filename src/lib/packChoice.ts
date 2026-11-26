@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { DEFAULT_PACK_ID } from "@/config/game";
+import { useLayoutEffect, useSyncExternalStore } from "react";
+import { DEFAULT_PACK_ID, PACK_PENDING_ATTR, PACK_STORAGE_KEY } from "@/config/game";
 import { getPack, listPacks } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
 
@@ -10,7 +10,7 @@ import type { LanguagePack } from "@/packs/types";
  * on the account (ADR 0011). Storage can be missing or blocked, so every read
  * and write is guarded and falls back to the default pack.
  */
-const STORAGE_KEY = "word-duel:pack";
+const STORAGE_KEY = PACK_STORAGE_KEY;
 
 const listeners = new Set<() => void>();
 /** The choice made this page load, kept in case storage refuses the write. */
@@ -63,5 +63,9 @@ export function choosePack(id: string) {
  */
 export function useChosenPack(): LanguagePack {
   const id = useSyncExternalStore(subscribe, currentPackId, () => DEFAULT_PACK_ID);
+  // Show the page once it shows the chosen pack (see PACK_PENDING_ATTR).
+  useLayoutEffect(() => {
+    if (id === currentPackId()) document.documentElement.removeAttribute(PACK_PENDING_ATTR);
+  }, [id]);
   return getPack(id);
 }

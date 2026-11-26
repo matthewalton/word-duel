@@ -81,3 +81,8 @@ input {
   font: inherit;
   color: inherit;
 }
+
+/* A stored language pack other than the default: the page waits for it to render (see PACK_PENDING_ATTR). */
+html[data-pack-pending] body > * {
+  visibility: hidden;
+}

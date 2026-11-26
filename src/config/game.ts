@@ -4,6 +4,16 @@ export const GAME_NAME = "Word Duel";
 /** Language pack on a first visit, and whenever the remembered choice is missing or unknown (ADR 0011). */
 export const DEFAULT_PACK_ID = "ko-en";
 
+/** Browser storage key for the language picker's choice. */
+export const PACK_STORAGE_KEY = "word-duel:pack";
+
+/**
+ * Set on <html> before the first paint while a pack other than the default is
+ * stored, so the static page (rendered with the default pack) stays hidden
+ * until the chosen pack has rendered instead of flashing the default one.
+ */
+export const PACK_PENDING_ATTR = "data-pack-pending";
+
 /** Solo duel rules. */
 export const RULES = {
   startHearts: 3,
