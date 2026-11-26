@@ -23,6 +23,8 @@ export interface Round {
   itemId: string;
   /** The prompt asked: the word's id in Word Strike, the gap's id in Gap Guard. Never the same twice in a row. */
   promptId: string;
+  /** The item's tier, 1 to 3; a right answer is worth points times this (ADR 0009). */
+  tier: number;
   promptKind: PromptKind;
   /** Short instruction for the round; Word Strike shows it as the input placeholder. */
   hint: string;
@@ -46,8 +48,12 @@ export type Direction = "toTarget" | "toBase";
 /** How a prompt asks about its item: translate either way, or fill a gap. */
 export type PromptKind = Direction | "gap";
 
+/** Which tiers a duel draws from: Easy tier 1, Normal tiers 1–2, Hard every tier (ADR 0009). */
+export type Difficulty = "easy" | "normal" | "hard";
+
 export interface MinigameOptions {
   direction: Direction;
+  difficulty: Difficulty;
 }
 
 /**
@@ -112,6 +118,8 @@ export interface Minigame {
   id: MinigameId;
   /** Whether the base/target direction toggle applies. */
   usesDirection: boolean;
+  /** Whether the difficulty switch applies. */
+  usesDifficulty: boolean;
   /** Deterministic sample shown on the idle screen. */
   sampleRound: (pack: LanguagePack, opts: MinigameOptions) => Round;
   nextRound: (pack: LanguagePack, opts: MinigameOptions, previous: Round | null) => Round;

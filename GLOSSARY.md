@@ -44,6 +44,10 @@ _Avoid_: Level, wave
 
 **Combo**:
 The number of right answers in a row; it multiplies points up to a cap.
+
+**Difficulty**:
+Easy, Normal or Hard, picked on the title screen before a Word Strike duel. It decides which tiers the duel draws items from: Easy tier 1, Normal tiers 1–2, Hard every tier. It does not change the fuse.
+_Avoid_: Level (a stage is a level of the duel), mode
 _Avoid_: Streak
 
 **Best score**:
@@ -70,6 +74,10 @@ Which way a Word Strike round is translated: base → target or target → base.
 **Item**:
 One thing the player learns in a language pack: a word, or a grammar point such as the object particle 을/를. Word history is kept per item, whichever minigame asked it.
 _Avoid_: Card, entry, vocab
+
+**Tier**:
+How hard an item is, from 1 (easiest) to 3, set in the language pack. A right answer is worth more points the higher its item's tier.
+_Avoid_: Grade (that is the source list's word for it), level
 
 **Prompt**:
 One way of asking about an item, which the player must answer: a word to translate or a gap sentence. Each prompt tests exactly one item.
@@ -114,7 +122,7 @@ _Avoid_: Mode, game type
 The minigame in which the player types the translation of a word.
 
 **Title screen**:
-The screen before a duel where the player chooses a minigame, its direction, and plays.
+The screen before a duel where the player chooses a minigame, its direction and difficulty, and plays.
 _Avoid_: Menu, home, start screen
 
 **Active card**:

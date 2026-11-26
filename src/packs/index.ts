@@ -60,6 +60,15 @@ function askableEntries(pack: LanguagePack) {
 }
 
 export const askableWords = (pack: LanguagePack): WordItem[] => askableEntries(pack).words;
+
+/** Askable words whose tier is at most `maxTier`. */
+export const wordsUpToTier = (pack: LanguagePack, maxTier: number): WordItem[] =>
+  askableWords(pack).filter((w) => w.tier <= maxTier);
+
+/** An item's tier; items without one (grammar points) count as tier 1. */
+export function itemTier(pack: LanguagePack, itemId: string): number {
+  return pack.words.find((w) => w.id === itemId)?.tier ?? 1;
+}
 export const askableGaps = (pack: LanguagePack): GapPrompt[] => askableEntries(pack).gaps;
 
 /** Google Fonts stylesheet URL for the pack's font, or null if it is local. */

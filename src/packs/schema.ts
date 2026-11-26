@@ -33,6 +33,8 @@ export const wordItemSchema = z.strictObject({
   targetAlt: z.array(text).min(1).optional(),
   /** Accepted base-language answers; the first is the main one. */
   base: z.array(text).min(1),
+  /** How hard the word is, 1 (easiest) to 3 (ADR 0009). Difficulty picks which tiers a duel draws. */
+  tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
 });
 
 /** A grammar point that isn't a word, e.g. the object particle 을/를. */

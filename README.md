@@ -37,7 +37,7 @@ A pack's content is **items** (what the player learns) and **prompts** (one way 
 
 | File | Kind | Payload |
 | --- | --- | --- |
-| `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first) |
+| `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first), `tier` (1 easiest to 3; ADR 0009) |
 | `grammar.json` | item, `grammar` | `target` (e.g. `을/를`), `base` (short description) |
 | `gaps.json` | prompt, `gap` | `tests` (an item id), `sentence` with one `___`, `translation`, `answer`, `options` |
 
@@ -59,7 +59,7 @@ A Word Strike round asks a word item directly; a gap tests the one item named by
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId` and `promptKind`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Accounts
 
@@ -85,7 +85,7 @@ The reducer takes outcomes as *whose heart broke* (`loser: "you" | "rival"`), no
 
 ## Credits (Korean pack)
 
-- Word selection: 국립국어원 (National Institute of Korean Language), *한국어 학습용 어휘 목록* (2003), level-1 nouns. KOGL Type 1 (attribution). <https://www.korean.go.kr/front_eng/down/down_02V.do?etc_seq=70>
+- Word selection: 국립국어원 (National Institute of Korean Language), *한국어 학습용 어휘 목록* (2003), nouns from grades A, B and C, which set their tiers 1, 2 and 3. KOGL Type 1 (attribution). <https://www.korean.go.kr/front_eng/down/down_02V.do?etc_seq=70>
 - English answers: hand-edited, using glosses from [kengdic](https://github.com/garfieldnate/kengdic) (Joe Speigle and contributors) as reference. LGPL 2.0 or later; the repo README also offers MPL 2.0, and its `datapackage.json` lists CC BY-SA 3.0.
 
 Credits are also in `src/packs/ko-en/meta.json` and shown under the game screen.

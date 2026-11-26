@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
-import { ACTIVE_PACK_ID, GAME_NAME } from "@/config/game";
+import { ACTIVE_PACK_ID, DEFAULT_DIFFICULTY, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES } from "@/game/minigames";
-import type { Direction, Minigame, MinigameOptions } from "@/game/types";
+import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import { useAccount } from "@/lib/useAccount";
@@ -30,6 +30,7 @@ export function GameScreen() {
   const [view, setView] = useState<View>({ name: "title" });
   const [minigameId, setMinigameId] = useState<string>(MINIGAMES[0].id);
   const [direction, setDirection] = useState<Direction>("toTarget");
+  const [difficulty, setDifficulty] = useState<Difficulty>(DEFAULT_DIFFICULTY);
   const account = useAccount(pack.meta.id);
   const [signInOpen, setSignInOpen] = useState(false);
   const openSignIn = () => setSignInOpen(true);
@@ -69,6 +70,8 @@ export function GameScreen() {
           initialId={minigameId}
           direction={direction}
           onDirection={setDirection}
+          difficulty={difficulty}
+          onDifficulty={setDifficulty}
           onPlay={play}
           gameName={GAME_NAME}
           lead={
@@ -86,6 +89,7 @@ export function GameScreen() {
           pack={pack}
           minigame={getMinigame(minigameId)}
           direction={direction}
+          difficulty={difficulty}
           onMenu={() => setView({ name: "title" })}
           gameOverExtra={
             account.pending ? null : account.user ? (
@@ -116,16 +120,18 @@ function Duel({
   pack,
   minigame,
   direction,
+  difficulty,
   onMenu,
   gameOverExtra,
 }: {
   pack: LanguagePack;
   minigame: Minigame;
   direction: Direction;
+  difficulty: Difficulty;
   onMenu: () => void;
   gameOverExtra?: ReactNode;
 }) {
-  const opts: MinigameOptions = useMemo(() => ({ direction }), [direction]);
+  const opts: MinigameOptions = useMemo(() => ({ direction, difficulty }), [direction, difficulty]);
   const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts);
   const lost = state.outcome != null && state.outcome.reason !== "correct";
   const Controls = minigame.Controls;

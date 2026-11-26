@@ -137,7 +137,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       let points = 0;
       if (action.loser === "rival") {
         combo += 1;
-        points = RULES.pointsPerHit * Math.min(combo, RULES.comboCap);
+        points = RULES.pointsPerHit * state.round.tier * Math.min(combo, RULES.comboCap);
         score += points;
       } else {
         combo = 0;
