@@ -5,6 +5,7 @@ import styles from "@/components/game.module.css";
 import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
+import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { pickEntry, shuffle } from "@/lib/random";
 import { askableGaps, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
@@ -33,6 +34,7 @@ const NO_OPTIONS: string[] = [];
 
 function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: ControlsProps) {
   const startRef = useRef<HTMLButtonElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const options = round.options ?? NO_OPTIONS;
   const live = phase === "playing";
   // START on the ready screen lives on the board; this one is play again.
@@ -43,6 +45,15 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
   useEffect(() => {
     if (phase === "gameOver") startRef.current?.focus();
   }, [phase]);
+
+  // One shared size for the row, so a short option doesn't look oddly large
+  // next to a long one that had to shrink.
+  useFitText(
+    () => buttonRefs.current.filter((el): el is HTMLButtonElement => el != null),
+    () => buttonRefs.current[0]?.clientWidth ?? 0,
+    [round.promptId],
+    FIT_STEPS_CHOICE,
+  );
 
   // Number keys 1–9 pick an option.
   useEffect(() => {
@@ -68,6 +79,9 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
         {options.map((option, i) => (
           <button
             key={`${round.promptId}-${option}`}
+            ref={(el) => {
+              buttonRefs.current[i] = el;
+            }}
             type="button"
             className={`${styles.choiceButton} ${stateClass(option)}`}
             lang={round.answerLang.code}

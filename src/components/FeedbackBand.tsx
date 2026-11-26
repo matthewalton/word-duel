@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import type { DuelState } from "@/game/duel";
 import { fill, strings } from "@/i18n/strings";
+import { FIT_STEPS_BAND_WORD, useFitText } from "@/lib/useFitText";
 import type { LanguagePack } from "@/packs/types";
 import styles from "./game.module.css";
 import { LangSpan } from "./LangSpan";
@@ -14,6 +15,24 @@ import { LangSpan } from "./LangSpan";
 export function FeedbackBand({ state, pack }: { state: DuelState; pack: LanguagePack }) {
   const { outcome, phase, round, fxKey, stage } = state;
   const target = pack.meta.target;
+
+  const bandRef = useRef<HTMLDivElement | null>(null);
+  const labelRef = useRef<HTMLSpanElement | null>(null);
+  const wordRef = useRef<HTMLSpanElement | null>(null);
+  useFitText(
+    () => (wordRef.current ? [wordRef.current] : []),
+    () => {
+      const bandEl = bandRef.current;
+      const labelEl = labelRef.current;
+      if (!bandEl || !labelEl) return 0;
+      const cs = getComputedStyle(bandEl);
+      const paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+      const gap = parseFloat(cs.columnGap) || 0;
+      return bandEl.clientWidth - paddingX - labelEl.getBoundingClientRect().width - gap;
+    },
+    [phase, fxKey],
+    FIT_STEPS_BAND_WORD,
+  );
 
   let band: { tone: string; label: string; word: ReactNode } | null = null;
   if (phase === "resolving" && outcome) {
@@ -60,9 +79,13 @@ export function FeedbackBand({ state, pack }: { state: DuelState; pack: Language
   return (
     <div className={styles.bandSlot} role="status" aria-live="polite">
       {band && (
-        <div key={`${phase}-${fxKey}`} className={`${styles.band} ${band.tone}`}>
-          <span className={styles.bandLabel}>{band.label}</span>
-          {band.word && <span className={styles.bandWord}>{band.word}</span>}
+        <div ref={bandRef} key={`${phase}-${fxKey}`} className={`${styles.band} ${band.tone}`}>
+          <span ref={labelRef} className={styles.bandLabel}>{band.label}</span>
+          {band.word && (
+            <span ref={wordRef} className={styles.bandWord}>
+              {band.word}
+            </span>
+          )}
         </div>
       )}
     </div>

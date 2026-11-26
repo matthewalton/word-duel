@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import type { DuelState } from "@/game/duel";
 import { strings } from "@/i18n/strings";
+import { FIT_STEPS_PROMPT, useFitText } from "@/lib/useFitText";
 import type { LanguagePack } from "@/packs/types";
 import { FeedbackBand } from "./FeedbackBand";
 import { FuseBar } from "./FuseBar";
@@ -33,6 +34,17 @@ export function PromptBoard({
   const comeback = phase === "resolving" && outcome?.comeback;
   const fuseActive = phase === "playing" || phase === "resolving";
 
+  const promptRef = useRef<HTMLParagraphElement | null>(null);
+  useFitText(
+    () => (promptRef.current ? [promptRef.current] : []),
+    () => promptRef.current?.clientWidth ?? 0,
+    // The <p> below remounts (fresh node, needing a fresh measurement) on
+    // every fxKey change too, not just a new prompt: resolving a gap fills
+    // the blank with the real answer, which can be wider than the gap was.
+    [round.promptId, fxKey],
+    FIT_STEPS_PROMPT,
+  );
+
   return (
     <div className={styles.promptArea}>
       {phase === "idle" && <ReadyStart onStart={onStart} />}
@@ -48,6 +60,7 @@ export function PromptBoard({
       {!waiting && (
         <>
           <p
+            ref={promptRef}
             key={`${round.promptId}-${fxKey}`}
             className={`${styles.prompt} ${round.gap ? styles.promptSentence : ""} ${fxClass} ${comeback ? styles.promptComeback : ""}`}
             lang={round.prompt.lang}
