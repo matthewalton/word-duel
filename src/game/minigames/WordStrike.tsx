@@ -18,6 +18,7 @@ import {
   type Minigame,
   type MinigameOptions,
   type Round,
+  type RoundDraw,
   type ShowcaseProps,
 } from "../types";
 
@@ -93,12 +94,21 @@ function promptCards(pack: LanguagePack, opts: MinigameOptions): WordItem[][] {
   return [...cards.values()];
 }
 
-/** Deals rounds from a shuffled draw order of prompt cards; each round records against one of its card's words. */
-function startDraw(pack: LanguagePack, opts: MinigameOptions): () => Round {
-  const next = drawOrder(promptCards(pack, opts));
-  return () => {
-    const card = next();
-    return buildRound(pack, opts, card[Math.floor(Math.random() * card.length)]);
+/**
+ * Deals rounds from a shuffled draw order of prompt cards; each round records
+ * against one of its card's words. A card counts as missed if any of its words is.
+ */
+function startDraw(pack: LanguagePack, opts: MinigameOptions): RoundDraw {
+  const draw = drawOrder(promptCards(pack, opts));
+  return {
+    next: () => {
+      const card = draw.next();
+      return buildRound(pack, opts, card[Math.floor(Math.random() * card.length)]);
+    },
+    workIn: (missedItemIds) => {
+      const missed = new Set(missedItemIds);
+      draw.workIn((card) => card.some((word) => missed.has(word.id)));
+    },
   };
 }
 

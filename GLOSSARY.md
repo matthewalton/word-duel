@@ -102,6 +102,10 @@ The feedback band shown instead of CORRECT on the right answer that clears a sta
 A right answer, by an account, to an item whose last outcome in this prompt kind was a miss before the duel began. It shows the comeback band in place of CORRECT (the stage band still wins), sparks burst off the prompt and the breaking stage chunk glints. Each item makes one comeback per duel; guests never see one.
 _Avoid_: Redemption, revenge, fixed
 
+**Missed item**:
+An item whose last outcome in a prompt kind, for an account, was a miss (wrong or too slow). Comebacks use it, and every duel's draw order works missed items in early, about one round in three, until they have all been dealt (ADR 0010).
+_Avoid_: Weak word, mistake
+
 **Comeback band**:
 The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
 
