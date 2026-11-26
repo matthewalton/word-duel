@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Last heart breaks, answer held</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:#8A7FA6}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 64px 36px; display: flex; flex-direction: column; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button style="padding: 6px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 8px 8px 0 #000; color: #2A2440;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 24px 14px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #1E9C8A;">YOU</span>
+        <span role="img" aria-label="You: 0 of 3 hearts" style="display: flex; gap: 4px;">
+          <sc-for list="{{hearts}}" as="h" hint-placeholder-count="3">
+            <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#D6C9DD" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+          </sc-for>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+        <span style="font-size: 12px; color: #6B5F7D; margin-bottom: 4px;">BEST 1210</span>
+        <span style="font-size: 32px; font-weight: 700;">0240</span>
+      </div>
+    </div>
+
+    <div role="img" aria-label="1 of 3 right answers to the next stage" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: 6px;">
+      <span style="background: #FFD23F;"></span>
+      <span style="background: #EFE6F2;"></span>
+      <span style="background: #EFE6F2;"></span>
+    </div>
+
+    <div style="position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;">
+      <span style="font-family: 'Jua', sans-serif; font-size: 104px; line-height: 1.1; color: #E0284A;">picnic</span>
+      <div role="meter" aria-label="Fuse" aria-valuemin="0" aria-valuemax="20" aria-valuenow="6" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; width: 440px; height: 12px;">
+        <sc-for list="{{fuse}}" as="f" hint-placeholder-count="20">
+          <span style="background: {{f.bg}};"></span>
+        </sc-for>
+      </div>
+
+      <div role="status" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 64px; padding: 8px 24px; box-sizing: border-box; color: #2A2440; background: #FF4D6D; border-top: 4px solid #2A2440;">
+        <span style="font-size: 20px; font-weight: 700; letter-spacing: 2px;">THE ANSWER WAS</span>
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 32px; line-height: 1;">소풍</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; padding: 16px 24px 20px; background: #EFE6F2; border-top: 4px solid #2A2440;">
+      <label for="EndLastMiss-answer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);">Your answer</label>
+      <input id="EndLastMiss-answer" readonly disabled value="소퐁" lang="ko" style="flex-grow: 1; min-width: 0; padding: 12px 18px; font-family: 'Jua', sans-serif; font-size: 28px; color: #2A2440; background: #FFFFFF; border: 4px solid #2A2440; outline: none;">
+      <button disabled style="min-width: 150px; padding: 0 28px; font-family: 'Pixelify Sans', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440;">GO</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+const lit = 6;
+return {
+hearts: [0, 1, 2],
+fuse: Array.from({ length: 20 }, (_, i) => ({ bg: Math.abs(i - 9.5) < lit / 2 ? '#FFD23F' : '#EFE6F2' }))
+};
+}
+}
+</script>
+</body>
+</html>

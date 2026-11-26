@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone title screen with optional sign-in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; padding: 16px 20px 24px; display: flex; flex-direction: column; align-items: center; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC; overflow: hidden;">
+
+  <div style="align-self: stretch; display: flex; justify-content: flex-end; min-height: 44px; align-items: center;">
+    <sc-if value="{{isGuest}}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{openPanel}}" style="min-height: 44px; padding: 4px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 15px; letter-spacing: 1px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">SIGN IN</button>
+    </sc-if>
+    <sc-if value="{{isSignedIn}}" hint-placeholder-val="{{ false }}">
+      <button aria-label="Account: Sam" onClick="{{signOut}}" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; font-family: 'Pixelify Sans', sans-serif; font-size: 15px; letter-spacing: 1px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">
+        <span aria-hidden="true" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: #2A2440; background: #3DD6C0;">S</span>
+        <span>SAM</span>
+      </button>
+    </sc-if>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <svg width="21" height="18" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#3DD6C0" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+    <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 4px;">WORD DUEL</h1>
+    <svg width="21" height="18" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#FF4D6D" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+  </div>
+
+  <section aria-label="Word Strike" style="flex-grow: 1; align-self: stretch; min-height: 0; display: flex; flex-direction: column; gap: 14px; padding: 16px; color: #2A2440; background: #FBF7FC; border: 4px solid #FFD23F; box-shadow: 8px 8px 0 #FFD23F;">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #EFE6F2;">
+      <span style="font-family: 'Jua', sans-serif; font-size: 64px; line-height: 1;">water</span>
+      <span style="display: flex; align-items: center; width: 76%; box-sizing: border-box; padding: 6px 12px; background: #FBF7FC; border: 4px solid #3DD6C0;">
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 26px;">물</span>
+        <span style="width: 4px; height: 26px; margin-left: 4px; background: #2A2440;"></span>
+      </span>
+    </div>
+    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+      <span style="font-size: 24px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+      <span style="font-size: 13px; color: #6B5F7D;">BEST {{best}}</span>
+    </div>
+    <span style="font-family: 'Jua', sans-serif; font-size: 16px; line-height: 1.4; color: #4A4060;">See a word, type its translation, hit Enter before time runs out.</span>
+    <span style="align-self: stretch; padding: 10px; text-align: center; font-size: 20px; font-weight: 700; letter-spacing: 2px; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #000;">PLAY</span>
+  </section>
+
+  <div style="display: flex; align-items: center; gap: 18px;">
+    <span style="width: 44px; height: 44px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 4px solid #D6C9DD;">&lt;</span>
+    <span style="display: flex; gap: 8px;"><span style="width: 12px; height: 12px; background: #FFD23F;"></span><span style="width: 12px; height: 12px; background: #6B5F7D;"></span></span>
+    <span style="width: 44px; height: 44px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 4px solid #D6C9DD;">&gt;</span>
+  </div>
+
+  <sc-if value="{{panelOpen}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; background: rgba(20, 16, 34, 0.78);">
+      <div role="dialog" aria-modal="true" aria-labelledby="SignInPhone-title" style="position: relative; display: flex; flex-direction: column; gap: 14px; padding: 24px 20px 28px; color: #2A2440; background: #FBF7FC; border-top: 4px solid #FFD23F;">
+        <button aria-label="Close" onClick="{{closePanel}}" style="position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; font-family: 'Pixelify Sans', sans-serif; font-size: 20px; font-weight: 700; color: #2A2440; background: transparent; border: 3px solid #2A2440; cursor: pointer;">X</button>
+        <h2 id="SignInPhone-title" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 3px;">SIGN IN</h2>
+        <p style="margin: 0; padding-right: 48px; font-family: 'Jua', sans-serif; font-size: 16px; line-height: 1.45; color: #4A4060;">Keep your best scores and the words you miss on any device. You don't need an account to play.</p>
+        <sc-for list="{{providers}}" as="p" hint-placeholder-count="3">
+          <button onClick="{{signIn}}" style="display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 14px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; letter-spacing: 1px; text-align: left; color: #2A2440; background: #FFFFFF; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440; cursor: pointer;">
+            <span aria-hidden="true" style="width: 26px; height: 26px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #6B5F7D; border: 2px dashed #8A7FA6;">{{p.mark}}</span>
+            <span>CONTINUE WITH {{p.name}}</span>
+          </button>
+        </sc-for>
+        <p style="margin: 0; font-family: 'Jua', sans-serif; font-size: 14px; color: #6B5F7D;">Your best scores from this browser come with you.</p>
+        <button onClick="{{closePanel}}" style="align-self: center; min-height: 44px; padding: 4px 8px; font-family: 'Pixelify Sans', sans-serif; font-size: 15px; letter-spacing: 1px; color: #6B5F7D; background: transparent; border: 0; text-decoration: underline; text-underline-offset: 4px; cursor: pointer;">KEEP PLAYING AS A GUEST</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startAt":{"editor":"enum","options":["guest","panel","signedIn"],"default":"guest"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const view = this.state.view || this.props.startAt || 'guest';
+const signedIn = view === 'signedIn';
+return {
+isGuest: !signedIn,
+isSignedIn: signedIn,
+panelOpen: view === 'panel',
+best: signedIn ? '1210' : '0110',
+providers: [
+{ name: 'GOOGLE', mark: 'G' },
+{ name: 'GITHUB', mark: 'GH' },
+{ name: 'DISCORD', mark: 'D' }
+],
+openPanel: () => this.setState({ view: 'panel' }),
+closePanel: () => this.setState({ view: 'guest' }),
+signIn: () => this.setState({ view: 'signedIn' }),
+signOut: () => this.setState({ view: 'guest' })
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone start screen carousel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;family=Gowun+Dodum&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 28px 18px 24px; display: flex; flex-direction: column; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', 'Gowun Dodum', sans-serif; color: #FBF7FC;">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+    <svg width="21" height="18" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#3DD6C0" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="#fff"></rect></svg>
+    <span style="font-size: 24px; font-weight: 700; letter-spacing: 4px;">WORD DUEL</span>
+    <svg width="21" height="18" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#FF4D6D" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="#fff"></rect></svg>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; padding: 16px; color: #2A2440; background: #FBF7FC; border: 4px solid #FFD23F; box-shadow: 6px 6px 0 #FFD23F;">
+    <sc-if value="{{isWs}}" hint-placeholder-val="{{ true }}">
+      <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 12px; background: #EFE6F2;">
+        <span style="font-family: 'Jua', sans-serif; font-size: 64px; line-height: 1;">water</span>
+        <span style="display: flex; align-items: center; width: 78%; padding: 6px 12px; background: #FBF7FC; border: 4px solid #3DD6C0;">
+          <span lang="ko" style="font-family: 'Gowun Dodum', sans-serif; font-size: 28px;">물</span>
+          <span style="width: 3px; height: 28px; margin-left: 3px; background: #2A2440;"></span>
+        </span>
+        <span style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; width: 78%; height: 12px; padding: 2px; background: #2A2440;">
+          <span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span style="background: #FFD23F;"></span><span></span><span></span><span></span><span></span><span></span>
+        </span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <span style="font-size: 26px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+        <span style="font-size: 12px; color: #6B5F7D;">BEST 0110</span>
+      </div>
+      <span style="font-family: 'Gowun Dodum', sans-serif; font-size: 16px; line-height: 1.4; color: #4A4060;">See a word, type its translation, hit Enter before the fuse runs out.</span>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 12px; letter-spacing: 2px; color: #6B5F7D;">LANGUAGE</span>
+        <span style="display: flex; border: 3px solid #2A2440;">
+          <button onClick="{{toTarget}}" style="padding: 4px 9px; font: inherit; font-size: 14px; color: #2A2440; background: {{dirA}}; border: 0;">EN &gt; <span lang="ko">한</span></button>
+          <button onClick="{{toBase}}" style="padding: 4px 9px; font: inherit; font-size: 14px; color: #2A2440; background: {{dirB}}; border: 0;"><span lang="ko">한</span> &gt; EN</button>
+        </span>
+      </div>
+    </sc-if>
+    <sc-if value="{{isGg}}" hint-placeholder-val="{{ false }}">
+      <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 12px; background: #EFE6F2;">
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 46px; line-height: 1.1;">학교<span style="display: inline-block; min-width: 1.3em; color: #1E9C8A; border-bottom: 5px solid #1E9C8A;">에</span> 가요.</span>
+        <span style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 92%;">
+          <span lang="ko" style="padding: 6px 0; text-align: center; font-family: 'Gowun Dodum', sans-serif; font-size: 20px; background: #3DD6C0; border: 3px solid #2A2440;">에</span>
+          <span lang="ko" style="padding: 6px 0; text-align: center; font-family: 'Gowun Dodum', sans-serif; font-size: 20px; background: #FBF7FC; border: 3px solid #2A2440;">에서</span>
+          <span lang="ko" style="padding: 6px 0; text-align: center; font-family: 'Gowun Dodum', sans-serif; font-size: 20px; background: #FBF7FC; border: 3px solid #2A2440;">를</span>
+        </span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <span style="font-size: 26px; font-weight: 700; letter-spacing: 2px;">GAP GUARD</span>
+        <span style="font-size: 12px; color: #6B5F7D;">BEST 0000</span>
+      </div>
+      <span style="font-family: 'Gowun Dodum', sans-serif; font-size: 16px; line-height: 1.4; color: #4A4060;">Fill the blank in a Korean sentence. Three choices, one is right.</span>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 12px; letter-spacing: 2px; color: #6B5F7D;">LANGUAGE</span>
+        <span style="padding: 4px 9px; font-size: 14px; border: 3px solid #2A2440;"><span lang="ko">한국어</span> · Korean</span>
+      </div>
+    </sc-if>
+    <button style="padding: 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 3px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #000;">PLAY</button>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <button aria-label="Previous minigame" onClick="{{prev}}" style="width: 44px; height: 44px; font: inherit; font-size: 20px; color: #FBF7FC; background: transparent; border: 3px solid #D6C9DD;">&lt;</button>
+    <span style="flex-grow: 1; display: flex; justify-content: center; gap: 8px;">
+      <span style="width: 12px; height: 12px; background: {{dot1}};"></span>
+      <span style="width: 12px; height: 12px; background: {{dot2}};"></span>
+    </span>
+    <button aria-label="How this minigame works" style="width: 44px; height: 44px; font: inherit; font-size: 20px; font-weight: 700; color: #FBF7FC; background: transparent; border: 3px solid #D6C9DD;">?</button>
+    <button aria-label="Next minigame" onClick="{{next}}" style="width: 44px; height: 44px; font: inherit; font-size: 20px; color: #FBF7FC; background: transparent; border: 3px solid #D6C9DD;">&gt;</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const i = this.state.i || 0;
+const dir = this.state.dir || 'toTarget';
+const flip = () => this.setState({ i: i === 0 ? 1 : 0 });
+return {
+isWs: i === 0,
+isGg: i === 1,
+dot1: i === 0 ? '#FFD23F' : '#6B5F7D',
+dot2: i === 1 ? '#FFD23F' : '#6B5F7D',
+prev: flip,
+next: flip,
+dirA: dir === 'toTarget' ? '#3DD6C0' : 'transparent',
+dirB: dir === 'toBase' ? '#3DD6C0' : 'transparent',
+toTarget: () => this.setState({ dir: 'toTarget' }),
+toBase: () => this.setState({ dir: 'toBase' })
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Game over with review on a phone, Word Strike</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:#8A7FA6}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 12px 10px 16px; display: flex; flex-direction: column; gap: 10px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button style="min-height: 44px; padding: 4px 10px; font-family: 'Pixelify Sans', sans-serif; font-size: 14px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 15px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 6px 6px 0 #000; color: #2A2440;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 10px 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 15px; font-weight: 700; letter-spacing: 1px; color: #1E9C8A;">YOU</span>
+        <span role="img" aria-label="You: 0 of 3 hearts" style="display: flex; gap: 4px;">
+          <sc-for list="{{hearts}}" as="h" hint-placeholder-count="3">
+            <svg width="28" height="24" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#D6C9DD" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+          </sc-for>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+        <span style="font-size: 12px; color: #6B5F7D; margin-bottom: 4px;">BEST {{best}}</span>
+        <span style="font-size: 26px; font-weight: 700;">0240</span>
+      </div>
+    </div>
+
+    <div role="img" aria-label="1 of 3 right answers to the next stage" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: 6px;">
+      <span style="background: #FFD23F;"></span>
+      <span style="background: #EFE6F2;"></span>
+      <span style="background: #EFE6F2;"></span>
+    </div>
+
+    <div role="status" style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 20px 14px; background: #2A2440; color: #FBF7FC;">
+
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+        <span style="font-size: 40px; font-weight: 700; letter-spacing: 3px; line-height: 1;">GAME OVER</span>
+        <span style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">SCORE 0240</span>
+          <sc-if value="{{newBest}}" hint-placeholder-val="{{ true }}">
+            <span style="padding: 2px 8px; font-size: 16px; color: #2A2440; background: #FFD23F;">NEW BEST!</span>
+          </sc-if>
+        </span>
+        <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 22px; color: #D6C9DD;">다시 해 봐요!</span>
+      </div>
+
+      <section aria-labelledby="EndPhoneOver-review" style="display: flex; flex-direction: column; gap: 10px;">
+        <h2 id="EndPhoneOver-review" style="margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 2px; color: #D6C9DD;">TO REVIEW</h2>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px;">
+          <sc-for list="{{misses}}" as="m" hint-placeholder-count="3">
+            <li style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; min-height: 56px; padding: 8px 12px; box-sizing: border-box; background: #FBF7FC; color: #2A2440; box-shadow: 4px 4px 0 #000;">
+              <span lang="en" style="font-family: 'Jua', sans-serif; font-size: 22px; line-height: 1;">{{m.prompt}}</span>
+              <span aria-hidden="true" style="font-size: 16px; color: #6B5F7D;">→</span>
+              <span lang="ko" style="padding: 3px 8px; font-family: 'Jua', sans-serif; font-size: 24px; line-height: 1.1; background: #3DD6C0;">{{m.answer}}</span>
+              <span style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+                <sc-if value="{{m.timedOut}}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 12px; letter-spacing: 1px; color: #6B5F7D;">TOO SLOW</span>
+                </sc-if>
+                <sc-if value="{{m.hasGuess}}" hint-placeholder-val="{{ true }}">
+                  <span class="sr">You answered</span>
+                  <del lang="ko" style="font-family: 'Jua', sans-serif; font-size: 18px; color: #B8203F; text-decoration-thickness: 2px;">{{m.guess}}</del>
+                </sc-if>
+              </span>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+    </div>
+
+    <div style="display: flex; gap: 10px; padding: 12px; background: #EFE6F2; border-top: 4px solid #2A2440;">
+      <label for="EndPhoneOver-answer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);">Your answer</label>
+      <input id="EndPhoneOver-answer" readonly disabled placeholder="Type it in Korean" lang="ko" style="flex-grow: 1; min-width: 0; padding: 10px 12px; font-family: 'Jua', sans-serif; font-size: 22px; color: #2A2440; background: #FFFFFF; border: 4px solid #2A2440; outline: none; opacity: 0.5;">
+      <button style="min-width: 96px; padding: 0 14px; font-family: 'Pixelify Sans', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440; cursor: pointer;">START</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"newBest":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const newBest = this.props.newBest ?? false;
+return {
+newBest: newBest,
+best: newBest ? '0240' : '1210',
+hearts: [0, 1, 2],
+misses: [
+{ prompt: 'cat', answer: '고양이', timedOut: true, hasGuess: false, guess: '' },
+{ prompt: 'love', answer: '사랑', timedOut: false, hasGuess: true, guess: '사람' },
+{ prompt: 'picnic', answer: '소풍', timedOut: false, hasGuess: true, guess: '소퐁' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

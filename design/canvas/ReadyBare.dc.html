@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Duel ready screen, bare START</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+input::placeholder{color:#8A7FA6}
+@keyframes beat{0%{transform:scale(1.5)}100%{transform:scale(1)}}
+.beat{animation:beat 240ms steps(3) both}
+@media (prefers-reduced-motion: reduce){.beat{animation:none}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 64px 36px; display: flex; flex-direction: column; gap: 18px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <button onClick="{{reset}}" style="padding: 6px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: 2px;">WORD STRIKE</span>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; background: #FBF7FC; border: 4px solid #2A2440; box-shadow: 8px 8px 0 #000; color: #2A2440;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 24px 14px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #1E9C8A;">YOU</span>
+        <span role="img" aria-label="You: 3 of 3 hearts" style="display: flex; gap: 4px;">
+          <sc-for list="{{hearts}}" as="h" hint-placeholder-count="3">
+            <svg width="35" height="30" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="#3DD6C0" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path><rect x="1" y="1" width="1" height="1" fill="#FFFFFF"></rect></svg>
+          </sc-for>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+        <span style="font-size: 12px; color: #6B5F7D; margin-bottom: 4px;">BEST 1210</span>
+        <span style="font-size: 32px; font-weight: 700;">0000</span>
+      </div>
+    </div>
+
+    <div role="img" aria-label="0 of 3 right answers to the next stage" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: 6px;">
+      <span style="background: #EFE6F2;"></span>
+      <span style="background: #EFE6F2;"></span>
+      <span style="background: #EFE6F2;"></span>
+    </div>
+
+    <div style="position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;">
+
+      <sc-if value="{{isReady}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 26px;">
+          <sc-if value="{{showRule}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 640px; text-align: center;">
+              <span style="font-family: 'Jua', sans-serif; font-size: 30px; line-height: 1.2;">English <span aria-label="to">→</span> <span lang="ko">한국어</span></span>
+              <span style="font-family: 'Jua', sans-serif; font-size: 22px; line-height: 1.35; color: #6B5F7D;">Type the Korean word before the fuse burns out.</span>
+            </div>
+          </sc-if>
+          <button onClick="{{start}}" style="min-width: 280px; padding: 18px 40px; font-family: 'Pixelify Sans', sans-serif; font-size: 44px; font-weight: 700; letter-spacing: 4px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 6px 6px 0 #2A2440; cursor: pointer;">START</button>
+          <span style="font-size: 14px; letter-spacing: 1px; color: #6B5F7D;">OR PRESS ENTER</span>
+        </div>
+      </sc-if>
+
+      <div role="status" aria-live="assertive" style="display: contents;">
+        <sc-if value="{{is3}}" hint-placeholder-val="{{ false }}"><span class="beat" style="font-size: 200px; font-weight: 700; line-height: 1;">3</span></sc-if>
+        <sc-if value="{{is2}}" hint-placeholder-val="{{ false }}"><span class="beat" style="font-size: 200px; font-weight: 700; line-height: 1;">2</span></sc-if>
+        <sc-if value="{{is1}}" hint-placeholder-val="{{ false }}"><span class="beat" style="font-size: 200px; font-weight: 700; line-height: 1;">1</span></sc-if>
+        <sc-if value="{{isGo}}" hint-placeholder-val="{{ false }}"><span class="beat" style="padding: 10px 36px; font-size: 140px; font-weight: 700; line-height: 1; letter-spacing: 6px; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 6px 6px 0 #2A2440;">GO!</span></sc-if>
+      </div>
+
+      <sc-if value="{{isPlaying}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 22px;">
+          <span style="font-family: 'Jua', sans-serif; font-size: 104px; line-height: 1.1;">picnic</span>
+          <div role="meter" aria-label="Fuse" aria-valuemin="0" aria-valuemax="20" aria-valuenow="20" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; width: 440px; height: 12px;">
+            <sc-for list="{{fuse}}" as="f" hint-placeholder-count="20"><span style="background: #FFD23F;"></span></sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display: flex; gap: 12px; padding: 16px 24px 20px; background: #EFE6F2; border-top: 4px solid #2A2440;">
+      <label for="ReadyBare-answer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);">Your answer</label>
+      <input id="ReadyBare-answer" readonly disabled="{{inputOff}}" placeholder="Type it in Korean" lang="ko" style="flex-grow: 1; min-width: 0; padding: 12px 18px; font-family: 'Jua', sans-serif; font-size: 28px; color: #2A2440; background: #FFFFFF; border: 4px solid {{inputBorder}}; outline: none; opacity: {{inputOpacity}};">
+      <button disabled="{{inputOff}}" style="min-width: 150px; padding: 0 28px; font-family: 'Pixelify Sans', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #2A2440; opacity: {{inputOpacity}};">GO</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ready":{"editor":"enum","options":["bare","rule"],"default":"bare"},"step":{"editor":"enum","options":["ready","3","2","1","go","playing"],"default":"ready"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { step: null }; this.timers = []; }
+componentWillUnmount() { this.clear(); }
+clear() { this.timers.forEach((t) => clearTimeout(t)); this.timers = []; }
+renderVals() {
+const step = this.state.step ?? this.props.step ?? 'ready';
+const off = step !== 'playing';
+return {
+isReady: step === 'ready', showRule: (this.props.ready ?? 'bare') === 'rule',
+is3: step === '3', is2: step === '2', is1: step === '1', isGo: step === 'go', isPlaying: step === 'playing',
+hearts: [0, 1, 2], fuse: Array.from({ length: 20 }, (_, i) => i),
+inputOff: off, inputOpacity: off ? '0.5' : '1', inputBorder: off ? '#2A2440' : '#1E9C8A',
+start: () => {
+this.clear();
+const seq = [['3', 0], ['2', 700], ['1', 1400], ['go', 2100], ['playing', 2600]];
+seq.forEach(([s, ms]) => this.timers.push(setTimeout(() => this.setState({ step: s }), ms)));
+},
+reset: () => { this.clear(); this.setState({ step: 'ready' }); }
+};
+}
+}
+</script>
+</body>
+</html>
