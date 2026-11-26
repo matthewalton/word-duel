@@ -7,7 +7,8 @@ import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
-import { askableGaps, itemTier } from "@/packs";
+import { MAX_TIER } from "@/config/game";
+import { askableGaps, gapsUpToTier, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
 import { langText, type ControlsProps, type Minigame, type Round, type RoundDraw, type ShowcaseProps } from "../types";
 
@@ -160,11 +161,12 @@ function GapGuardHowTo({ pack }: ShowcaseProps) {
 export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
-  usesDifficulty: false,
+  usesDifficulty: true,
   hasContent: (pack) => askableGaps(pack).length > 0,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
-  startDraw: (pack): RoundDraw => {
-    const draw = drawOrder(askableGaps(pack));
+  /** Deals the gaps whose tested item is within the difficulty, in a shuffled draw order. */
+  startDraw: (pack, opts): RoundDraw => {
+    const draw = drawOrder(gapsUpToTier(pack, MAX_TIER[opts.difficulty]));
     return {
       next: () => buildRound(pack, draw.next(), true),
       workIn: (missedItemIds) => {

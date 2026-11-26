@@ -14,11 +14,19 @@ export const strings = {
   difficulty: {
     label: "Difficulty",
     names: { easy: "EASY", normal: "NORMAL", hard: "HARD" },
+    /** What each difficulty draws, per minigame. */
     blurbs: {
-      easy: "Everyday words only. 10 points each.",
-      normal: "Everyday and common words. Common ones are worth 20.",
-      hard: "Every word, rare ones too. Rare ones are worth 30.",
-    },
+      "word-strike": {
+        easy: "Everyday words only. 10 points each.",
+        normal: "Everyday and common words. Common ones are worth 20.",
+        hard: "Every word, rare ones too. Rare ones are worth 30.",
+      },
+      "gap-guard": {
+        easy: "First grammar and everyday words. 10 points each.",
+        normal: "Adds past tense, negatives and more counters. Worth up to 20.",
+        hard: "Every sentence, the hardest grammar too. Hard ones are worth 30.",
+      },
+    } as Record<string, Record<"easy" | "normal" | "hard", string>>,
   },
   start: "START",
   pressEnter: "OR PRESS ENTER",

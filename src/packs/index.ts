@@ -94,6 +94,10 @@ export function itemTier(pack: LanguagePack, itemId: string): number {
 }
 export const askableGaps = (pack: LanguagePack): GapPrompt[] => askableEntries(pack).gaps;
 
+/** Askable gaps whose tested item's tier is at most `maxTier`. */
+export const gapsUpToTier = (pack: LanguagePack, maxTier: number): GapPrompt[] =>
+  askableGaps(pack).filter((g) => itemTier(pack, g.tests) <= maxTier);
+
 /** Google Fonts stylesheet URL for the pack's font, or null if it is local. */
 export function packFontsHref(pack: LanguagePack): string | null {
   const family = pack.meta.fonts.words.google;
