@@ -397,16 +397,19 @@
 .prompt {
   margin: 0;
   max-width: 100%;
+  /* Stretched so its own width is a stable "available width" to fit text
+     against; text-align:center already centers it the same as before. */
+  align-self: stretch;
   text-align: center;
   font-family: var(--font-words);
-  font-size: clamp(calc(40px * var(--s)), 10vw, calc(88px * var(--s)));
+  font-size: calc(clamp(calc(40px * var(--s)), 10vw, calc(88px * var(--s))) * var(--fit, 1));
   line-height: 1.15;
   overflow-wrap: anywhere;
   color: var(--ink);
 }
 
 .promptSentence {
-  font-size: clamp(calc(30px * var(--s)), 7vw, calc(66px * var(--s)));
+  font-size: calc(clamp(calc(30px * var(--s)), 7vw, calc(66px * var(--s))) * var(--fit, 1));
   line-height: 1.25;
 }
 
@@ -610,8 +613,9 @@
 
 .bandWord {
   font-family: var(--font-words);
-  font-size: calc(28px * var(--s));
+  font-size: calc((28px * var(--s)) * var(--fit, 1));
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 @keyframes bandIn {
@@ -913,7 +917,7 @@
   position: relative;
   padding: calc(12px * var(--s)) calc(8px * var(--s));
   font-family: var(--font-words);
-  font-size: calc(26px * var(--s));
+  font-size: calc((26px * var(--s)) * var(--fit, 1));
   color: var(--ink);
   background: #fff;
   border: var(--border);
@@ -987,7 +991,7 @@
   }
 
   .bandWord {
-    font-size: 24px;
+    font-size: calc(24px * var(--fit, 1));
   }
 
   .heartRow {
@@ -1022,7 +1026,7 @@
   }
 
   .choiceButton {
-    font-size: 22px;
+    font-size: calc(22px * var(--fit, 1));
   }
 
   .gameOver {
