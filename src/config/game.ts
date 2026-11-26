@@ -25,6 +25,11 @@ export const RULES = {
   countdownGoMs: 500,
 } as const;
 
+/** Difficulties in switch order, and the highest item tier each draws (ADR 0009). */
+export const DIFFICULTIES = ["easy", "normal", "hard"] as const;
+export const DEFAULT_DIFFICULTY = "normal";
+export const MAX_TIER = { easy: 1, normal: 2, hard: 3 } as const;
+
 export function fuseForStage(stage: number): number {
   return Math.max(RULES.fuseMinMs, RULES.fuseStartMs - (stage - 1) * RULES.fuseStepMs);
 }

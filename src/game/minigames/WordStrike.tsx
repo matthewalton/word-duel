@@ -7,7 +7,8 @@ import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
 import { pickEntry } from "@/lib/random";
-import { askableWords } from "@/packs";
+import { MAX_TIER } from "@/config/game";
+import { askableWords, wordsUpToTier } from "@/packs";
 import { normalizeAnswer } from "@/lib/matching";
 import type { LanguagePack, WordItem } from "@/packs/types";
 import {
@@ -48,7 +49,7 @@ function acceptedBases(pack: LanguagePack, word: WordItem): string[] {
 function buildRound(pack: LanguagePack, opts: MinigameOptions, word: WordItem): Round {
   const { target, base } = pack.meta;
   // A Word Strike prompt is the word item itself, asked in one direction.
-  const ids = { itemId: word.id, promptId: word.id, promptKind: opts.direction };
+  const ids = { itemId: word.id, promptId: word.id, promptKind: opts.direction, tier: word.tier };
   if (opts.direction === "toTarget") {
     return {
       ...ids,
@@ -69,9 +70,9 @@ function buildRound(pack: LanguagePack, opts: MinigameOptions, word: WordItem): 
   };
 }
 
-/** Random round whose prompt text differs from the previous one. */
+/** Random round from the difficulty's tiers, whose prompt text differs from the previous one. */
 function nextRound(pack: LanguagePack, opts: MinigameOptions, previous: Round | null): Round {
-  const words = askableWords(pack);
+  const words = wordsUpToTier(pack, MAX_TIER[opts.difficulty]);
   let round = buildRound(pack, opts, pickEntry(words, previous?.promptId ?? null));
   for (let tries = 0; previous && round.prompt.text === previous.prompt.text && tries < 20; tries++) {
     round = buildRound(pack, opts, pickEntry(words, round.promptId));
@@ -218,6 +219,7 @@ function WordStrikeHowTo({ pack, opts }: ShowcaseProps) {
 export const wordStrike: Minigame = {
   id: "word-strike",
   usesDirection: true,
+  usesDifficulty: true,
   sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
   nextRound,
   Controls: WordStrikeControls,

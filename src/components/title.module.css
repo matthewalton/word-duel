@@ -192,12 +192,15 @@
   background: var(--pv-bg);
   border: 4px solid var(--pv-frame);
   cursor: pointer;
+  /* Previews size to the box, so the details under them never push them out. */
+  container-type: size;
 }
 
 .previewButton:focus-visible,
 .play:focus-visible,
 .help:focus-visible,
 .dirToggle:focus-visible,
+.difficultyOption:focus-visible,
 .navButton:focus-visible,
 .close:focus-visible,
 .dialogPlay:focus-visible {
@@ -212,7 +215,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc(20px * var(--s));
+  gap: min(calc(20px * var(--s)), 6cqh);
 }
 
 .pvPrompt {
@@ -229,11 +232,11 @@
 }
 
 .cardOn .pvPrompt {
-  font-size: calc(96px * var(--s));
+  font-size: min(calc(96px * var(--s)), 38cqh);
 }
 
 .cardOn .pvSentence {
-  font-size: calc(76px * var(--s));
+  font-size: min(calc(76px * var(--s)), 28cqh);
 }
 
 .pvInput {
@@ -249,7 +252,7 @@
 }
 
 .cardOn .pvInput {
-  font-size: calc(34px * var(--s));
+  font-size: min(calc(34px * var(--s)), 14cqh);
 }
 
 .pvCaret {
@@ -367,6 +370,89 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* Difficulty: three joined buttons, the chosen one lit in its colour. */
+.difficulty {
+  display: flex;
+}
+
+.difficultyOption {
+  flex: 1 1 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(10px * var(--s));
+  font: inherit;
+  font-size: calc(17px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--ink);
+  background: var(--board);
+  border: 4px solid var(--ink);
+  cursor: pointer;
+}
+
+.difficultyOption + .difficultyOption {
+  margin-inline-start: -4px;
+}
+
+.difficultyOption:hover {
+  background: #efe6f2;
+}
+
+.difficultyOption:focus-visible {
+  position: relative;
+}
+
+.difficulty_easy[aria-pressed="true"] {
+  background: var(--player);
+}
+
+.difficulty_normal[aria-pressed="true"] {
+  background: var(--accent);
+}
+
+.difficulty_hard[aria-pressed="true"] {
+  background: var(--rival);
+}
+
+/* Signal bars: one lit per tier the difficulty draws. */
+.difficultyBars {
+  height: calc(15px * var(--s));
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.difficultyBar {
+  width: calc(5px * var(--s));
+  background: var(--line);
+}
+
+.difficultyBar:nth-child(1) { height: 34%; }
+.difficultyBar:nth-child(2) { height: 67%; }
+.difficultyBar:nth-child(3) { height: 100%; }
+
+.difficultyBarOn {
+  background: var(--muted);
+}
+
+[aria-pressed="true"] .difficultyBar {
+  background: rgb(42 36 64 / 0.25);
+}
+
+[aria-pressed="true"] .difficultyBarOn {
+  background: var(--ink);
+}
+
+.difficultyBlurb {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  line-height: 1.4;
+  color: #4a4060;
 }
 
 /* One button that swaps the answer direction; same height as the help button. */
@@ -712,11 +798,11 @@
   }
 
   .cardOn .pvPrompt {
-    font-size: 64px;
+    font-size: min(64px, 38cqh);
   }
 
   .cardOn .pvSentence {
-    font-size: 42px;
+    font-size: min(42px, 28cqh);
   }
 
   .navHint {
@@ -737,6 +823,13 @@
 
   .langRow {
     --control-size: 36px;
+  }
+
+  .difficultyOption {
+    min-width: 0;
+    gap: 6px;
+    font-size: 15px;
+    letter-spacing: 1px;
   }
 
   .play {

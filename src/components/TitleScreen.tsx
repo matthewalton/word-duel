@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import type { Direction, Minigame, MinigameOptions } from "@/game/types";
+import { DIFFICULTIES } from "@/config/game";
+import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
@@ -39,6 +40,8 @@ export function TitleScreen({
   initialId,
   direction,
   onDirection,
+  difficulty,
+  onDifficulty,
   onPlay,
   gameName,
   lead,
@@ -52,6 +55,8 @@ export function TitleScreen({
   initialId: string;
   direction: Direction;
   onDirection: (d: Direction) => void;
+  difficulty: Difficulty;
+  onDifficulty: (d: Difficulty) => void;
   onPlay: (id: string) => void;
   gameName: string;
   /** Top-left slot: the wordbook link. */
@@ -67,7 +72,7 @@ export function TitleScreen({
     ),
   );
   const [helpFor, setHelpFor] = useState<Minigame | null>(null);
-  const opts: MinigameOptions = { direction };
+  const opts: MinigameOptions = { direction, difficulty };
   const { base, target } = pack.meta;
   const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
   const active = minigames[activeIndex];
@@ -90,8 +95,15 @@ export function TitleScreen({
   const step = (delta: number) =>
     setActiveIndex((i) => (i + delta + minigames.length) % minigames.length);
 
-  // Arrow keys move between cards; Enter plays (unless a button has focus,
-  // which handles Enter itself). Number keys pick a card directly.
+  // Up and down move along the switch and stop at its ends.
+  const stepDifficulty = (delta: number) => {
+    const i = DIFFICULTIES.indexOf(difficulty) + delta;
+    if (i >= 0 && i < DIFFICULTIES.length) onDifficulty(DIFFICULTIES[i]);
+  };
+
+  // Arrow keys move between cards, and up and down change the active card's
+  // difficulty; Enter plays (unless a button has focus, which handles Enter
+  // itself). Number keys pick a card directly.
   useEffect(() => {
     if (helpFor) return;
     const onKey = (e: KeyboardEvent) => {
@@ -101,6 +113,10 @@ export function TitleScreen({
         e.target.closest("button, input, a, dialog");
       if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
+      else if ((e.key === "ArrowUp" || e.key === "ArrowDown") && active.usesDifficulty) {
+        e.preventDefault();
+        stepDifficulty(e.key === "ArrowUp" ? 1 : -1);
+      }
       else if (e.key === "Enter" && !onControl) onPlay(active.id);
       else if (/^[1-9]$/.test(e.key) && Number(e.key) <= minigames.length)
         setActiveIndex(Number(e.key) - 1);
@@ -166,6 +182,29 @@ export function TitleScreen({
                         {fill(info.description, { language: target.name })}
                       </p>
                     )}
+                    {m.usesDifficulty && (
+                      <>
+                        <div className={t.difficulty} role="group" aria-label={strings.difficulty.label}>
+                          {DIFFICULTIES.map((d, level) => (
+                            <button
+                              key={d}
+                              type="button"
+                              aria-pressed={d === difficulty}
+                              className={`${t.difficultyOption} ${t[`difficulty_${d}`]}`}
+                              onClick={() => onDifficulty(d)}
+                            >
+                              <span className={t.difficultyBars} aria-hidden="true">
+                                {DIFFICULTIES.map((b, n) => (
+                                  <span key={b} className={`${t.difficultyBar} ${n <= level ? t.difficultyBarOn : ""}`} />
+                                ))}
+                              </span>
+                              {strings.difficulty.names[d]}
+                            </button>
+                          ))}
+                        </div>
+                        <p className={t.difficultyBlurb}>{strings.difficulty.blurbs[difficulty]}</p>
+                      </>
+                    )}
                     <div className={t.langRow}>
                       {m.usesDirection && (
                         <button
@@ -208,7 +247,7 @@ export function TitleScreen({
         })}
       </div>
 
-      <p className={t.navHint}>{strings.title.navHint}</p>
+      <p className={t.navHint}>{active.usesDifficulty ? strings.title.navHintDifficulty : strings.title.navHint}</p>
 
       <div className={t.carouselBar}>
         <button

@@ -11,6 +11,15 @@ export const strings = {
   } as Record<string, string>,
   modesLabel: "Minigame",
   directionAria: "Answer direction: {from} to {to}. Click to switch.",
+  difficulty: {
+    label: "Difficulty",
+    names: { easy: "EASY", normal: "NORMAL", hard: "HARD" },
+    blurbs: {
+      easy: "Everyday words only. 10 points each.",
+      normal: "Everyday and common words. Common ones are worth 20.",
+      hard: "Every word, rare ones too. Rare ones are worth 30.",
+    },
+  },
   start: "START",
   pressEnter: "OR PRESS ENTER",
   countdownGo: "GO!",
@@ -41,6 +50,7 @@ export const strings = {
   menuAria: "Back to the title screen",
   title: {
     navHint: "← → or click to choose · Enter to play",
+    navHintDifficulty: "← → choose · ↑ ↓ difficulty · Enter to play",
     play: "PLAY",
     choose: "Choose {name}",
     playName: "Play {name}",

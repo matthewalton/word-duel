@@ -6,7 +6,7 @@ import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { pickEntry, shuffle } from "@/lib/random";
-import { askableGaps } from "@/packs";
+import { askableGaps, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
 import { langText, type ControlsProps, type Minigame, type Round, type ShowcaseProps } from "../types";
 
@@ -17,6 +17,7 @@ function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean)
     itemId: gap.tests,
     promptId: gap.id,
     promptKind: "gap",
+    tier: itemTier(pack, gap.tests),
     hint: strings.hintFillGap,
     prompt: langText(target, gap.sentence),
     gap: { before, after },
@@ -145,6 +146,7 @@ function GapGuardHowTo({ pack }: ShowcaseProps) {
 export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
+  usesDifficulty: false,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
   nextRound: (pack, _opts, previous) =>
     buildRound(pack, pickEntry(askableGaps(pack), previous?.promptId ?? null), true),
