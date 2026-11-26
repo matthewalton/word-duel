@@ -21,7 +21,7 @@ export function langText(info: LanguageInfo, text: string): LangText {
 export interface Round {
   /** The item this round tests; word history is kept per item id. */
   itemId: string;
-  /** The prompt asked: the word's id in Word Strike, the gap's id in Gap Guard. Never the same twice in a row. */
+  /** The prompt asked: the word's id in Word Strike, the gap's id in Gap Guard. */
   promptId: string;
   /** The item's tier, 1 to 3; a right answer is worth points times this (ADR 0009). */
   tier: number;
@@ -122,7 +122,11 @@ export interface Minigame {
   usesDifficulty: boolean;
   /** Deterministic sample shown on the idle screen. */
   sampleRound: (pack: LanguagePack, opts: MinigameOptions) => Round;
-  nextRound: (pack: LanguagePack, opts: MinigameOptions, previous: Round | null) => Round;
+  /**
+   * Starts a duel's draw order and returns a function that deals its next
+   * round. No prompt comes back until the whole pool has been dealt.
+   */
+  startDraw: (pack: LanguagePack, opts: MinigameOptions) => () => Round;
   Controls: ComponentType<ControlsProps>;
   /** Static picture of a round, shown on the title screen. */
   Preview: ComponentType<ShowcaseProps>;

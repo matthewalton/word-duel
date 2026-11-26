@@ -8,7 +8,7 @@ import { loadLastMissed } from "@/server/history";
 import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
-import type { Minigame, MinigameOptions } from "./types";
+import type { Minigame, MinigameOptions, Round } from "./types";
 
 /** Number of segments in the fuse bar (5% steps). */
 export const FUSE_SEGMENTS = 20;
@@ -92,9 +92,13 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
     return () => current.current();
   }, []);
 
+  // The duel's draw order; each duel, play again included, starts a fresh shuffle.
+  const drawRef = useRef<(() => Round) | null>(null);
+
   const advance = useCallback(() => {
     setFuseLit(FUSE_SEGMENTS);
-    dispatch({ type: "next", round: minigame.nextRound(pack, opts, roundRef.current), at: performance.now() });
+    drawRef.current ??= minigame.startDraw(pack, opts);
+    dispatch({ type: "next", round: drawRef.current(), at: performance.now() });
   }, [minigame, pack, opts]);
 
   // Fuse timer while a prompt is live.
@@ -139,7 +143,8 @@ export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOp
         } else {
           setFuseLit(FUSE_SEGMENTS);
           duelIdRef.current = newDuelId();
-          dispatch({ type: "start", round: minigame.nextRound(pack, opts, roundRef.current), at: performance.now() });
+          drawRef.current = minigame.startDraw(pack, opts);
+          dispatch({ type: "start", round: drawRef.current(), at: performance.now() });
         }
       },
       count > 0 ? RULES.countdownBeatMs : RULES.countdownGoMs,

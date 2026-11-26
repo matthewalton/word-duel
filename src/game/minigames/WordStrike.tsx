@@ -6,7 +6,7 @@ import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToP
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
-import { pickEntry } from "@/lib/random";
+import { drawOrder } from "@/lib/random";
 import { MAX_TIER } from "@/config/game";
 import { askableWords, wordsUpToTier } from "@/packs";
 import { normalizeAnswer } from "@/lib/matching";
@@ -70,14 +70,29 @@ function buildRound(pack: LanguagePack, opts: MinigameOptions, word: WordItem): 
   };
 }
 
-/** Random round from the difficulty's tiers, whose prompt text differs from the previous one. */
-function nextRound(pack: LanguagePack, opts: MinigameOptions, previous: Round | null): Round {
-  const words = wordsUpToTier(pack, MAX_TIER[opts.difficulty]);
-  let round = buildRound(pack, opts, pickEntry(words, previous?.promptId ?? null));
-  for (let tries = 0; previous && round.prompt.text === previous.prompt.text && tries < 20; tries++) {
-    round = buildRound(pack, opts, pickEntry(words, round.promptId));
+/**
+ * The words in the difficulty's tiers, grouped by the prompt text they show in
+ * this direction: "house" (집, 주택) or 눈 (eye, snow) is one card, asked once
+ * per pass through the pool. Any word of the card's answers is accepted.
+ */
+function promptCards(pack: LanguagePack, opts: MinigameOptions): WordItem[][] {
+  const lang = opts.direction === "toTarget" ? pack.meta.base.code : pack.meta.target.code;
+  const cards = new Map<string, WordItem[]>();
+  for (const word of wordsUpToTier(pack, MAX_TIER[opts.difficulty])) {
+    const text = opts.direction === "toTarget" ? word.base[0] : word.target;
+    const key = normalizeAnswer(text, pack.matching, lang);
+    cards.set(key, [...(cards.get(key) ?? []), word]);
   }
-  return round;
+  return [...cards.values()];
+}
+
+/** Deals rounds from a shuffled draw order of prompt cards; each round records against one of its card's words. */
+function startDraw(pack: LanguagePack, opts: MinigameOptions): () => Round {
+  const next = drawOrder(promptCards(pack, opts));
+  return () => {
+    const card = next();
+    return buildRound(pack, opts, card[Math.floor(Math.random() * card.length)]);
+  };
 }
 
 function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) {
@@ -221,7 +236,7 @@ export const wordStrike: Minigame = {
   usesDirection: true,
   usesDifficulty: true,
   sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
-  nextRound,
+  startDraw,
   Controls: WordStrikeControls,
   Preview: WordStrikePreview,
   HowTo: WordStrikeHowTo,

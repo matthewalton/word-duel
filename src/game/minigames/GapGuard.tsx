@@ -6,7 +6,7 @@ import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
-import { pickEntry, shuffle } from "@/lib/random";
+import { drawOrder, shuffle } from "@/lib/random";
 import { askableGaps, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
 import { langText, type ControlsProps, type Minigame, type Round, type ShowcaseProps } from "../types";
@@ -162,8 +162,10 @@ export const gapGuard: Minigame = {
   usesDirection: false,
   usesDifficulty: false,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
-  nextRound: (pack, _opts, previous) =>
-    buildRound(pack, pickEntry(askableGaps(pack), previous?.promptId ?? null), true),
+  startDraw: (pack) => {
+    const next = drawOrder(askableGaps(pack));
+    return () => buildRound(pack, next(), true);
+  },
   Controls: GapGuardControls,
   Preview: GapGuardPreview,
   HowTo: GapGuardHowTo,
