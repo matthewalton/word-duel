@@ -1,4 +1,5 @@
 [
+  { "id": "el-agua.water", "kind": "word", "target": "el agua", "base": ["water"], "tier": 1 },
   { "id": "la-verdad.truth", "kind": "word", "target": "la verdad", "base": ["truth"], "tier": 1 },
   { "id": "la-casa.house", "kind": "word", "target": "la casa", "base": ["house", "home"], "tier": 1 },
   { "id": "el-tiempo.time", "kind": "word", "target": "el tiempo", "base": ["time", "weather"], "tier": 1 },
@@ -50,7 +51,6 @@
   { "id": "el-corazón.heart", "kind": "word", "target": "el corazón", "base": ["heart"], "tier": 1 },
   { "id": "el-miedo.fear", "kind": "word", "target": "el miedo", "base": ["fear"], "tier": 1 },
   { "id": "el-jefe.boss", "kind": "word", "target": "el jefe", "base": ["boss", "chief"], "tier": 1 },
-  { "id": "el-agua.water", "kind": "word", "target": "el agua", "base": ["water"], "tier": 1 },
   { "id": "la-mano.hand", "kind": "word", "target": "la mano", "base": ["hand"], "tier": 1 },
   { "id": "el-ojo.eye", "kind": "word", "target": "el ojo", "base": ["eye"], "tier": 1 },
   { "id": "la-cara.face", "kind": "word", "target": "la cara", "base": ["face"], "tier": 1 },
