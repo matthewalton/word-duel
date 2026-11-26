@@ -1105,4 +1105,22 @@
   .countGo {
     animation: none;
   }
+
+  /* One steady flash for the same length instead of blinking twice. */
+  .hurtFlash {
+    animation: steadyFlash 480ms steps(1, end);
+  }
+
+  .heartFlash {
+    animation: steadyFlash 420ms steps(1, end);
+  }
+}
+
+@keyframes steadyFlash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
