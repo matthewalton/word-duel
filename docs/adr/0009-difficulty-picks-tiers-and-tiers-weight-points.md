@@ -12,7 +12,9 @@ Verbs and adjectives come from the same list by the same rule (grade A, B, C →
 
 For the Spanish pack, no openly licensed graded list exists, so tiers come from frequency bands in an openly licensed frequency list: hermitdave's FrequencyWords (Spanish, from OpenSubtitles 2018, CC BY-SA 4.0). The list counts word forms, not lemmas, so a word's rank is the rank of its most frequent form (the infinitive or a common conjugation for a verb, the singular or plural for a noun, any gender or number for an adjective), skipping forms that are also another common word ("camino" for caminar, "cara" for caro). A rank in the top 1,000 is tier 1, 1,001–3,000 tier 2, 3,001–6,000 tier 3. Words are picked from each band for a clear English equivalent, about 250, 150 and 100 of them. Nouns are shown with their article (el gato), verbs as the infinitive (comer) with English answers written "to eat", adjectives in the masculine singular (rojo).
 
-For now only Word Strike offers a difficulty. Gap Guard has ten gap sentences, too few to split; it keeps drawing from all of them until there are enough to tier.
+Word Strike and Gap Guard both offer a difficulty, and it is one setting shared by the two: picking Hard on one leaves the other on Hard too. A gap takes the tier of the item it tests: a grammar gap the grammar point's tier, a noun or verb gap its word's tier. Sentence length doesn't count, for the same reason word length doesn't (below).
+
+Grammar points have no graded list like the words do, so their tiers are set by hand in the order a first-year Korean course teaches them: the core particles (이/가, 을/를, 은/는, 도), 예요/이에요, the polite present and the counters 개 and 명 are tier 1; place particles, 와/과, the past, -고 싶어요, -지 않아요 and the counters 살, 잔, 병 and 마리 tier 2; 에게/한테, (으)로, -(으)ㄹ 거예요 and the counters 권 and 장 tier 3.
 
 ## Considered options
 
