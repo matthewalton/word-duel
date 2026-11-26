@@ -11,7 +11,28 @@ A snapshot of the Word Duel design canvas (https://claude.ai/artifact/4aRo9VYK8D
 
 ## What was built
 
-The code in `src/` is the source of truth for what shipped; these boards show the options considered and why the shipped one looks the way it does. Known picks: round 4 built "Lights off" (`InactiveDark`), round 17 the COMEBACK band with sparks and the stage glint (`ComebackSparks`), round 18 the three-way switch (`DifficultyRow`, `DifficultyPhone`).
+The code in `src/` is the source of truth for what shipped; these boards show the options considered and why the shipped one looks the way it does. Picks below were worked out by comparing the boards with the code. Later rounds refine earlier ones, so the newest round on a screen wins.
+
+| Round | Built | How it carried on |
+| --- | --- | --- |
+| Before START (Word Strike, Gap Guard) | C · title and mode cards | Refined in rounds 2 to 6 |
+| 2 · minimal, full screen | C1 · minimal split (`MinSplit`, `MinPhone`) | Round 3 kept the split |
+| 3 · active card that expands | `StartSplit`, `StartCarousel` on a phone | The title screen today |
+| 4 · inactive card | 3 · Lights off (`InactiveDark`) | |
+| 5 · two fonts | C · Pixelify Sans for all game text, Jua for anything read | Now a rule in AGENTS.md |
+| 6 · direction toggle | 1 · outlined, names with an arrow, one button (`ToggleOutline`) | `DirectionLabel` |
+| 7 · duel screen | Mixed: C's header and input, A's feedback band | Round 8 |
+| 8 · where the fuse goes | 3 · burns in under the word (`DuelTimerWord`) | Round 9 |
+| 9 · duel screen, final | All boards as shown, desktop and phone, both minigames | The duel today |
+| 10 · ready screen | A · bare START, plus the 3 · 2 · 1 · GO! countdown | |
+| 11 · last answer, game over | All boards as shown | Round 12 replaced the separate stage card |
+| 12 · clearing a stage | 2 · one STAGE band instead of CORRECT (`StageB`) | `FeedbackBand` |
+| 13 · optional sign-in | All boards as shown | |
+| 14 · linking sign-ins | B · one list of sign-in methods, LINKED or LINK (`AccountLinkList`) | |
+| 15 · wordbook and the ways in | All boards; all three ways in were built | Round 16 replaced the rows |
+| 16 · wordbook rows | 3 · accordion (`WordbookRowExpand`) | |
+| 17 · COMEBACK | B · band, sparks off the word, the stage chunk glints (`ComebackSparks`) | |
+| 18 · difficulty | A · three-way switch (`DifficultyRow`, `DifficultyPhone`) | |
 
 ## Keeping it current
 
