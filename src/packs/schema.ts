@@ -59,12 +59,17 @@ export const gapPromptSchema = z.strictObject({
   /** Base-language translation. */
   translation: text,
   answer: text,
-  /** Answer options including the correct one. */
-  options: z.array(text).min(2),
-}).refine((g) => g.options.includes(g.answer), {
-  message: "answer must be one of the options",
-  path: ["answer"],
-});
+  /** Exactly three answer options including the correct one (the 1, 2, 3 keys and the how-to assume three). */
+  options: z.array(text).length(3),
+})
+  .refine((g) => g.options.includes(g.answer), {
+    message: "answer must be one of the options",
+    path: ["answer"],
+  })
+  .refine((g) => new Set(g.options).size === g.options.length, {
+    message: "options must be different",
+    path: ["options"],
+  });
 
 const languageInfoSchema = z.strictObject({
   /** Display name in the interface language, e.g. "Korean". */
