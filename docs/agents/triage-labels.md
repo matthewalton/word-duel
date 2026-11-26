@@ -10,9 +10,10 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 | `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
 | `wontfix`                  | `wontfix`            | Will not be actioned                     |
 | _(repo-specific)_          | `in-progress`        | The Orca bot has a worker building it    |
+| _(repo-specific)_          | `found-by-bot`       | Bug, polish or pack content the bot found and is building on its own |
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
 Edit the "Label in our tracker" column to match whatever vocabulary you actually use.
 
-In this repo `needs-info` means waiting on a decision from Matt; the open question is the latest issue comment. The Orca bot's full lifecycle is in `orca-bot.md`.
+In this repo `needs-triage` means a feature waiting for Matt's scope, and `needs-info` means waiting on a decision from Matt; the open question is the latest issue comment. A `found-by-bot` issue also carries `ready-for-agent` until the bot starts it; at most 2 are open at once. When the bot adds `in-progress`, it removes `ready-for-agent`. The Orca bot's full lifecycle is in `orca-bot.md`.
