@@ -1,58 +1,62 @@
 /**
- * Applies the migrations in `drizzle/` to the production database. Only Matt runs it.
+ * Matt's escape hatch: applies the migrations in `drizzle/` to the production database by hand.
+ * Normally a merged PR's production build does this (ADR 0014). Only Matt runs it.
  *
- * Production credentials live only in Vercel's Production environment. This pulls them into a
- * fresh private temp folder, migrates, and deletes the folder afterwards, also when the migration
- * fails or is interrupted, so they never stay on disk.
+ * Prod's database variables in Vercel are sensitive, so `vercel env pull` can't fetch them. This
+ * asks for the prod connection string instead, read without echo and never written to disk.
  *
- *   pnpm db:migrate:prod            (from a checkout linked with `vercel link`)
- *   pnpm db:migrate:prod --dry-run  (prints the steps, fetches nothing)
+ *   pnpm db:migrate:prod
  */
-import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { createInterface } from "node:readline/promises";
-import { parseEnv } from "node:util";
-import { BAD_URL, hostOf, migrate, migrationUrl } from "./migrate.mts";
-
-const dryRun = process.argv.includes("--dry-run");
-const help = process.argv.includes("--help") || process.argv.includes("-h");
+import { BAD_URL, hostOf, migrate } from "./migrate.mts";
 
 const fail = (message: string): never => {
   console.error(`✗ ${message}`);
   process.exit(1);
 };
 
-console.log(`pnpm db:migrate:prod applies drizzle/ migrations to the PRODUCTION database:
-  1. vercel env pull --environment=production into a new private folder in ${tmpdir()}
-  2. show the production host and ask you to type "yes"
-  3. drizzle-kit migrate with its DATABASE_URL_UNPOOLED (or DATABASE_URL)
-  4. delete the folder, also when the migration fails or is interrupted
-`);
-if (help || dryRun) {
-  console.log(dryRun ? "Dry run: nothing fetched, nothing migrated." : "Add --dry-run to print this without fetching anything.");
-  process.exit(0);
+/** Reads one line from the terminal without showing it; Ctrl+C exits, Ctrl+D ends the line. */
+function askHidden(prompt: string) {
+  // Raw mode first, so nothing typed straight after the prompt is echoed.
+  process.stdin.setRawMode(true);
+  process.stdout.write(prompt);
+  process.stdin.resume();
+  process.stdin.setEncoding("utf8");
+  return new Promise<string>((resolve) => {
+    let line = "";
+    const onData = (chunk: string) => {
+      for (const char of chunk) {
+        if (char === "\u0003") {
+          process.stdout.write("\n");
+          process.exit(130);
+        }
+        if (char === "\r" || char === "\n" || char === "\u0004") {
+          process.stdin.off("data", onData);
+          process.stdin.setRawMode(false);
+          process.stdin.pause();
+          process.stdout.write("\n");
+          resolve(line);
+          return;
+        }
+        if (char === "\u007f" || char === "\b") line = line.slice(0, -1);
+        else line += char;
+      }
+    };
+    process.stdin.on("data", onData);
+  });
 }
 
+console.log(`pnpm db:migrate:prod applies drizzle/ migrations to the PRODUCTION database:
+  1. paste prod's direct connection string: Neon console → Word Duel → Connect → branch main,
+     connection pooling off (it isn't shown or saved)
+  2. check the production host and type "yes"
+  3. the pending migrations are applied while holding the migration lock
+`);
 if (!process.stdin.isTTY) fail("run it yourself in a terminal; it asks before touching prod.");
-if (!existsSync(".vercel")) fail("this checkout isn't linked to Vercel: run `vercel link` here first.");
-const vercel = spawnSync("vercel", ["--version"], { stdio: "ignore" });
-if (vercel.error) fail("the Vercel CLI isn't installed: `pnpm add -g vercel`, then `vercel login`.");
 
-const dir = mkdtempSync(join(tmpdir(), "word-duel-prod-")); // mkdtemp makes it readable by you only
-const cleanup = () => rmSync(dir, { recursive: true, force: true });
-// `exit` runs after a failure or process.exit too; a signal exits through it.
-process.on("exit", cleanup);
-for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"] as const) process.on(signal, () => process.exit(130));
-
-const file = join(dir, "production.env");
-const pull = spawnSync("vercel", ["env", "pull", file, "--environment=production", "--yes"], { stdio: "inherit" });
-if (pull.status !== 0) fail("vercel env pull failed; nothing was migrated.");
-
-const url = migrationUrl(parseEnv(readFileSync(file, "utf8")));
-if (!url) fail("Vercel's Production environment has no DATABASE_URL (a sensitive variable pulls empty); nothing was migrated.");
-const host = hostOf(url) ?? fail(`Production: ${BAD_URL}; nothing was migrated.`);
+const url = (await askHidden("Prod connection string: ")).trim();
+const host = hostOf(url) ?? fail(`${BAD_URL}; nothing was migrated.`);
+if (host.includes("-pooler.")) fail(`${host} is the pooled host: copy the string with connection pooling off; nothing was migrated.`);
 
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 rl.on("SIGINT", () => process.exit(130));
@@ -61,7 +65,4 @@ const answer = await rl.question(`Migrate PRODUCTION at ${host}? Type "yes": `).
 rl.close();
 if (answer.trim() !== "yes") fail("not confirmed; nothing was migrated.");
 
-const status = migrate(url, "PRODUCTION");
-cleanup();
-console.log(`Deleted the production credentials from ${dir}.`);
-process.exit(status);
+process.exit(await migrate(url, "PRODUCTION"));
