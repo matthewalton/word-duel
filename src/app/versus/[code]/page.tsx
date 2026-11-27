@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { VersusScreen } from "@/components/VersusScreen";
 import { GAME_NAME } from "@/config/game";
 import { cleanCode } from "@/game/versus";
@@ -9,7 +10,16 @@ export const metadata: Metadata = {
 };
 
 /** A versus room: the link a friend opens joins it directly. The room loads in the browser. */
-export default async function VersusPage({ params }: PageProps<"/versus/[code]">) {
+export default function VersusPage({ params }: PageProps<"/versus/[code]">) {
+  // The code is only known per request, so it streams in behind the static shell.
+  return (
+    <Suspense>
+      <Room params={params} />
+    </Suspense>
+  );
+}
+
+async function Room({ params }: Pick<PageProps<"/versus/[code]">, "params">) {
   const { code } = await params;
   return <VersusScreen code={cleanCode(decodeURIComponent(code))} />;
 }
