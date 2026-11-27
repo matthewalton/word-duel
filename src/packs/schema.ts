@@ -163,9 +163,13 @@ export const matchingSettingsSchema = z.strictObject({
   /**
    * Leading words that join the next word with an apostrophe instead of a
    * space, keyed like `ignoreLeadingWords`, e.g. { "fr": ["l'"] } so "l'eau",
-   * "leau" and "eau" all match "l'eau".
+   * "leau" and "eau" all match "l'eau". Can't be combined with
+   * `ignorePunctuation`, which would strip the apostrophe first.
    */
   ignoreElidedWords: z.record(z.string(), z.array(text.endsWith("'"))).optional(),
+}).refine((m) => !(m.ignorePunctuation && m.ignoreElidedWords), {
+  message: "ignoreElidedWords can't be combined with ignorePunctuation, which strips the apostrophe first",
+  path: ["ignoreElidedWords"],
 });
 
 /** One pack's files, as the registry and the check script see them. */

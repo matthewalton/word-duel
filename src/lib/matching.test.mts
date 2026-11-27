@@ -29,6 +29,11 @@ describe("elided leading words", () => {
     assert.ok(!accepts(elided, "fr", ["été"], "lete"));
   });
 
+  it("can't be combined with ignorePunctuation, which would strip the apostrophe first", () => {
+    const both = { ignorePunctuation: true, ignoreElidedWords: { fr: ["l'"] } };
+    assert.ok(!matchingSettingsSchema.safeParse(both).success);
+  });
+
   it("only applies in the language it is set for", () => {
     assert.ok(!accepts(elided, "en", ["été"], "l'été"));
   });
