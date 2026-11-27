@@ -131,6 +131,28 @@ export const strings = {
     signOut: "SIGN OUT",
     gameOverNudge: "Sign in to track history.",
   },
+  versusRecord: {
+    /** The account menu item, and the dialog's title. */
+    title: "VERSUS RECORD",
+    loading: "LOADING…",
+    failed: "Your versus record didn't load. Close this and try again.",
+    empty: "No versus matches yet",
+    played: "PLAYED",
+    won: "WON",
+    lost: "LOST",
+    winRate: "WIN RATE",
+    percent: "{n}%",
+    headToHead: "HEAD-TO-HEAD",
+    /** Head-to-head when every match so far was against a guest. */
+    headToHeadNone: "Matches against other accounts show here.",
+    wonLost: "{won} WON · {lost} LOST",
+    recent: "RECENT MATCHES",
+    /** Hearts left at the end: yours, then the rival's. */
+    hearts: "{mine}–{theirs}",
+    heartsAria: "Hearts left: you {mine}, rival {theirs}",
+    rivalLeft: "RIVAL LEFT",
+    youLeft: "YOU LEFT",
+  },
   versus: {
     button: "VERSUS",
     /** The title bar button on a phone. */

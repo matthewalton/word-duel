@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { fill, strings } from "@/i18n/strings";
 import { authClient } from "@/lib/auth-client";
 import { PROVIDERS, type ProviderId } from "@/lib/providers";
@@ -10,14 +10,17 @@ import { countMissed } from "@/server/wordbook";
 import a from "./account.module.css";
 import { BookIcon } from "./BookIcon";
 import { ProviderMark } from "./ProviderMark";
+import { TrophyIcon } from "./TrophyIcon";
 import { Button } from "./ui/Button";
 import { Menu, MenuGroup, MenuItem, MenuLabel } from "./ui/Menu";
+import { VersusRecordDialog } from "./VersusRecordDialog";
 
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
 
 /**
  * Top corner of the title screen: SIGN IN for a guest, or the account chip
- * with a menu to link sign-in methods and sign out. Shows nothing while the
+ * with a menu to the wordbook and the versus record, to link sign-in methods
+ * and sign out. Shows nothing while the
  * session loads. The menu opens by itself on return from linking a provider.
  */
 export function AccountCorner({
@@ -30,6 +33,8 @@ export function AccountCorner({
   onOpenSignIn: () => void;
 }) {
   const [menuOpenState, setMenuOpen] = useState(false);
+  const [recordOpen, setRecordOpen] = useState(false);
+  const chip = useRef<HTMLButtonElement>(null);
   const { user, linkResult, clearLinkResult } = account;
   const menuOpen = menuOpenState || linkResult != null;
   const noteId = useId();
@@ -49,32 +54,41 @@ export function AccountCorner({
 
   const accountAria = fill(strings.account.accountAria, { name: user.name });
   return (
-    <Menu
-      label={accountAria}
-      describedBy={noteId}
-      align="end"
-      open={menuOpen}
-      onOpenChange={(open) => (open ? setMenuOpen(true) : closeMenu())}
-      className={a.menu}
-      trigger={
-        <Button variant="outlined" className={a.chip} aria-label={accountAria}>
-          <Initial name={user.name} />
-          <span className={a.chipName}>{user.name.toUpperCase()}</span>
-          <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
-          </svg>
-        </Button>
-      }
-    >
-      <AccountMenu
-        name={user.name}
-        noteId={noteId}
-        packId={packId}
-        linkResult={linkResult}
-        onLink={account.linkProvider}
-        onSignOut={account.signOut}
-      />
-    </Menu>
+    <>
+      <Menu
+        label={accountAria}
+        describedBy={noteId}
+        align="end"
+        open={menuOpen}
+        onOpenChange={(open) => (open ? setMenuOpen(true) : closeMenu())}
+        className={a.menu}
+        trigger={
+          <Button ref={chip} variant="outlined" className={a.chip} aria-label={accountAria}>
+            <Initial name={user.name} />
+            <span className={a.chipName}>{user.name.toUpperCase()}</span>
+            <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
+              <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
+            </svg>
+          </Button>
+        }
+      >
+        <AccountMenu
+          name={user.name}
+          noteId={noteId}
+          packId={packId}
+          linkResult={linkResult}
+          onLink={account.linkProvider}
+          onOpenRecord={() => {
+            // The dialog hands focus back to what had it when it opened: the
+            // chip, not the menu item that is about to go.
+            chip.current?.focus();
+            setRecordOpen(true);
+          }}
+          onSignOut={account.signOut}
+        />
+      </Menu>
+      {recordOpen && <VersusRecordDialog onClose={() => setRecordOpen(false)} />}
+    </>
   );
 }
 
@@ -93,6 +107,7 @@ function AccountMenu({
   packId,
   linkResult,
   onLink,
+  onOpenRecord,
   onSignOut,
 }: {
   name: string;
@@ -101,6 +116,7 @@ function AccountMenu({
   packId: string;
   linkResult: LinkResult | null;
   onLink: (provider: ProviderId) => Promise<boolean>;
+  onOpenRecord: () => void;
   onSignOut: () => void;
 }) {
   const [linked, setLinked] = useState<ProviderId[] | null>(null);
@@ -148,12 +164,19 @@ function AccountMenu({
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
       <MenuItem asChild>
-        <Link href="/wordbook" className={a.menuWordbook}>
+        <Link href="/wordbook" className={a.menuRow}>
           <BookIcon className={a.wordbookIcon} />
-          <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
+          <span className={a.menuRowName}>{strings.wordbook.title}</span>
           {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
           <span aria-hidden="true">&gt;</span>
         </Link>
+      </MenuItem>
+      <MenuItem asChild onSelect={onOpenRecord}>
+        <Button className={a.menuRow}>
+          <TrophyIcon className={a.trophyIcon} />
+          <span className={a.menuRowName}>{strings.versusRecord.title}</span>
+          <span aria-hidden="true">&gt;</span>
+        </Button>
       </MenuItem>
       <p id={noteId} className={a.menuNote}>
         {strings.account.savedNote}

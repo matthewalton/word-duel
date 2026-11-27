@@ -308,8 +308,8 @@
   color: var(--line);
 }
 
-/* The account menu's wordbook row. */
-.menuWordbook {
+/* The account menu's rows: WORDBOOK and VERSUS RECORD. */
+.menuRow {
   min-height: 48px;
   display: flex;
   align-items: center;
@@ -325,12 +325,21 @@
   box-shadow: 4px 4px 0 var(--ink);
 }
 
-.menuWordbook .wordbookIcon {
+.menuRow .wordbookIcon {
   color: var(--ink);
 }
 
-.menuWordbookName {
+.trophyIcon {
+  display: block;
+  flex: none;
+  width: calc(21px * var(--s));
+  height: calc(21px * var(--s));
+  color: var(--ink);
+}
+
+.menuRowName {
   flex: 1;
+  text-align: start;
 }
 
 .menuWordbookCount {
