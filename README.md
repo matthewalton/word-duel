@@ -46,6 +46,7 @@ A pack's content is **items** (what the player learns) and **prompts** (one way 
 
 A Word Strike round asks a word item directly; a gap tests the one item named by `tests`.
 
+- **Adjectives** show the masculine singular (`target`). In packs whose adjectives agree, the feminine singular goes in `targetAlt` when it is spelt differently, so it counts as right too, and on the list in `src/packs/feminineAdjectives.test.mts`; plurals stay out. Gap sentences test agreement on purpose.
 - **Ids are forever.** Word history points at item ids, so never change or reuse one, even to fix a typo in the word. Homographs get one entry and id per meaning (`눈.eye`, `눈.snow`).
 - **Retire, don't delete.** Set `"retired": true` on an entry to stop asking it; prompts that test a retired item stop too.
 - **Adding entries:** write them without `id`/`kind`, run `pnpm packs:ids` (it only fills in missing ids), add `tests` to new gaps, then run `pnpm check:packs`.
