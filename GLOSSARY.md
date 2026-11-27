@@ -64,6 +64,14 @@ _Avoid_: Multiplayer, PvP, online mode
 Where one versus duel is played: two seats, PLAYER 1 who made it and PLAYER 2 who joined, with the maker's language pack, direction and difficulty. A room nobody joins expires after 30 minutes.
 _Avoid_: Lobby, match, game
 
+**Rematch**:
+The next versus duel in the same room with the same settings, started from REMATCH at game over once both players have pressed it: fresh hearts, a fresh shuffle and the countdown again. A room closes when both players have left it, or 10 minutes after its last duel ended.
+_Avoid_: Play again (that is solo), replay
+
+**Leaving**:
+A player leaves a room by pressing MENU, or by being gone (tab closed, connection lost) for 15 seconds. Leaving before a versus duel is won loses it: the other player sees "Rival left: you win". A player who has left can't come back to the room.
+_Avoid_: Quitting, forfeiting, disconnecting
+
 **Room code**:
 The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the versus panel, or opened as the link `/versus/<code>`.
 _Avoid_: Room ID, PIN, invite code
