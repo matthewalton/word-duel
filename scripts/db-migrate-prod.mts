@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { parseEnv } from "node:util";
-import { hostOf, migrate, migrationUrl } from "./migrate.mts";
+import { BAD_URL, hostOf, migrate, migrationUrl } from "./migrate.mts";
 
 const dryRun = process.argv.includes("--dry-run");
 const help = process.argv.includes("--help") || process.argv.includes("-h");
@@ -52,11 +52,12 @@ if (pull.status !== 0) fail("vercel env pull failed; nothing was migrated.");
 
 const url = migrationUrl(parseEnv(readFileSync(file, "utf8")));
 if (!url) fail("Vercel's Production environment has no DATABASE_URL (a sensitive variable pulls empty); nothing was migrated.");
+const host = hostOf(url) ?? fail(`Production: ${BAD_URL}; nothing was migrated.`);
 
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 rl.on("SIGINT", () => process.exit(130));
 // Input closing before an answer counts as no.
-const answer = await rl.question(`Migrate PRODUCTION at ${hostOf(url)}? Type "yes": `).catch(() => "");
+const answer = await rl.question(`Migrate PRODUCTION at ${host}? Type "yes": `).catch(() => "");
 rl.close();
 if (answer.trim() !== "yes") fail("not confirmed; nothing was migrated.");
 

@@ -11,21 +11,24 @@ const DRIZZLE_KIT = join(import.meta.dirname, "..", "node_modules", ".bin", "dri
 /** The URL migrations use: the direct (unpooled) connection when Neon provides one. */
 export const migrationUrl = (env: NodeJS.Dict<string>) => env.DATABASE_URL_UNPOOLED || env.DATABASE_URL || "";
 
-/** The host part of a Postgres URL, the one thing that tells the dev branch from prod. */
+/** The host part of a Postgres URL, the one thing that tells the dev branch from prod; null if it isn't a URL. */
 export function hostOf(url: string) {
-  try {
-    return new URL(url).host;
-  } catch {
-    throw new Error("the database URL isn't a valid postgresql:// URL");
-  }
+  return URL.canParse(url) ? new URL(url).host : null;
 }
+
+export const BAD_URL = "the database URL isn't a valid postgresql:// URL";
 
 /**
  * Runs `drizzle-kit migrate` against `url` and returns its exit code. Both URL variables are set
  * to it so `drizzle.config.ts` can't pick up a different one from an env file.
  */
 export function migrate(url: string, label: string) {
-  console.log(`Migrating the ${label} database at ${hostOf(url)}`);
+  const host = hostOf(url);
+  if (!host) {
+    console.error(`✗ ${BAD_URL}; nothing was migrated.`);
+    return 1;
+  }
+  console.log(`Migrating the ${label} database at ${host}`);
   const run = spawnSync(DRIZZLE_KIT, ["migrate"], {
     stdio: "inherit",
     env: { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url },
