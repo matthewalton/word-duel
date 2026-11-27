@@ -57,6 +57,7 @@
 .modeBar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: calc(8px * var(--s));
 }
 
@@ -64,28 +65,11 @@
   padding: calc(6px * var(--s)) calc(12px * var(--s));
   font-size: calc(16px * var(--s));
   color: var(--board);
-  background: transparent;
   border: 4px solid var(--line);
-  cursor: pointer;
 }
 
 .modeButton:hover {
   border-color: var(--accent);
-}
-
-.modeButton:focus-visible {
-  outline: 4px solid var(--player);
-  outline-offset: 2px;
-}
-
-.modeActive {
-  color: var(--ink);
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.modeBar {
-  align-items: center;
 }
 
 .duelName {

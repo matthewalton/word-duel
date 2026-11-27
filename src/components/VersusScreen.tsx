@@ -90,7 +90,7 @@ export function VersusScreen({ code }: { code: string }) {
 /** Back to the title screen; `onLeave` gives up the seat first (leaving before a match is won loses it). */
 function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
-    <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria} onClick={onLeave}>
+    <Link href="/" className={buttonClass(undefined, `${styles.modeButton} ${v.menuLink}`)} aria-label={strings.menuAria} onClick={onLeave}>
       &lt; {label}
     </Link>
   );
