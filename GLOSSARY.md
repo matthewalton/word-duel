@@ -9,8 +9,8 @@ One game from START to game over, made of rounds against a single rival.
 _Avoid_: Match, session
 
 **Ready screen**:
-The duel board before the first round: hearts and score are shown, the prompt is hidden, and a START button sits in the middle. Shown when a duel is opened from the title screen; play again after game over skips it.
-_Avoid_: Lobby, start screen (that is the title screen)
+The duel board before the first round: hearts and score are shown, the prompt is hidden, and a START button sits in the middle. Shown when a duel is opened from the hub or the Single player area; play again after game over skips it.
+_Avoid_: Lobby, start screen
 
 **Countdown**:
 The 3, 2, 1, GO! after START and before the first round. It runs once per duel, not after a stage clear.
@@ -46,7 +46,7 @@ _Avoid_: Level, wave
 The number of right answers in a row; it multiplies points up to a cap.
 
 **Difficulty**:
-Easy, Normal or Hard, picked on the title screen before a Word Strike or Gap Guard duel; one setting shared by both minigames. It decides which tiers the duel draws items from: Easy tier 1, Normal tiers 1–2, Hard every tier. A gap sentence counts as the tier of the item it tests. It does not change the fuse.
+Easy, Normal or Hard, picked on the minigame cards in the Single player area; one setting shared by both minigames, remembered in this browser, and used by the hub's quick PLAY and by a new room. It decides which tiers the duel draws items from: Easy tier 1, Normal tiers 1–2, Hard every tier. A gap sentence counts as the tier of the item it tests. It does not change the fuse.
 _Avoid_: Level (a stage is a level of the duel), mode
 _Avoid_: Streak
 
@@ -73,7 +73,7 @@ A player leaves a room by pressing MENU, or by being gone (tab closed, connectio
 _Avoid_: Quitting, forfeiting, disconnecting
 
 **Room code**:
-The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the versus panel, or opened as the link `/versus/<code>`.
+The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the hub's VERSUS panel or the versus panel, or opened as the link `/versus/<code>`.
 _Avoid_: Room ID, PIN, invite code
 
 ## Content
@@ -83,8 +83,12 @@ A self-contained set of data for one target language learned from one base langu
 _Avoid_: Language, course, deck
 
 **Language picker**:
-The button in the title screen's top bar that names the current language pack's target language in its own words and opens a menu of every pack. The choice is remembered in this browser, not on the account; it shows only when there are two or more packs.
+The language chip in the top bar: it names the current language pack's target language in its own words and opens a menu of every pack, with REMEMBER ON THIS DEVICE. The choice is remembered in this browser, not on the account; it shows only when there are two or more packs.
 _Avoid_: Language switcher, language menu, settings
+
+**Language step**:
+The first screen at `/`: one tile per language pack, REMEMBER MY LANGUAGE (on by default) and CONTINUE, which opens the hub. Skipped when a language is remembered on this device.
+_Avoid_: Onboarding, language screen
 
 **Target language**:
 The language being learned.
@@ -155,12 +159,26 @@ _Avoid_: Mode, game type
 **Word Strike**:
 The minigame in which the player types the translation of a word.
 
-**Title screen**:
-The screen before a duel where the player chooses a minigame, its direction and difficulty, and plays.
-_Avoid_: Menu, home, start screen
+**Hub**:
+The home screen at `/` once a language is chosen, with one panel per area: SINGLE PLAYER (a quick PLAY per minigame), VERSUS (CREATE ROOM and a room code box) and STUDY. Each panel's heading is the door to its area.
+_Avoid_: Title screen, menu, home page
+
+**Area**:
+One of the hub's three parts, Single player, Versus and Study, each with its own screen headed by a title strip in its colour and a back button to the hub.
+_Avoid_: Mode, section, tab
+
+**Single player area**:
+The area screen at `/play` where the player chooses a minigame, its direction and difficulty, and plays against the CPU rival.
+_Avoid_: Title screen, solo menu
+
+**Quick PLAY**:
+A minigame's PLAY button on the hub: it opens that minigame's duel with the difficulty and direction last picked in the Single player area.
+
+**Top bar**:
+The row on top of the hub and the area screens: the brand or a back button, an area's title strip, the language picker and the account corner (SIGN IN or the account chip).
 
 **Active card**:
-The minigame on the title screen that Enter or PLAY will start. Other minigames' cards are inactive and show their preview dimmed.
+The minigame card in the Single player area that Enter or PLAY will start. Other minigames' cards are inactive and show their preview dimmed.
 _Avoid_: Selected mode
 
 **Preview**:
@@ -196,5 +214,5 @@ An account's running totals for one item and prompt kind: right, wrong and too s
 _Avoid_: Word score, mastery
 
 **Wordbook**:
-The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the title bar, the account menu and game over; a guest who opens it is asked to sign in.
+The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the hub's STUDY panel, the account menu and game over; a guest who opens it is asked to sign in.
 _Avoid_: Word history page (word history is the data), mistakes, review list (that is game over's list)

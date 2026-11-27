@@ -27,7 +27,7 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/game/duel.ts` | Pure duel reducer shared by every minigame |
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
 | `src/game/minigames/` | One module per minigame, plus the registry |
-| `src/components/` | Title screen, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
+| `src/components/` | Language step, hub, Single player area and top bar, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
 | `src/components/ui/` | Shared controls: Button, Dialog, Menu, Toggle group, Tabs, Panel (Radix behaviour, our pixel styles; ADR 0013) |
 | `src/lib/progress.ts` | Best scores, for accounts only: a guest has none |
 | `src/lib/useAccount.ts` | Session in the browser, loading account best scores, sign in and out |
@@ -63,7 +63,7 @@ A Word Strike round asks a word item directly; a gap tests the one item named by
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`, and give it blurbs in `strings.difficulty.blurbs`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`, and give it blurbs in `strings.difficulty.blurbs`) and renders its own controls, its card `Preview` (shown in the Single player area and on the hub) and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Accounts
 

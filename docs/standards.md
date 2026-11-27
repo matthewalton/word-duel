@@ -22,7 +22,7 @@ Every agent follows these when building, and the reviewer checks every PR agains
 
 React 19 and Next.js 16 App Router. Read `node_modules/next/dist/docs/` before using a Next API; it differs from older versions.
 
-- **Pages stay static; the session is read in the browser.** `src/app/page.tsx` and `src/app/wordbook/page.tsx` render a client screen and never call `headers()` or the session. Account data goes through `"use server"` actions in `src/server/` that read the session themselves. Why: ADR 0006/0008, the title screen must be fast and cacheable.
+- **Pages stay static; the session is read in the browser.** `src/app/page.tsx`, `src/app/play/page.tsx` and `src/app/wordbook/page.tsx` render a client screen and never call `headers()` or the session. Account data goes through `"use server"` actions in `src/server/` that read the session themselves. Why: ADR 0006/0008, the hub must be fast and cacheable.
 - **Server-only code imports `server-only`** (`src/server/db.ts`, `auth.ts`), and secrets are read on the server only. Nothing that needs the database, zod or a secret ships to the client. Why: bundle size and leaked keys.
 - **No effect for derived state.** Compute it in render, or reset state by a key during render (`useLastMissed` keys its state by user and pack). Effects are for timers, subscriptions and server calls. Browser-only values come from `useSyncExternalStore` with a server snapshot (`currentPackId` in `src/lib/packChoice.ts`), not a mount effect. Why: an extra render and a flash of wrong content.
 - **Game rules live in the pure reducer**, controllers wire them to clocks and servers (`duelReducer` vs `useDuel`/`useVersusDuel`). Timed actions carry `at` so the reducer stays pure. Why: ADR 0002, versus reuses it, and it can be tested.
