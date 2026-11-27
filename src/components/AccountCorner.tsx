@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fill, strings } from "@/i18n/strings";
 import { authClient } from "@/lib/auth-client";
 import { PROVIDERS, type ProviderId } from "@/lib/providers";
@@ -10,6 +10,8 @@ import { countMissed } from "@/server/wordbook";
 import a from "./account.module.css";
 import { BookIcon } from "./BookIcon";
 import { ProviderMark } from "./ProviderMark";
+import { Button } from "./ui/Button";
+import { Menu, MenuItem } from "./ui/Menu";
 
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
 
@@ -39,40 +41,37 @@ export function AccountCorner({
 
   if (!user)
     return (
-      <button type="button" className={a.cornerButton} onClick={onOpenSignIn}>
+      <Button variant="outlined" onClick={onOpenSignIn}>
         {strings.account.signIn}
-      </button>
+      </Button>
     );
 
+  const accountAria = fill(strings.account.accountAria, { name: user.name });
   return (
-    <div className={a.corner}>
-      <button
-        type="button"
-        className={`${a.chip} ${menuOpen ? a.chipOpen : ""}`}
-        aria-label={fill(strings.account.accountAria, { name: user.name })}
-        aria-expanded={menuOpen}
-        onClick={() => (menuOpen ? closeMenu() : setMenuOpen(true))}
-      >
-        <Initial name={user.name} />
-        <span className={a.chipName}>{user.name.toUpperCase()}</span>
-        <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
-          <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
-        </svg>
-      </button>
-      {menuOpen && (
-        <AccountMenu
-          name={user.name}
-          packId={packId}
-          linkResult={linkResult}
-          onLink={account.linkProvider}
-          onClose={closeMenu}
-          onSignOut={() => {
-            closeMenu();
-            account.signOut();
-          }}
-        />
-      )}
-    </div>
+    <Menu
+      label={accountAria}
+      align="end"
+      open={menuOpen}
+      onOpenChange={(open) => (open ? setMenuOpen(true) : closeMenu())}
+      className={a.menu}
+      trigger={
+        <Button variant="outlined" className={a.chip} aria-label={accountAria}>
+          <Initial name={user.name} />
+          <span className={a.chipName}>{user.name.toUpperCase()}</span>
+          <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
+          </svg>
+        </Button>
+      }
+    >
+      <AccountMenu
+        name={user.name}
+        packId={packId}
+        linkResult={linkResult}
+        onLink={account.linkProvider}
+        onSignOut={account.signOut}
+      />
+    </Menu>
   );
 }
 
@@ -90,17 +89,14 @@ function AccountMenu({
   packId,
   linkResult,
   onLink,
-  onClose,
   onSignOut,
 }: {
   name: string;
   packId: string;
   linkResult: LinkResult | null;
   onLink: (provider: ProviderId) => Promise<boolean>;
-  onClose: () => void;
   onSignOut: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
   const [linked, setLinked] = useState<ProviderId[] | null>(null);
   const [linking, setLinking] = useState<ProviderId | null>(null);
   const [missed, setMissed] = useState<number | null>(null);
@@ -138,35 +134,20 @@ function AccountMenu({
     if (!(await onLink(provider))) setLinking(null);
   };
 
-  // Close on Escape or a click outside the menu and its chip.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const onDown = (e: PointerEvent) => {
-      const corner = ref.current?.parentElement;
-      if (corner && !corner.contains(e.target as Node)) onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onDown);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onDown);
-    };
-  }, [onClose]);
-
   return (
-    <div ref={ref} className={a.menu}>
+    <>
       <div className={a.menuHead}>
         <Initial name={name} large />
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
-      <Link href="/wordbook" className={a.menuWordbook}>
-        <BookIcon className={a.wordbookIcon} />
-        <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
-        {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
-        <span aria-hidden="true">&gt;</span>
-      </Link>
+      <MenuItem asChild>
+        <Link href="/wordbook" className={a.menuWordbook}>
+          <BookIcon className={a.wordbookIcon} />
+          <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
+          {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
+          <span aria-hidden="true">&gt;</span>
+        </Link>
+      </MenuItem>
       <p className={a.menuNote}>{strings.account.savedNote}</p>
       {linked && (
         <div className={a.methods}>
@@ -189,16 +170,24 @@ function AccountMenu({
                       {strings.account.linked}
                     </span>
                   ) : (
-                    <button
-                      type="button"
-                      className={a.linkButton}
-                      aria-label={fill(strings.account.linkAria, { provider: providerName })}
-                      aria-busy={linking === p}
+                    <MenuItem
+                      asChild
                       disabled={linking != null}
-                      onClick={() => link(p)}
+                      // Stay open while the browser leaves for the provider.
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        link(p);
+                      }}
                     >
-                      {strings.account.link}
-                    </button>
+                      <Button
+                        className={a.linkButton}
+                        aria-label={fill(strings.account.linkAria, { provider: providerName })}
+                        aria-busy={linking === p}
+                        disabled={linking != null}
+                      >
+                        {strings.account.link}
+                      </Button>
+                    </MenuItem>
                   )}
                 </li>
               );
@@ -213,9 +202,11 @@ function AccountMenu({
           })}
         </p>
       )}
-      <button type="button" className={a.signOut} onClick={onSignOut}>
-        {strings.account.signOut}
-      </button>
-    </div>
+      <MenuItem asChild onSelect={onSignOut}>
+        <Button variant="outlined" className={a.signOut}>
+          {strings.account.signOut}
+        </Button>
+      </MenuItem>
+    </>
   );
 }

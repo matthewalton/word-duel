@@ -8,6 +8,9 @@ import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
 import t from "./title.module.css";
+import { Button } from "./ui/Button";
+import { Panel } from "./ui/Panel";
+import { ToggleGroup } from "./ui/ToggleGroup";
 
 const pad = (n: number) => String(n).padStart(4, "0");
 
@@ -103,14 +106,15 @@ export function TitleScreen({
 
   // Arrow keys move between cards, and up and down change the active card's
   // difficulty; Enter plays (unless a button has focus, which handles Enter
-  // itself). Number keys pick a card directly.
+  // itself). Number keys pick a card directly. Keys a control already used
+  // (the difficulty switch's arrows, opening a menu) and keys inside an open
+  // menu or dialog are left alone.
   useEffect(() => {
     if (helpFor) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.altKey || e.ctrlKey || e.metaKey) return;
-      const onControl =
-        e.target instanceof Element &&
-        e.target.closest("button, input, a, dialog");
+      if (e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) return;
+      if (e.target instanceof Element && e.target.closest('[role="menu"], [role="dialog"]')) return;
+      const onControl = e.target instanceof Element && e.target.closest("button, input, a");
       if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
       else if ((e.key === "ArrowUp" || e.key === "ArrowDown") && active.usesDifficulty) {
@@ -147,17 +151,16 @@ export function TitleScreen({
           const info = strings.minigameInfo[m.id];
           const Preview = m.Preview;
           return (
-            <section
+            <Panel
               key={m.id}
               className={`${t.card} ${on ? t.cardOn : t.cardOff}`}
               aria-label={name}
             >
               <div className={t.cardBody}>
-                <button
+                <Button
                   ref={(el) => {
                     previews.current[i] = el;
                   }}
-                  type="button"
                   className={t.previewButton}
                   aria-label={fill(
                     on ? strings.title.playName : strings.title.choose,
@@ -167,7 +170,7 @@ export function TitleScreen({
                   onClick={() => (on ? onPlay(m.id) : setActiveIndex(i))}
                 >
                   <Preview pack={pack} opts={opts} />
-                </button>
+                </Button>
 
                 {on && (
                   <div className={t.info}>
@@ -184,31 +187,30 @@ export function TitleScreen({
                     )}
                     {m.usesDifficulty && (
                       <>
-                        <div className={t.difficulty} role="group" aria-label={strings.difficulty.label}>
-                          {DIFFICULTIES.map((d, level) => (
-                            <button
-                              key={d}
-                              type="button"
-                              aria-pressed={d === difficulty}
-                              className={`${t.difficultyOption} ${t[`difficulty_${d}`]}`}
-                              onClick={() => onDifficulty(d)}
-                            >
+                        <ToggleGroup
+                          label={strings.difficulty.label}
+                          options={DIFFICULTIES}
+                          value={difficulty}
+                          onValueChange={onDifficulty}
+                          optionClassName={(d) => `${t.difficultyOption} ${t[`difficulty_${d}`]}`}
+                          renderOption={(d, level) => (
+                            <>
                               <span className={t.difficultyBars} aria-hidden="true">
                                 {DIFFICULTIES.map((b, n) => (
                                   <span key={b} className={`${t.difficultyBar} ${n <= level ? t.difficultyBarOn : ""}`} />
                                 ))}
                               </span>
                               {strings.difficulty.names[d]}
-                            </button>
-                          ))}
-                        </div>
+                            </>
+                          )}
+                        />
                         <p className={t.difficultyBlurb}>{strings.difficulty.blurbs[m.id]?.[difficulty]}</p>
                       </>
                     )}
                     <div className={t.langRow}>
                       {m.usesDirection && (
-                        <button
-                          type="button"
+                        <Button
+                          variant="outlined"
                           className={t.dirToggle}
                           aria-label={fill(strings.directionAria, {
                             from: from.name,
@@ -221,28 +223,24 @@ export function TitleScreen({
                           }
                         >
                           <DirectionLabel from={from} to={to} />
-                        </button>
+                        </Button>
                       )}
-                      <button
-                        type="button"
+                      <Button
+                        variant="icon"
                         className={t.help}
                         aria-label={fill(strings.title.help, { name })}
                         onClick={() => setHelpFor(m)}
                       >
                         ?
-                      </button>
-                      <button
-                        type="button"
-                        className={t.play}
-                        onClick={() => onPlay(m.id)}
-                      >
+                      </Button>
+                      <Button variant="primary" className={t.play} onClick={() => onPlay(m.id)}>
                         {strings.title.play}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
               </div>
-            </section>
+            </Panel>
           );
         })}
       </div>
@@ -259,14 +257,9 @@ export function TitleScreen({
 
       {minigames.length > 1 && (
         <div className={t.carouselBar}>
-          <button
-            type="button"
-            className={t.navButton}
-            aria-label={strings.title.previous}
-            onClick={() => step(-1)}
-          >
+          <Button variant="icon" className={t.navButton} aria-label={strings.title.previous} onClick={() => step(-1)}>
             &lt;
-          </button>
+          </Button>
           <span
             className={t.dots}
             aria-label={fill(strings.title.pageOf, {
@@ -281,14 +274,9 @@ export function TitleScreen({
               />
             ))}
           </span>
-          <button
-            type="button"
-            className={t.navButton}
-            aria-label={strings.title.next}
-            onClick={() => step(1)}
-          >
+          <Button variant="icon" className={t.navButton} aria-label={strings.title.next} onClick={() => step(1)}>
             &gt;
-          </button>
+          </Button>
         </div>
       )}
 

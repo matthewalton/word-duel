@@ -6,26 +6,6 @@
 
 /* ---------- Corner ---------- */
 
-.corner {
-  position: relative;
-}
-
-.cornerButton,
-.chip {
-  min-height: 44px;
-  font: inherit;
-  font-size: calc(16px * var(--s));
-  letter-spacing: 1px;
-  color: var(--board);
-  background: transparent;
-  border: 4px solid var(--line);
-  cursor: pointer;
-}
-
-.cornerButton {
-  padding: 4px calc(14px * var(--s));
-}
-
 .chip {
   max-width: calc(260px * var(--s));
   padding: 4px calc(12px * var(--s)) 4px 4px;
@@ -34,7 +14,7 @@
   gap: calc(10px * var(--s));
 }
 
-.chipOpen {
+.chip[data-state="open"] {
   background: #4e4670;
 }
 
@@ -71,36 +51,10 @@
   font-size: calc(26px * var(--s));
 }
 
-.cornerButton:focus-visible,
-.chip:focus-visible,
-.signOut:focus-visible,
-.linkButton:focus-visible,
-.provider:focus-visible,
-.guest:focus-visible,
-.nudgeButton:focus-visible {
-  outline: 4px solid var(--player);
-  outline-offset: 2px;
-}
-
-.menu {
-  position: absolute;
-  z-index: 5;
-  top: calc(100% + 12px);
-  right: 0;
-  border: 4px solid var(--ink);
-  box-shadow: 4px 4px 0 #000;
-}
-
 .menu {
   width: calc(320px * var(--s));
-  max-width: calc(100vw - 32px);
   padding: calc(18px * var(--s));
-  display: flex;
-  flex-direction: column;
   gap: calc(14px * var(--s));
-  color: var(--ink);
-  background: var(--board);
-  box-shadow: 8px 8px 0 #000;
 }
 
 .menuHead {
@@ -179,14 +133,12 @@
 .linkButton {
   min-height: 36px;
   padding: 0 12px;
-  font: inherit;
   font-size: calc(14px * var(--s));
   letter-spacing: 1px;
   color: var(--ink);
   background: #fff;
   border: 4px solid var(--ink);
   box-shadow: 3px 3px 0 var(--ink);
-  cursor: pointer;
 }
 
 .linkButton:active:not(:disabled) {
@@ -195,7 +147,6 @@
 }
 
 .linkButton:disabled {
-  cursor: default;
   opacity: 0.6;
 }
 
@@ -217,26 +168,12 @@
 
 .signOut {
   align-self: flex-start;
-  min-height: 44px;
-  padding: 4px calc(14px * var(--s));
-  font: inherit;
-  font-size: calc(16px * var(--s));
-  letter-spacing: 1px;
-  color: var(--ink);
-  background: transparent;
-  border: 4px solid var(--ink);
-  cursor: pointer;
 }
 
 /* ---------- Sign-in panel ---------- */
 
-dialog.dialog {
+.dialog {
   width: min(calc(520px * var(--s)), calc(100% - 32px));
-}
-
-.dialogBody {
-  display: flex;
-  flex-direction: column;
   gap: calc(18px * var(--s));
 }
 
@@ -275,7 +212,6 @@ dialog.dialog {
   display: flex;
   align-items: center;
   gap: 16px;
-  font: inherit;
   font-size: calc(18px * var(--s));
   letter-spacing: 1px;
   text-align: start;
@@ -283,7 +219,6 @@ dialog.dialog {
   background: #fff;
   border: 4px solid var(--ink);
   box-shadow: 4px 4px 0 var(--ink);
-  cursor: pointer;
 }
 
 .provider:active:not(:disabled) {
@@ -292,7 +227,6 @@ dialog.dialog {
 }
 
 .provider:disabled {
-  cursor: default;
   opacity: 0.6;
 }
 
@@ -311,15 +245,11 @@ dialog.dialog {
   align-self: center;
   min-height: 44px;
   padding: 4px 8px;
-  font: inherit;
   font-size: calc(15px * var(--s));
   letter-spacing: 1px;
   color: var(--muted);
-  background: transparent;
-  border: 0;
   text-decoration: underline;
   text-underline-offset: 4px;
-  cursor: pointer;
 }
 
 /* ---------- Game-over nudge (guests only) ---------- */
@@ -343,7 +273,6 @@ dialog.dialog {
 }
 
 .nudgeButton {
-  composes: cornerButton;
   flex: none;
 }
 
@@ -373,8 +302,7 @@ dialog.dialog {
   border-color: var(--accent);
 }
 
-.wordbookButton:focus-visible,
-.menuWordbook:focus-visible {
+.wordbookButton:focus-visible {
   outline: 4px solid var(--player);
   outline-offset: 2px;
 }
@@ -420,7 +348,7 @@ dialog.dialog {
 }
 
 @media (max-width: 640px) {
-  dialog.dialog {
+  .dialog {
     width: 100%;
     max-width: 100%;
     margin: auto 0 0;

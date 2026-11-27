@@ -29,16 +29,12 @@
   color: var(--ink);
   background: var(--rival);
   border: 4px solid var(--rival);
-  cursor: pointer;
 }
 
 .versusButton:hover {
   border-color: var(--accent);
 }
 
-.versusButton:focus-visible,
-.createButton:focus-visible,
-.joinButton:focus-visible,
 .codeInput:focus-visible,
 .linkButton:focus-visible {
   outline: 4px solid var(--player);
@@ -57,34 +53,18 @@
 
 /* ---------- Room panel ---------- */
 
-dialog.panel {
+.panel {
   width: min(calc(860px * var(--s)), calc(100% - 32px));
+  gap: calc(22px * var(--s));
   border-color: var(--rival);
   box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--rival);
 }
 
-.panelBody {
-  display: flex;
-  flex-direction: column;
-  gap: calc(22px * var(--s));
-}
-
-.panelHead {
-  display: flex;
-  align-items: center;
-  gap: calc(16px * var(--s));
-}
-
 .panelLead {
-  margin: 0;
+  margin: 0 calc(16px * var(--s));
   font-family: var(--font-words);
   font-size: calc(18px * var(--s));
   color: #4a4060;
-}
-
-.panelHead .panelClose {
-  margin-inline-start: auto;
-  flex: none;
 }
 
 .options {
@@ -135,34 +115,16 @@ dialog.panel {
 .joinButton {
   min-height: calc(52px * var(--s));
   font-size: calc(22px * var(--s));
-  font-weight: 700;
-  letter-spacing: 2px;
-  border: var(--border);
-  box-shadow: 4px 4px 0 #000;
-  cursor: pointer;
 }
 
 .createButton {
   margin-block-start: auto;
-  color: var(--ink);
-  background: var(--accent);
 }
 
+/* The join button is the ink version of the primary button. */
 .joinButton {
   color: var(--board);
   background: var(--ink);
-}
-
-.createButton:active:not(:disabled),
-.joinButton:active:not(:disabled) {
-  transform: translate(4px, 4px);
-  box-shadow: none;
-}
-
-.createButton:disabled,
-.joinButton:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 
 .joinForm {
@@ -654,7 +616,7 @@ dialog.panel {
   }
 
   /* The panel is a sheet from the bottom. */
-  dialog.panel {
+  .panel {
     width: 100%;
     max-width: 100%;
     margin: auto 0 0;
@@ -663,11 +625,11 @@ dialog.panel {
     box-shadow: none;
   }
 
-  .panelHead .panelLead {
+  .panelLead {
     display: none;
   }
 
-  .panelBody {
+  .panel {
     gap: 16px;
   }
 
@@ -831,8 +793,6 @@ dialog.panel {
     animation: none;
   }
 
-  .createButton:active:not(:disabled),
-  .joinButton:active:not(:disabled),
   .linkButton:active {
     transform: none;
   }
