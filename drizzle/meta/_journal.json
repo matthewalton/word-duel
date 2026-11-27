@@ -36,6 +36,13 @@
       "when": 1795797141838,
       "tag": "0004_versus_minigame",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795817072778,
+      "tag": "0005_versus_record",
+      "breakpoints": true
     }
   ]
 }

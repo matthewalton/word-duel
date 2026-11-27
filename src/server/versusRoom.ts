@@ -5,10 +5,11 @@ import { COUNTDOWN_MS, RULES, VERSUS, versusFuse } from "@/config/game";
 import type { Round } from "@/game/types";
 import { otherSeat, roomChannel, seatClientId, type RoomSnapshot, type Seat, type VersusRound } from "@/game/versus";
 import { dealDraw, isRightAnswer, roomRound, type RoomSettings } from "@/game/versusRounds";
+import { matchRowOf } from "@/lib/versusRecord";
 import { getPack } from "@/packs";
 import { presentClients, publish } from "./ably";
 import { getDb } from "./db";
-import { versusRoom, versusRound } from "./schema";
+import { versusMatch, versusRoom, versusRound } from "./schema";
 
 /**
  * The versus referee (ADR 0012): rooms, the draw, checking answers and
@@ -235,6 +236,22 @@ export async function broadcast(snapshot: RoomSnapshot): Promise<void> {
     await publish(roomChannel(snapshot.code), "room", snapshot);
   } catch (e) {
     console.error("versus: publish failed", e);
+  }
+}
+
+/**
+ * Once the room's current match is won, writes its row in the versus record.
+ * Safe to repeat: the row's key is the room and match, so only the first
+ * write lands. A failed write is logged, not thrown, so the room still
+ * plays on; the next catch-up for this room tries again.
+ */
+export async function recordMatch(room: Room, snapshot: RoomSnapshot, now: Date): Promise<void> {
+  const row = matchRowOf(room, snapshot, now);
+  if (!row) return;
+  try {
+    await getDb().insert(versusMatch).values(row).onConflictDoNothing();
+  } catch (e) {
+    console.error("versus: recording the match failed", e);
   }
 }
 
