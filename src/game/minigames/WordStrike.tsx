@@ -18,7 +18,7 @@ import {
 } from "../types";
 import { buildRound, startDraw } from "./wordStrikeRounds";
 
-function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) {
+function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }: ControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const composing = useRef(false);
@@ -26,7 +26,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
   const inGame = phase === "countdown" || phase === "playing" || phase === "resolving";
   // Typing is allowed during the countdown so the input can hold focus, but
   // nothing submits until the round is live (and the input is cleared then).
-  const editable = phase === "countdown" || phase === "playing";
+  const editable = (phase === "countdown" || phase === "playing") && !locked;
 
   // Focus while the START press is still being handled, so phones open the
   // keyboard: a focus from the later timer would not count as a user gesture.
@@ -50,7 +50,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
 
   const submitNow = () => {
     const value = inputRef.current?.value ?? "";
-    if (phase !== "playing" || !value.trim()) return;
+    if (phase !== "playing" || locked || !value.trim()) return;
     onSubmit(value);
   };
 
@@ -72,7 +72,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         dir={round.answerLang.dir}
         aria-label={strings.inputLabel}
         placeholder={round.hint}
-        disabled={!inGame}
+        disabled={!inGame || locked}
         readOnly={!editable}
         autoComplete="off"
         autoCorrect="off"
@@ -88,7 +88,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         type="button"
         className={styles.goldButton}
         onClick={phase === "gameOver" ? onStart : submitNow}
-        disabled={phase !== "gameOver" && phase !== "playing"}
+        disabled={phase !== "gameOver" && (phase !== "playing" || locked)}
       >
         {phase === "gameOver" ? strings.start : strings.go}
       </button>

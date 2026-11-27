@@ -2,13 +2,16 @@
  * Pure duel state machine shared by every minigame.
  *
  * Outcomes are expressed as "whose heart broke" rather than "was the answer
- * right", so a future versus mode can feed in server-decided outcomes
- * (the rival answered first → loser: "you") through the same reducer.
+ * right", so versus feeds in server-decided outcomes (the rival answered
+ * first → loser: "you", nobody right → loser: null) through the same reducer
+ * (ADR 0002, 0012).
  */
 import { RULES, fuseForStage } from "@/config/game";
 import type { Miss, Outcome, Phase, PlayedRound, Reason, Round, Side } from "./types";
 
 export interface DuelState {
+  /** Versus: no stages, scores, combos or comebacks, and the duel ends when either side runs out of hearts. */
+  versus: boolean;
   phase: Phase;
   stage: number;
   score: number;
@@ -47,10 +50,12 @@ export type DuelAction =
   | { type: "loadLastMissed"; itemIds: string[] | null }
   | { type: "countdown" }
   | { type: "tick" }
-  | { type: "start"; round: Round; at: number }
-  | { type: "resolve"; loser: Side; reason: Reason; given?: string; at: number }
+  /** `fuseMs` is set by the versus server; solo takes it from the stage. */
+  | { type: "start"; round: Round; at: number; fuseMs?: number }
+  /** `loser` is null when no heart breaks (versus: nobody answered right). */
+  | { type: "resolve"; loser: Side | null; reason: Reason; given?: string; at: number }
   | { type: "gameOver" }
-  | { type: "next"; round: Round; at: number };
+  | { type: "next"; round: Round; at: number; fuseMs?: number };
 
 /** The rounds the player lost, for the review list at game over. */
 export function missesOf(rounds: PlayedRound[]): Miss[] {
@@ -71,8 +76,9 @@ function afterRounds(lastMissed: string[], rounds: PlayedRound[]): string[] {
   return [...missed];
 }
 
-export function initialDuel(sample: Round): DuelState {
+export function initialDuel(sample: Round, versus = false): DuelState {
   return {
+    versus,
     phase: "idle",
     stage: 1,
     score: 0,
@@ -105,7 +111,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "countdown":
       if (state.phase !== "idle" && state.phase !== "gameOver") return state;
       return {
-        ...initialDuel(state.round),
+        ...initialDuel(state.round, state.versus),
         best: state.best,
         lastMissed: state.lastMissed && afterRounds(state.lastMissed, state.rounds),
         phase: "countdown",
@@ -119,23 +125,27 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "start":
       if (state.phase !== "countdown") return state;
       return {
-        ...initialDuel(action.round),
+        ...initialDuel(action.round, state.versus),
         best: state.best,
         lastMissed: state.lastMissed,
         phase: "playing",
         fxKey: state.fxKey,
+        fuseMs: action.fuseMs ?? fuseForStage(1),
         startedAt: action.at,
         roundShownAt: action.at,
       };
 
     case "resolve": {
       if (state.phase !== "playing") return state;
+      const { versus } = state;
       const hearts = { ...state.hearts };
-      hearts[action.loser] = Math.max(0, hearts[action.loser] - 1);
+      if (action.loser) hearts[action.loser] = Math.max(0, hearts[action.loser] - 1);
 
       let { score, combo } = state;
       let points = 0;
-      if (action.loser === "rival") {
+      if (versus) {
+        // Versus keeps no score.
+      } else if (action.loser === "rival") {
         combo += 1;
         points = RULES.pointsPerHit * state.round.tier * Math.min(combo, RULES.comboCap);
         score += points;
@@ -144,12 +154,12 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       }
 
       // One comeback per item per duel.
-      const comeback = action.loser === "rival" && !!state.lastMissed?.includes(state.round.itemId);
+      const comeback = !versus && action.loser === "rival" && !!state.lastMissed?.includes(state.round.itemId);
       const lastMissed = comeback ? state.lastMissed!.filter((id) => id !== state.round.itemId) : state.lastMissed;
 
-      const stageCleared = hearts.rival === 0;
+      const stageCleared = !versus && hearts.rival === 0;
       if (stageCleared) score += RULES.stageBonus;
-      const gameOver = hearts.you === 0;
+      const gameOver = hearts.you === 0 || (versus && hearts.rival === 0);
       const newBest = gameOver && state.best != null && score > state.best;
       const played: PlayedRound = {
         round: state.round,
@@ -193,7 +203,14 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "next": {
       if (state.phase !== "resolving" || state.outcome?.gameOver) return state;
       if (!state.outcome?.stageCleared) {
-        return { ...state, phase: "playing", round: action.round, outcome: null, roundShownAt: action.at };
+        return {
+          ...state,
+          phase: "playing",
+          round: action.round,
+          outcome: null,
+          roundShownAt: action.at,
+          fuseMs: action.fuseMs ?? state.fuseMs,
+        };
       }
       const stage = state.stage + 1;
       return {
