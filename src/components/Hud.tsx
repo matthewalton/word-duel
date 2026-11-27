@@ -2,7 +2,7 @@ import { RULES } from "@/config/game";
 import type { DuelState } from "@/game/duel";
 import { fill, strings } from "@/i18n/strings";
 import styles from "./game.module.css";
-import { HeartRow } from "./PixelHeart";
+import { HeartRow } from "./ui/PixelHeart";
 
 const pad = (n: number) => String(n).padStart(4, "0");
 

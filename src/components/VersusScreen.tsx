@@ -16,7 +16,7 @@ import { DirectionLabel } from "./DirectionLabel";
 import styles from "./game.module.css";
 import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
-import { HeartRow } from "./PixelHeart";
+import { HeartRow } from "./ui/PixelHeart";
 import { PromptBoard } from "./PromptBoard";
 import v from "./versus.module.css";
 
