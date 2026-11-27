@@ -73,9 +73,7 @@
   border-color: var(--accent);
 }
 
-.modeButton:focus-visible,
-.goldButton:focus-visible,
-.choiceButton:focus-visible {
+.modeButton:focus-visible {
   outline: 4px solid var(--player);
   outline-offset: 2px;
 }
@@ -277,7 +275,7 @@
   padding: calc(16px * var(--s)) calc(36px * var(--s));
   font-size: calc(44px * var(--s));
   letter-spacing: calc(4px * var(--s));
-  box-shadow: 6px 6px 0 var(--ink);
+  --btn-shadow: 6px 6px 0 var(--ink);
 }
 
 .readyHint {
@@ -819,27 +817,13 @@
   color: #8a7fa6;
 }
 
+/* The primary Button (GO, START, REMATCH) at board size, with an ink shadow. */
 .goldButton {
+  --btn-shadow: 4px 4px 0 var(--ink);
   min-width: calc(110px * var(--s));
   padding: calc(10px * var(--s)) calc(18px * var(--s));
   font-size: calc(22px * var(--s));
-  font-weight: 700;
   letter-spacing: calc(2px * var(--s));
-  color: var(--ink);
-  background: var(--accent);
-  border: var(--border);
-  box-shadow: 4px 4px 0 var(--ink);
-  cursor: pointer;
-}
-
-.goldButton:active:not(:disabled) {
-  transform: translate(4px, 4px);
-  box-shadow: none;
-}
-
-.goldButton:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 
 .choiceArea {
@@ -958,7 +942,7 @@
     min-height: 64px;
     font-size: 32px;
     letter-spacing: 3px;
-    box-shadow: 5px 5px 0 var(--ink);
+    --btn-shadow: 5px 5px 0 var(--ink);
   }
 
   .choiceButton {

@@ -5,6 +5,7 @@ import styles from "@/components/game.module.css";
 import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToParts";
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
+import { Button } from "@/components/ui/Button";
 import { fill, strings } from "@/i18n/strings";
 import { askableWords } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
@@ -83,15 +84,15 @@ function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }:
         onCompositionStart={() => (composing.current = true)}
         onCompositionEnd={() => (composing.current = false)}
       />
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
+        variant="primary"
         className={styles.goldButton}
         onClick={phase === "gameOver" ? onStart : submitNow}
         disabled={phase !== "gameOver" && (phase !== "playing" || locked)}
       >
         {phase === "gameOver" ? strings.start : strings.go}
-      </button>
+      </Button>
     </div>
   );
 }

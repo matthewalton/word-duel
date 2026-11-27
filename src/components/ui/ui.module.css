@@ -96,7 +96,8 @@
     color: var(--ink);
     background: var(--accent);
     border: 4px solid var(--ink);
-    box-shadow: 4px 4px 0 #000;
+    /* A screen sets its own shadow here; :active still presses it flat. */
+    box-shadow: var(--btn-shadow, 4px 4px 0 #000);
   }
 
   .primary:active:not(:disabled) {

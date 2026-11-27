@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import styles from "@/components/game.module.css";
 import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
+import { Button } from "@/components/ui/Button";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
@@ -93,9 +94,9 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart, locked = f
         ))}
       </div>
       {showStart && (
-        <button ref={startRef} type="button" className={styles.goldButton} onClick={onStart}>
+        <Button ref={startRef} variant="primary" className={styles.goldButton} onClick={onStart}>
           {strings.start}
-        </button>
+        </Button>
       )}
     </div>
   );
