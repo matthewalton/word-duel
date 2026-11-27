@@ -9,7 +9,7 @@
     "lint": "eslint",
     "check:packs": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-packs.mts",
     "packs:ids": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/add-pack-ids.mts",
-    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/**/*.test.mts\"",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/**/*.test.mts\" \"scripts/**/*.test.mts\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate.mts",
     "db:migrate:prod": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate-prod.mts",
