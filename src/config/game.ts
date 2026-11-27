@@ -56,6 +56,12 @@ export const VERSUS = {
   maxNameLength: 24,
   /** Most rounds dealt in one room, far more than a duel can last. */
   maxRounds: 200,
+  /** The versus record shows a win rate once this many matches are played, so one win doesn't read as 100%. */
+  recordWinRateFrom: 5,
+  /** Rival accounts shown in the versus record's head-to-head. */
+  recordHeadToHead: 10,
+  /** Recent matches shown in the versus record. */
+  recordRecent: 10,
 } as const;
 
 /** The versus fuse: the solo start, 1 s shorter for every heart broken so far, down to the solo floor. */
