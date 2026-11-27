@@ -253,15 +253,6 @@ dialog.dialog {
   color: #4a4060;
 }
 
-/* Why signing in helps, when a feature asked for it. */
-.lead {
-  margin: 0;
-  font-family: var(--font-words);
-  font-size: calc(20px * var(--s));
-  line-height: 1.4;
-  color: var(--ink);
-}
-
 .note {
   font-size: calc(15px * var(--s));
   color: var(--muted);

@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { DIFFICULTIES, PRACTICE_MIN_MISSED } from "@/config/game";
-import { practiceCount } from "@/game/minigames";
+import { DIFFICULTIES } from "@/config/game";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
-import type { MissedLists } from "@/lib/useLastMissed";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
@@ -30,53 +28,6 @@ function Heart({ color }: { color: string }) {
   );
 }
 
-/** Accounts get "M missed only" in the nav hint, just before "Enter to play". */
-function withMissedHint(hint: string, account: boolean): string {
-  if (!account) return hint;
-  const parts = hint.split(" · ");
-  parts.splice(parts.length - 1, 0, strings.title.navHintMissed);
-  return parts.join(" · ");
-}
-
-/**
- * MISSED ONLY: switches the card to a practice duel of the account's missed
- * items, showing how many there are. Below the minimum it is disabled with a
- * hint; a guest can still choose it, which asks them to sign in.
- */
-function PracticeToggle({
-  count,
-  guest,
-  on,
-  onToggle,
-}: {
-  /** Null for a guest or while the missed list loads. */
-  count: number | null;
-  guest: boolean;
-  on: boolean;
-  onToggle: () => void;
-}) {
-  const tooFew = count != null && count < PRACTICE_MIN_MISSED;
-  return (
-    <div className={t.practiceRow}>
-      <button
-        type="button"
-        className={t.practice}
-        aria-pressed={on}
-        aria-label={count != null ? fill(strings.practice.toggleAria, { n: count }) : undefined}
-        disabled={!guest && (count == null || tooFew)}
-        onClick={onToggle}
-      >
-        <span className={t.practiceBox} aria-hidden="true" />
-        <span>
-          {strings.practice.toggle}
-          {count != null && fill(strings.practice.count, { n: count })}
-        </span>
-      </button>
-      {tooFew && <span className={t.practiceHint}>{fill(strings.practice.tooFew, { n: PRACTICE_MIN_MISSED })}</span>}
-    </div>
-  );
-}
-
 /**
  * Title screen: one card per minigame, one of them active. The active card
  * grows and shows details; the others keep their preview with the lights off.
@@ -91,7 +42,6 @@ export function TitleScreen({
   onDirection,
   difficulty,
   onDifficulty,
-  practice,
   onPlay,
   gameName,
   lead,
@@ -107,14 +57,6 @@ export function TitleScreen({
   onDirection: (d: Direction) => void;
   difficulty: Difficulty;
   onDifficulty: (d: Difficulty) => void;
-  /** MISSED ONLY on each card: a practice duel of the account's missed items. */
-  practice: {
-    /** Null for a guest (choosing it asks them to sign in); a kind is missing while it loads. */
-    missed: MissedLists | null;
-    /** Which cards have it switched on; it only takes effect with enough missed items. */
-    on: Record<string, boolean>;
-    onToggle: (id: string) => void;
-  };
   onPlay: (id: string) => void;
   gameName: string;
   /** Top-left slot: the wordbook link. */
@@ -135,9 +77,6 @@ export function TitleScreen({
   const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
   const active = minigames[activeIndex];
   const previews = useRef<(HTMLButtonElement | null)[]>([]);
-  const missedCount = (m: Minigame) => practiceCount(m, pack, practice.missed, direction);
-  const practising = (m: Minigame) => !!practice.on[m.id] && (missedCount(m) ?? 0) >= PRACTICE_MIN_MISSED;
-  const activePractice = practising(active);
 
   // Focus follows the active card. Without this, a preview that was clicked
   // keeps focus after the arrow keys move on, and the keyboard press makes
@@ -176,11 +115,7 @@ export function TitleScreen({
       else if (e.key === "ArrowLeft") step(-1);
       else if ((e.key === "ArrowUp" || e.key === "ArrowDown") && active.usesDifficulty) {
         e.preventDefault();
-        if (!activePractice) stepDifficulty(e.key === "ArrowUp" ? 1 : -1);
-      }
-      else if ((e.key === "m" || e.key === "M") && !(e.target instanceof HTMLInputElement)) {
-        const count = missedCount(active);
-        if (practice.missed === null || (count ?? 0) >= PRACTICE_MIN_MISSED) practice.onToggle(active.id);
+        stepDifficulty(e.key === "ArrowUp" ? 1 : -1);
       }
       else if (e.key === "Enter" && !onControl) onPlay(active.id);
       else if (/^[1-9]$/.test(e.key) && Number(e.key) <= minigames.length)
@@ -255,7 +190,6 @@ export function TitleScreen({
                               key={d}
                               type="button"
                               aria-pressed={d === difficulty}
-                              disabled={activePractice}
                               className={`${t.difficultyOption} ${t[`difficulty_${d}`]}`}
                               onClick={() => onDifficulty(d)}
                             >
@@ -268,18 +202,8 @@ export function TitleScreen({
                             </button>
                           ))}
                         </div>
+                        <p className={t.difficultyBlurb}>{strings.difficulty.blurbs[m.id]?.[difficulty]}</p>
                       </>
-                    )}
-                    <PracticeToggle
-                      count={missedCount(m)}
-                      guest={practice.missed === null}
-                      on={activePractice}
-                      onToggle={() => practice.onToggle(m.id)}
-                    />
-                    {m.usesDifficulty && (
-                      <p className={t.difficultyBlurb}>
-                        {activePractice ? strings.practice.blurb : strings.difficulty.blurbs[m.id]?.[difficulty]}
-                      </p>
                     )}
                     <div className={t.langRow}>
                       {m.usesDirection && (
@@ -324,16 +248,13 @@ export function TitleScreen({
       </div>
 
       <p className={t.navHint}>
-        {withMissedHint(
-          minigames.length > 1
-            ? active.usesDifficulty
-              ? strings.title.navHintDifficulty
-              : strings.title.navHint
-            : active.usesDifficulty
-              ? strings.title.navHintOneDifficulty
-              : strings.title.navHintOne,
-          practice.missed !== null,
-        )}
+        {minigames.length > 1
+          ? active.usesDifficulty
+            ? strings.title.navHintDifficulty
+            : strings.title.navHint
+          : active.usesDifficulty
+            ? strings.title.navHintOneDifficulty
+            : strings.title.navHintOne}
       </p>
 
       {minigames.length > 1 && (
