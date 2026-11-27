@@ -4,7 +4,7 @@ import { and, eq, isNull, lt } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { DIFFICULTIES, HISTORY_LIMITS, VERSUS } from "@/config/game";
-import { isRoomCode, roomChannel, type RoomView, type Seat } from "@/game/versus";
+import { isRoomCode, roomChannel, seatClientId, type RoomView, type Seat } from "@/game/versus";
 import { askableWords, getPack, listPacks } from "@/packs";
 import { subscribeToken } from "./ably";
 import { getAuth } from "./auth";
@@ -13,13 +13,18 @@ import { DIRECTIONS, versusRoom } from "./schema";
 import {
   advance,
   answer,
+  askRematch,
   broadcast,
+  checkPresence,
+  closeLater,
   dealDraw,
   dealFirstRound,
   findRoom,
   hashToken,
+  leave,
   newToken,
   randomCode,
+  reload,
   seatOf,
   snapshotOf,
   type Room,
@@ -50,18 +55,22 @@ async function playerName(): Promise<string | null> {
   return name ? name.slice(0, VERSUS.maxNameLength) : null;
 }
 
-/** The room and the caller's seat in it, or null if the room is gone or the token holds no seat. */
-async function seated(rawCode: unknown, rawToken: unknown, now: Date): Promise<{ room: Room; seat: Seat } | null> {
+type Seated = { room: Room; seat: Seat } | { error: "missing" | "left" };
+
+/** The room and the caller's seat in it; `missing` if the room is gone or the token holds no seat. */
+async function seated(rawCode: unknown, rawToken: unknown, now: Date): Promise<Seated> {
   const c = code.safeParse(rawCode);
   const t = token.safeParse(rawToken);
-  if (!c.success || !t.success) return null;
+  if (!c.success || !t.success) return { error: "missing" };
   const room = await findRoom(c.data, now);
-  if (!room) return null;
+  if (!room) return { error: "missing" };
   const seat = seatOf(room, t.data);
-  return seat ? { room, seat } : null;
+  if (!seat) return { error: "missing" };
+  if (seat === "p1" ? room.p1Left : room.p2Left) return { error: "left" };
+  return { room, seat };
 }
 
-const gone: RoomView = { ok: false, error: "missing" };
+const refused = (found: { error: "missing" | "left" }): RoomView => ({ ok: false, error: found.error });
 
 async function view(room: Room, seat: Seat, now: Date, send: boolean): Promise<RoomView> {
   const snapshot = await snapshotOf(room, now);
@@ -121,14 +130,18 @@ export async function joinRoom(rawCode: unknown): Promise<{ ok: true; token: str
   return { ok: true, token: secret };
 }
 
-/** The room as it stands, for the seat this token holds. Also ends a round whose time is up. */
+/**
+ * The room as it stands, for the seat this token holds. Also ends a round
+ * whose time is up, and lets a seat gone from Ably presence leave.
+ */
 export async function roomState(rawCode: unknown, rawToken: unknown): Promise<RoomView> {
   const now = new Date();
   const found = await seated(rawCode, rawToken, now);
-  if (!found) return gone;
+  if ("error" in found) return refused(found);
   const before = (await snapshotOf(found.room, now)).seq;
-  await advance(found.room, now);
-  const snapshot = await snapshotOf(found.room, now);
+  const room = (await checkPresence(found.room, now)) ? await reload(found.room) : found.room;
+  await advance(room, now);
+  const snapshot = await snapshotOf(room, now);
   if (snapshot.seq !== before) await broadcast(snapshot);
   return { ok: true, seat: found.seat, snapshot };
 }
@@ -137,7 +150,7 @@ export async function roomState(rawCode: unknown, rawToken: unknown): Promise<Ro
 export async function answerRound(rawCode: unknown, rawToken: unknown, n: unknown, given: unknown): Promise<RoomView> {
   const now = new Date();
   const found = await seated(rawCode, rawToken, now);
-  if (!found) return gone;
+  if ("error" in found) return refused(found);
   const round = z.int().min(1).max(VERSUS.maxRounds).safeParse(n);
   const text = z.string().min(1).safeParse(given);
   if (!round.success || !text.success) return view(found.room, found.seat, now, false);
@@ -148,14 +161,35 @@ export async function answerRound(rawCode: unknown, rawToken: unknown, n: unknow
     text.data.slice(0, HISTORY_LIMITS.maxGivenLength),
     now,
   );
-  if (changed) await advance(found.room, now);
-  return view(found.room, found.seat, now, changed);
+  if (!changed) return view(found.room, found.seat, now, false);
+  await advance(found.room, now);
+  const snapshot = await snapshotOf(found.room, now);
+  if (snapshot.winner) await closeLater(found.room, now);
+  await broadcast(snapshot);
+  return { ok: true, seat: found.seat, snapshot };
 }
 
-/** A token that lets this seat's browser listen to its room's channel, and nothing else. */
+/** Presses REMATCH. When both players have, the next match starts in the same room with the same settings. */
+export async function requestRematch(rawCode: unknown, rawToken: unknown): Promise<RoomView> {
+  const now = new Date();
+  const found = await seated(rawCode, rawToken, now);
+  if ("error" in found) return refused(found);
+  const changed = await askRematch(found.room, found.seat, now);
+  return view(changed ? await reload(found.room) : found.room, found.seat, now, changed);
+}
+
+/** Leaves the room for good: before the match is won, that loses it. */
+export async function leaveRoom(rawCode: unknown, rawToken: unknown): Promise<void> {
+  const now = new Date();
+  const found = await seated(rawCode, rawToken, now);
+  if ("error" in found) return;
+  if (await leave(found.room, found.seat, now)) await broadcast(await snapshotOf(await reload(found.room), now));
+}
+
+/** A token that lets this seat's browser listen to its room's channel and be present on it, and nothing else. */
 export async function listenToken(rawCode: unknown, rawToken: unknown): Promise<string | null> {
   const found = await seated(rawCode, rawToken, new Date());
-  if (!found) return null;
-  const channel = roomChannel(found.room.code);
-  return (await subscribeToken(channel, `${channel}:${found.seat}`)).token;
+  if ("error" in found) return null;
+  const { code: roomCode } = found.room;
+  return (await subscribeToken(roomChannel(roomCode), seatClientId(roomCode, found.seat))).token;
 }

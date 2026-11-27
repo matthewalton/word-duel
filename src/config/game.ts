@@ -42,8 +42,12 @@ export const VERSUS = {
   codeLength: 4,
   /** A room nobody has joined expires after this long. */
   waitMs: 30 * 60_000,
-  /** A joined room's code stays taken for this long. */
+  /** A joined room's code stays taken for this long while a match is on. */
   matchMs: 3 * 60 * 60_000,
+  /** A room closes this long after its last match ended, unless a rematch starts. */
+  closeMs: 10 * 60_000,
+  /** A rematch's first prompt shows this long after the countdown is dealt, so both browsers hear of it first. */
+  rematchLeadMs: 800,
   /** The joined player card shows this long before the countdown starts. */
   getReadyMs: 1_200,
   /** How long a round's outcome stays on screen before the next prompt. */
