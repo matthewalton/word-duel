@@ -4,7 +4,7 @@ Every agent follows these when building, and the reviewer checks every PR agains
 
 ## 1. Correctness
 
-- **Handle the empty and odd cases the game really has**: an empty pool after a difficulty or retired-item filter, a pack with no gap sentences (`Minigame.hasContent`), a guest (`null`) next to an account, a list that hasn't loaded yet. Why: each one has shipped as a bug or a blank card before. See the practice duel's fallback in `startDraw` (`src/game/useDuel.ts`).
+- **Handle the empty and odd cases the game really has**: an empty pool after a difficulty or retired-item filter, a pack with no gap sentences (`Minigame.hasContent`), a guest (`null`) next to an account, a list that hasn't loaded yet. Why: a draw must never deal from an empty pool, and a guest must never see or send account data. See the practice duel's fallback in `startDraw` (`src/game/useDuel.ts`).
 - **Retired items are never asked, but their ids still resolve.** Draws read `askableWords`/`askableGaps`; word history checks every id, retired ones included (`lookup` in `src/server/history.ts`). Why: ADR 0007, history outlives content.
 - **Timers and async calls can't land late.** Clear intervals and timeouts in the effect cleanup, and guard a promise that sets state with a `live` flag (`useLastMissed`, the missed list in `useDuel`). Why: a duel left mid-fuse or a pack switched mid-load must not dispatch into the next one.
 - **Races are settled by the server, not by timing.** A versus round is won by one conditional `UPDATE … WHERE outcome IS NULL` (`answer` in `src/server/versusRoom.ts`), and every server action is safe to repeat (a duel's browser-made `id` keeps a double send to one row). Why: ADR 0012; two browsers and a retry must agree.
@@ -27,6 +27,7 @@ React 19 and Next.js 16 App Router. Read `node_modules/next/dist/docs/` before u
 - **No effect for derived state.** Compute it in render, or reset state by a key during render (`useLastMissed` keys its state by user and pack). Effects are for timers, subscriptions and server calls. Browser-only values come from `useSyncExternalStore` with a server snapshot (`currentPackId` in `src/lib/packChoice.ts`), not a mount effect. Why: an extra render and a flash of wrong content.
 - **Game rules live in the pure reducer**, controllers wire them to clocks and servers (`duelReducer` vs `useDuel`/`useVersusDuel`). Timed actions carry `at` so the reducer stays pure. Why: ADR 0002, versus reuses it, and it can be tested.
 - **Stable keys**: an id when a list can reorder, grow in the middle or shrink; an index only for lists fixed while shown (fuse segments, the review list at game over). Why: index keys on changing lists mix up state and effects.
+- **Stream only what is per request.** A page that needs a request value (route params) wraps that part in `<Suspense>` so the shell stays static (`src/app/versus/[code]/page.tsx`); data a client screen needs from an account loads through a server action, not by making the page dynamic. Why: the shell renders at build time and paints at once.
 - **Memo only where it pays**: a `useMemo` that keeps an object prop stable for an effect's deps (`opts` in `GameScreen`) is fine; wrapping cheap components in `memo` is noise. Disabling `react-hooks/exhaustive-deps` needs a comment saying why. Why: memo has a cost and hides real dependency bugs.
 
 ## 4. Simplicity and reuse

@@ -104,7 +104,7 @@ Each run:
 ### What counts as done for a worker
 
 - The branch is cut from `origin/main`, and each commit does one thing.
-- The code follows `docs/standards.md`, and `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit` passes.
+- The code follows `docs/standards.md`, and `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit && pnpm test` passes.
 - Once the PR is open and Checks pass, the worker tells you (one message, not `worker_done`) and keeps watching the PR. After the review lands it fixes or answers each finding (see Review), and only then reports done.
 - The issue's **Demo flow** is recorded at desktop and embedded in the PR (see Demo recording). Phone width too, only if the change is phone-specific UI. If the issue has no Demo flow, the worker records the shortest path from the title screen to the change.
 - Glossary terms are used in code, the PR and commits.
