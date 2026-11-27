@@ -1,0 +1,18 @@
+[
+  { "id": "grammar.definite-article", "kind": "grammar", "target": "el/la/los/las", "base": "the (definite article)", "tier": 1},
+  { "id": "grammar.indefinite-article", "kind": "grammar", "target": "un/una", "base": "a, an (indefinite article)", "tier": 1},
+  { "id": "grammar.ser", "kind": "grammar", "target": "es/son", "base": "to be (who or what): ser", "tier": 1},
+  { "id": "grammar.estar", "kind": "grammar", "target": "está/están", "base": "to be (where or how): estar", "tier": 1},
+  { "id": "grammar.present-ar", "kind": "grammar", "target": "-o/-as/-a/-amos/-an", "base": "present tense, -ar verbs", "tier": 1},
+  { "id": "grammar.hay", "kind": "grammar", "target": "hay", "base": "there is, there are", "tier": 1},
+  { "id": "grammar.possessive", "kind": "grammar", "target": "mi/tu/su", "base": "my, your, his/her/their", "tier": 1},
+  { "id": "grammar.present-er-ir", "kind": "grammar", "target": "-o/-es/-e/-emos/-imos/-en", "base": "present tense, -er/-ir verbs", "tier": 2},
+  { "id": "grammar.gustar", "kind": "grammar", "target": "me gusta/me gustan", "base": "I like (gustar)", "tier": 2},
+  { "id": "grammar.contraction", "kind": "grammar", "target": "del/al", "base": "of the, to the (de + el, a + el)", "tier": 2},
+  { "id": "grammar.going-to", "kind": "grammar", "target": "ir a + infinitive", "base": "going to (future)", "tier": 2},
+  { "id": "grammar.have-to", "kind": "grammar", "target": "tener que", "base": "have to", "tier": 2},
+  { "id": "grammar.demonstrative", "kind": "grammar", "target": "este/esta/estos/estas", "base": "this, these", "tier": 2},
+  { "id": "grammar.preterite", "kind": "grammar", "target": "habló/comió", "base": "past tense (preterite)", "tier": 3},
+  { "id": "grammar.por-para", "kind": "grammar", "target": "por/para", "base": "for, through, by (por or para)", "tier": 3},
+  { "id": "grammar.reflexive", "kind": "grammar", "target": "se", "base": "reflexive se (oneself)", "tier": 3}
+]

@@ -1,0 +1,7 @@
+{
+  "normalization": "NFC",
+  "caseInsensitive": true,
+  "ignoreDiacritics": true,
+  "ignoreLeadingWords": { "en": ["a", "an", "the"], "es": ["el", "la", "los", "las", "un", "una"] },
+  "ignoreWordClassMarkers": { "en": ["to be", "to", "be"] }
+}
