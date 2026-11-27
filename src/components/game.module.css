@@ -1093,19 +1093,21 @@
 /* ---------- Short screen: a phone with its keyboard open ---------- */
 
 /* Everything down to the answer input fits in about 370px, the shortest
-   visible height on an iPhone with the keyboard and QuickType bar open. */
-@container duel (max-height: 520px) {
+   visible height on an iPhone with the keyboard and QuickType bar open.
+   The container is .screen's content box: 472px here is a visible height of
+   about 520px on desktop (48px of padding) and 492px at phone width. */
+@container duel (max-height: 472px) {
   .modeBar {
-    gap: 6px;
+    gap: calc(6px * var(--s));
   }
 
   .modeButton {
-    padding: 2px 8px;
-    font-size: 13px;
+    padding: calc(2px * var(--s)) calc(8px * var(--s));
+    font-size: calc(13px * var(--s));
   }
 
   .duelName {
-    font-size: 14px;
+    font-size: calc(14px * var(--s));
   }
 
   .board {
@@ -1113,97 +1115,97 @@
   }
 
   .hud {
-    padding: 6px 12px;
+    padding: calc(6px * var(--s)) calc(12px * var(--s));
   }
 
   .hudSide {
-    gap: 2px 8px;
+    gap: calc(2px * var(--s)) calc(8px * var(--s));
   }
 
   .hudLabel {
-    font-size: 13px;
+    font-size: calc(13px * var(--s));
   }
 
   .heart {
-    width: 26px;
-    height: 22px;
+    width: calc(26px * var(--s));
+    height: calc(22px * var(--s));
   }
 
   .best {
-    font-size: 11px;
-    margin-block-end: 2px;
+    font-size: calc(11px * var(--s));
+    margin-block-end: calc(2px * var(--s));
   }
 
   .score {
-    font-size: 22px;
+    font-size: calc(22px * var(--s));
   }
 
   .pointsTag {
-    padding: 2px 6px;
-    font-size: 15px;
+    padding: calc(2px * var(--s)) calc(6px * var(--s));
+    font-size: calc(15px * var(--s));
   }
 
   .promptArea {
     min-height: 0;
-    padding: 8px 12px 44px;
-    gap: 6px;
+    padding: calc(8px * var(--s)) calc(12px * var(--s)) calc(44px * var(--s));
+    gap: calc(6px * var(--s));
   }
 
   .prompt {
-    font-size: calc(clamp(28px, 10vw, 56px) * var(--fit, 1));
+    font-size: calc(clamp(calc(28px * var(--s)), 10vw, calc(56px * var(--s))) * var(--fit, 1));
   }
 
   .promptSentence {
-    font-size: calc(clamp(22px, 7vw, 40px) * var(--fit, 1));
+    font-size: calc(clamp(calc(22px * var(--s)), 7vw, calc(40px * var(--s))) * var(--fit, 1));
   }
 
   .fuse {
-    height: 8px;
-    margin-block-start: 2px;
+    height: calc(8px * var(--s));
+    margin-block-start: calc(2px * var(--s));
   }
 
   .band {
-    min-height: 44px;
-    padding: 4px 12px;
+    min-height: calc(44px * var(--s));
+    padding: calc(4px * var(--s)) calc(12px * var(--s));
   }
 
   .bandLabel {
-    font-size: 14px;
+    font-size: calc(14px * var(--s));
   }
 
   .bandWord {
-    font-size: calc(22px * var(--fit, 1));
+    font-size: calc(calc(22px * var(--s)) * var(--fit, 1));
   }
 
   .countNumber {
-    font-size: 80px;
+    font-size: calc(80px * var(--s));
   }
 
   .countGo {
-    padding: 6px 20px;
-    font-size: 56px;
+    padding: calc(6px * var(--s)) calc(20px * var(--s));
+    font-size: calc(56px * var(--s));
   }
 
   .startButton {
-    min-width: 180px;
+    min-width: calc(180px * var(--s));
     min-height: 0;
-    padding: 8px 24px;
-    font-size: 28px;
+    padding: calc(8px * var(--s)) calc(24px * var(--s));
+    font-size: calc(28px * var(--s));
   }
 
   .controlStrip {
-    padding: 8px 12px;
+    padding: calc(8px * var(--s)) calc(12px * var(--s));
   }
 
-  /* 16px or more, or iOS zooms in on focus. */
+  /* calc(16px * var(--s)) or more, or iOS zooms in on focus. */
   .answerInput {
-    padding: 6px 10px;
-    font-size: 20px;
+    padding: calc(6px * var(--s)) calc(10px * var(--s));
+    font-size: calc(20px * var(--s));
   }
 
   .goldButton {
-    padding: 6px 14px;
-    font-size: 18px;
+    padding: calc(6px * var(--s)) calc(14px * var(--s));
+    font-size: calc(18px * var(--s));
   }
 }
 
