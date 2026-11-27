@@ -68,10 +68,10 @@ export function cleanCode(raw: string): string {
 
 export const isRoomCode = (code: string) => code.length === VERSUS.codeLength && cleanCode(code) === code;
 
-/** The seat's side in the duel reducer. */
-export function sideOf(winner: Seat | null, me: Seat): Side | null {
+/** Whose heart a round's winner broke, from this seat's side (ADR 0002); null if nobody won. */
+export function loserSide(winner: Seat | null, me: Seat): Side | null {
   if (!winner) return null;
-  return winner === me ? "you" : "rival";
+  return winner === me ? "rival" : "you";
 }
 
 /** Rounds each seat won. */

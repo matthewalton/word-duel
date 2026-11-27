@@ -5,7 +5,7 @@ import { RULES } from "@/config/game";
 import { duelReducer, initialDuel } from "./duel";
 import type { Round } from "./types";
 import { FUSE_SEGMENTS } from "./useDuel";
-import { sideOf, type RoomSnapshot, type Seat, type VersusRound } from "./versus";
+import { loserSide, type RoomSnapshot, type Seat, type VersusRound } from "./versus";
 
 /** How often the controller catches the screen up with the server's clock. */
 const FRAME_MS = 50;
@@ -82,7 +82,7 @@ export function useVersusDuel({
         const current = s.rounds[d.started - 1];
         if (current?.result && d.resolved < d.started) {
           const { winner, reason } = current.result;
-          dispatch({ type: "resolve", loser: sideOf(winner, seat), reason, at: performance.now() });
+          dispatch({ type: "resolve", loser: loserSide(winner, seat), reason, at: performance.now() });
           d.resolved += 1;
           d.resolvedAt = performance.now();
           continue;
