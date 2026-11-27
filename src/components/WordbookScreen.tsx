@@ -128,7 +128,7 @@ function GuestPrompt({ onSignIn }: { onSignIn: () => void }) {
 function Empty() {
   return (
     <Message title={s.emptyTitle} text={s.emptyBody}>
-      <Link href="/" className={w.gold}>
+      <Link href="/play" className={w.gold}>
         {s.play}
       </Link>
     </Message>

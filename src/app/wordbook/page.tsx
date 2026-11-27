@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: `${strings.wordbook.pageTitle} · ${GAME_NAME}`,
 };
 
-/** Static like the title page: the session and the wordbook load in the browser. */
+/** Static like the hub: the session and the wordbook load in the browser. */
 export default function WordbookPage() {
   return <WordbookScreen />;
 }

@@ -1,0 +1,952 @@
+/*
+ * Navigation (design canvas round 20): the language step (NavDoorsLanguage),
+ * the hub (NavSplitHub), the area screens' frame (NavDoorsSingle) and the top
+ * bar they share, with its language chip.
+ * Pixel rules: 4px borders, square corners, unblurred offset shadows, no motion.
+ */
+
+/* The page frame of the hub and the area screens. */
+.screen,
+.languageStep {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(1280px * var(--s));
+  /* Fills the screen; a short window scrolls instead of squashing the panels. */
+  min-height: max(100dvh, calc(560px * var(--s)));
+  margin-inline: auto;
+  padding: calc(32px * var(--s)) calc(48px * var(--s)) calc(20px * var(--s));
+  display: flex;
+  flex-direction: column;
+  gap: calc(24px * var(--s));
+  color: var(--board);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.short {
+  display: none;
+}
+
+/* ---------- Brand ---------- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--s));
+}
+
+.brandBig {
+  justify-content: center;
+  gap: calc(16px * var(--s));
+}
+
+.brandHeart {
+  display: block;
+  flex: none;
+  width: calc(21px * var(--s));
+  height: calc(18px * var(--s));
+}
+
+.brandBig .brandHeart {
+  width: calc(28px * var(--s));
+  height: calc(24px * var(--s));
+}
+
+.brandName {
+  margin: 0;
+  font-size: calc(22px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(3px * var(--s));
+  white-space: nowrap;
+}
+
+.brandBig .brandName {
+  font-size: calc(30px * var(--s));
+  letter-spacing: calc(4px * var(--s));
+}
+
+/* ---------- Top bar ---------- */
+
+/* Back or brand on the left, an area's title strip in the middle, the language chip and account on the right. */
+.bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: calc(12px * var(--s));
+}
+
+.barLead {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.barCorner {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: calc(12px * var(--s));
+  min-width: 0;
+}
+
+.back {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(14px * var(--s));
+  font-size: calc(16px * var(--s));
+  letter-spacing: 1px;
+  color: var(--board);
+  text-decoration: none;
+  white-space: pre;
+  border: 4px solid var(--line);
+}
+
+.back:hover {
+  border-color: var(--accent);
+}
+
+.back:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+/* An area's heading: its name on a strip of the area's colour. */
+.areaTitle {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  padding: calc(6px * var(--s)) calc(28px * var(--s));
+  font-size: calc(26px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(4px * var(--s));
+  white-space: nowrap;
+  color: var(--ink);
+  border: 4px solid var(--ink);
+  box-shadow: calc(6px * var(--s)) calc(6px * var(--s)) 0 #000;
+}
+
+.areaSingle {
+  background: var(--accent);
+}
+
+/* The language chip: the target language's own name, opening a menu of packs. */
+.langButton {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8px * var(--s));
+  padding: 4px calc(14px * var(--s));
+  letter-spacing: normal;
+}
+
+.langButton[data-state="open"] {
+  background: #4e4670;
+}
+
+.langButtonName {
+  font-family: var(--font-words);
+  font-size: calc(19px * var(--s));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.langCaret {
+  flex: none;
+  width: 10px;
+  height: 6px;
+  color: var(--line);
+}
+
+.langMenu {
+  width: calc(260px * var(--s));
+  padding: calc(14px * var(--s));
+  gap: 8px;
+}
+
+.langMenuLabel {
+  font-size: calc(13px * var(--s));
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+.langList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.langOption {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: start;
+  border: 3px solid var(--ink);
+}
+
+.langOption:hover,
+.langOption[data-highlighted] {
+  background: var(--track);
+}
+
+.langOption[data-state="checked"] {
+  background: var(--player);
+}
+
+.langOptionNative {
+  font-family: var(--font-words);
+  font-size: calc(20px * var(--s));
+  line-height: 1.1;
+}
+
+.langOptionName {
+  margin-inline-start: auto;
+  font-size: calc(15px * var(--s));
+  letter-spacing: 1px;
+}
+
+.langRemember {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: calc(14px * var(--s));
+  letter-spacing: 1px;
+}
+
+/* ---------- REMEMBER boxes ---------- */
+
+.checkBox {
+  flex: none;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  background: #fff;
+  border: 3px solid var(--ink);
+}
+
+.langRemember[data-state="checked"] .checkBox,
+.checkInput:checked + .checkBox {
+  background: var(--player);
+}
+
+.checkMark {
+  display: block;
+  width: 12px;
+  height: 10px;
+}
+
+.checkBoxBig {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 4px solid var(--line);
+}
+
+.checkBoxBig .checkMark {
+  width: 18px;
+  height: 15px;
+}
+
+/* The real checkbox stays focusable under the drawn one. */
+.checkInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.checkInput:focus-visible + .checkBox {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+/* ---------- Language step ---------- */
+
+.languageStep {
+  padding: calc(32px * var(--s)) calc(64px * var(--s)) calc(28px * var(--s));
+}
+
+.languageHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.languageTitle {
+  margin: 0;
+  font-size: calc(34px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(3px * var(--s));
+}
+
+.languageLead {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(18px * var(--s));
+  color: var(--line);
+}
+
+.tiles {
+  flex: 1;
+  min-height: 0;
+  max-height: calc(380px * var(--s));
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: calc(40px * var(--s));
+  /* Room for the picked tile's shadow. */
+  padding: 0 10px 10px 0;
+}
+
+/* The tiles sit in the row beside MORE SOON; the group only adds the radio behaviour. */
+.tileGroup {
+  display: contents;
+}
+
+.tile {
+  flex: 0 1 calc(330px * var(--s));
+  min-width: 0;
+  /* The language's own name shrinks to fit a narrow tile. */
+  container-type: inline-size;
+  padding: calc(18px * var(--s));
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--board);
+  background: #332c4e;
+  border-color: #6b5f7d;
+}
+
+.tile + .tile {
+  margin-inline-start: 0;
+}
+
+.tile:hover {
+  background: #3b335a;
+  border-color: var(--line);
+}
+
+.tile[data-state="on"] {
+  color: var(--ink);
+  background: var(--board);
+  border-color: var(--accent);
+  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--accent);
+}
+
+.tileBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(22px * var(--s));
+}
+
+.tileNative {
+  font-family: var(--font-words);
+  font-size: min(calc(68px * var(--s)), 22cqw);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tileText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.tileName {
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(3px * var(--s));
+}
+
+.tileSample {
+  font-family: var(--font-words);
+  font-size: calc(20px * var(--s));
+  color: var(--line);
+}
+
+.tile[data-state="on"] .tileSample {
+  color: #4a4060;
+}
+
+.moreSoon {
+  flex: 0 1 calc(330px * var(--s));
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(18px * var(--s));
+  font-size: calc(16px * var(--s));
+  letter-spacing: 2px;
+  color: var(--line);
+  border: 4px dashed #6b5f7d;
+}
+
+.rememberRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(48px * var(--s));
+}
+
+.remember {
+  position: relative;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: calc(14px * var(--s));
+  cursor: pointer;
+}
+
+.rememberText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rememberTitle {
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.rememberNote {
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  color: var(--line);
+}
+
+.continue {
+  min-height: 56px;
+  padding: 0 calc(28px * var(--s));
+  font-size: calc(24px * var(--s));
+  letter-spacing: 3px;
+}
+
+/* ---------- Hub ---------- */
+
+.hub {
+  flex: 1;
+  min-height: 0;
+  max-height: calc(680px * var(--s));
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: calc(32px * var(--s));
+  /* Room for the panels' shadows. */
+  padding: 0 10px 10px 0;
+}
+
+.single {
+  grid-row: 1 / span 2;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(16px * var(--s));
+  padding: calc(20px * var(--s)) calc(22px * var(--s));
+  border-color: var(--accent);
+  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--accent);
+}
+
+.singleHead {
+  margin: 0;
+}
+
+.singleDoor {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: calc(28px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(3px * var(--s));
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.singleDoor:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+.allOptions {
+  margin-inline-start: auto;
+  padding: calc(4px * var(--s)) calc(10px * var(--s));
+  font-size: calc(14px * var(--s));
+  font-weight: 400;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+}
+
+.singleDoor:hover .allOptions {
+  background: var(--accent);
+}
+
+.games {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: calc(16px * var(--s));
+}
+
+.game {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: calc(12px * var(--s));
+  background: var(--track);
+  border: 4px solid var(--ink);
+}
+
+/* The minigame's own title-card preview, lit and sized down to the box. */
+.gamePreview {
+  --pv-bg: var(--board);
+  --pv-ink: var(--ink);
+  --pv-panel: var(--board);
+  --pv-accent: var(--player);
+  --pv-good: var(--player-ink);
+  --pv-track: var(--ink);
+  --pv-fuse: var(--accent);
+  --pv-chip-on: var(--player);
+  --pv-prompt: min(calc(40px * var(--s)), 30cqh);
+  --pv-sentence: min(calc(30px * var(--s)), 22cqh);
+  --pv-input: min(calc(20px * var(--s)), 13cqh);
+  --pv-chip: min(calc(16px * var(--s)), 11cqh);
+
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--board);
+  border: 3px solid var(--line);
+  container-type: size;
+}
+
+.gameInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gameName {
+  font-size: calc(22px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.gameMeta {
+  /* Two lines, so both cards' PLAY buttons line up when one wraps. */
+  min-height: 2.8em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  font-size: calc(13px * var(--s));
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.gameMeta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gameMeta > span + span::before {
+  content: "·";
+  margin-inline: 6px;
+}
+
+.gamePlay {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 calc(18px * var(--s));
+  font-size: calc(17px * var(--s));
+}
+
+/* VERSUS and STUDY: dark panels edged in their area's colour. */
+.side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10px * var(--s));
+  padding: calc(20px * var(--s)) calc(22px * var(--s));
+  background: #332c4e;
+  border: 4px solid var(--edge);
+  box-shadow: calc(8px * var(--s)) calc(8px * var(--s)) 0 var(--edge);
+}
+
+.versus {
+  --edge: var(--rival);
+}
+
+.study {
+  --edge: var(--player);
+}
+
+.sideHead {
+  margin: 0;
+}
+
+.sideDoor {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: calc(24px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(3px * var(--s));
+  color: var(--board);
+  text-align: start;
+  text-decoration: none;
+}
+
+.sideDoor:hover .sideArrow {
+  color: var(--accent);
+}
+
+.sideDoor:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+.sideIcon {
+  display: block;
+  flex: none;
+  width: calc(21px * var(--s));
+  height: calc(18px * var(--s));
+  color: var(--line);
+}
+
+.sideArrow {
+  margin-inline-start: auto;
+  font-size: calc(20px * var(--s));
+}
+
+.sideLine {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(16px * var(--s));
+  line-height: 1.35;
+  color: var(--line);
+}
+
+.versusRow {
+  margin-top: auto;
+  display: flex;
+  gap: calc(10px * var(--s));
+}
+
+.createRoom {
+  flex: 1;
+  min-height: 46px;
+  font-size: calc(17px * var(--s));
+  letter-spacing: 1px;
+}
+
+.codeInput {
+  width: calc(96px * var(--s));
+  min-width: 0;
+  padding: 0 10px;
+  font-size: calc(20px * var(--s));
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  outline: none;
+}
+
+.codeInput::placeholder {
+  color: #8a7fa6;
+}
+
+.codeInput:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+.joinButton {
+  min-height: 46px;
+  padding: 0 12px;
+  font-size: calc(17px * var(--s));
+  font-weight: 700;
+  color: var(--board);
+  background: var(--ink);
+  border: 4px solid var(--line);
+}
+
+.joinButton:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.joinButton:disabled {
+  opacity: 0.6;
+}
+
+.versusError {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  color: #ff8fa3;
+}
+
+.sideAction {
+  margin-top: auto;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(17px * var(--s));
+  letter-spacing: 1px;
+}
+
+.sideActionPrimary {
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--accent);
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.sideActionPrimary:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+/* A one-line status in place of the actions, on a phone. */
+.sideMeta {
+  display: none;
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 640px) {
+  .screen,
+  .languageStep {
+    min-height: 100dvh;
+    padding: 20px 16px 24px;
+    gap: 16px;
+  }
+
+  .long {
+    display: none;
+  }
+
+  .short {
+    display: inline;
+  }
+
+  /* The area's title strip drops under the back button and the corner. */
+  .bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 16px;
+  }
+
+  .barCorner {
+    grid-column: 2;
+    gap: 8px;
+  }
+
+  .brandName {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  .brandBig .brandName {
+    font-size: 22px;
+  }
+
+  .back {
+    padding: 0 10px;
+  }
+
+  .backLabel {
+    display: none;
+  }
+
+  .areaTitle {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-inline-end: 8px;
+    padding: 6px 0;
+    text-align: center;
+    font-size: 20px;
+    letter-spacing: 3px;
+    box-shadow: 6px 6px 0 #000;
+  }
+
+  .langButton {
+    padding: 4px 10px;
+  }
+
+  .langButtonName {
+    font-size: 17px;
+  }
+
+  .languageTitle {
+    font-size: 22px;
+  }
+
+  .languageLead {
+    font-size: 16px;
+  }
+
+  .tiles {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 8px 8px 0;
+  }
+
+  .tile,
+  .moreSoon {
+    flex: 1 1 0;
+  }
+
+  .tileBody {
+    flex-direction: row;
+    gap: 18px;
+  }
+
+  .tileNative {
+    font-size: 44px;
+  }
+
+  .tiles {
+    max-height: none;
+  }
+
+  .tileText {
+    align-items: flex-start;
+  }
+
+  .tile[data-state="on"] {
+    box-shadow: 8px 8px 0 var(--accent);
+  }
+
+  .rememberRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .continue {
+    width: 100%;
+  }
+
+  .hub {
+    max-height: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 16px;
+    padding: 0 8px 8px 0;
+  }
+
+  .single {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    gap: 10px;
+    padding: 12px 14px;
+    box-shadow: 8px 8px 0 var(--accent);
+  }
+
+  .singleDoor {
+    font-size: 20px;
+  }
+
+  .games {
+    grid-auto-flow: row;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .game {
+    flex-direction: row;
+  }
+
+  .gamePreview {
+    --pv-detail: none;
+    --pv-prompt: min(26px, 34cqh);
+    --pv-sentence: min(20px, 26cqh);
+  }
+
+  .singleDoor,
+  .allOptions {
+    white-space: nowrap;
+  }
+
+  .allOptions {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .gameInfo {
+    flex: none;
+    width: 150px;
+  }
+
+  .gameName {
+    font-size: 16px;
+  }
+
+  .side {
+    padding: 12px 14px;
+    box-shadow: 6px 6px 0 var(--edge);
+  }
+
+  .sideDoor {
+    font-size: 18px;
+    gap: 8px;
+  }
+
+  .sideLine {
+    font-size: 14px;
+  }
+
+  .versusRow,
+  .sideAction {
+    display: none;
+  }
+
+  .sideMeta {
+    display: block;
+    margin-top: auto;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--line);
+  }
+}

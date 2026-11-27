@@ -3,14 +3,14 @@
 import type { PromptKind } from "@/game/types";
 
 /**
- * The Wordbook starts a practice duel by linking to the title page with the
- * way to practise in the address bar; the page stays static and reads it in
- * the browser.
+ * The Wordbook starts a practice duel by linking to the Single player area
+ * with the way to practise in the address bar; the page stays static and
+ * reads it in the browser.
  */
 const PARAM = "practice";
 const KINDS: readonly PromptKind[] = ["toTarget", "toBase", "gap"];
 
-export const practiceHref = (kind: PromptKind) => `/?${PARAM}=${kind}`;
+export const practiceHref = (kind: PromptKind) => `/play?${PARAM}=${kind}`;
 
 /** The way to practise in the address bar; null when there is none, and on the server. */
 export function readPracticeWay(): PromptKind | null {

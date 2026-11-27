@@ -94,7 +94,7 @@ function Chooser({ ways, onClose }: { ways: Way[]; onClose: () => void }) {
           return (
             <li key={way.kind}>
               {way.count >= PRACTICE_MIN_MISSED ? (
-                // A full page load, so the title page reads the way on arrival.
+                // A full page load, so the Single player area reads the way on arrival.
                 <a href={practiceHref(way.kind)} className={w.way} aria-label={aria}>
                   {inner}
                 </a>

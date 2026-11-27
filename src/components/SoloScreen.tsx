@@ -2,80 +2,81 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { DEFAULT_DIFFICULTY, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES, minigamesFor } from "@/game/minigames";
 import { gapGuard } from "@/game/minigames/GapGuard";
 import { wordStrike } from "@/game/minigames/WordStrike";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
-import { useAccount } from "@/lib/useAccount";
-import { choosePack, useChosenPack } from "@/lib/packChoice";
+import { useAccount, type Account } from "@/lib/useAccount";
+import { useChosenPack } from "@/lib/packChoice";
 import { readPracticeWay, stripPracticeWay } from "@/lib/practiceLink";
+import { useSoloSettings, type SoloSettings } from "@/lib/soloSettings";
 import { useBestScores } from "@/lib/useBestScores";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
-import { AccountCorner } from "./AccountCorner";
 import { BookIcon } from "./BookIcon";
 import styles from "./game.module.css";
 import { Hud } from "./Hud";
-import { LanguagePicker } from "./LanguagePicker";
 import { PackFonts, packVars } from "./PackFonts";
 import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
-import t from "./title.module.css";
-import { TitleScreen } from "./TitleScreen";
 import { Button } from "./ui/Button";
 import { PortalRoot } from "./ui/PortalRoot";
-import { VersusButton, VersusPanel } from "./VersusPanel";
-import v from "./versus.module.css";
 
-/** A practice duel (from the Wordbook) asks only the account's missed items and keeps no best. */
-type View = { name: "title" } | { name: "duel"; run: number; practice?: boolean };
+/** What a menu screen (the hub, the Single player area) gets from the solo screen around it. */
+export interface SoloMenuProps {
+  pack: LanguagePack;
+  /** The minigames the pack has content for. */
+  minigames: Minigame[];
+  /** Null for a guest: no best scores are shown. */
+  best: Record<string, number> | null;
+  account: Account;
+  settings: SoloSettings;
+  /** The minigame played last this visit, so its card is the active one. */
+  lastId: string;
+  play: (id: string) => void;
+  openSignIn: () => void;
+}
 
-/** Top level: loads the chosen pack, switches between the title screen and a duel. */
-export function GameScreen() {
+/**
+ * A practice duel (from the Wordbook) asks only the account's missed items
+ * and keeps no best; it is asked in the way the Wordbook picked, without
+ * changing the saved direction.
+ */
+type View = { name: "menu" } | { name: "duel"; run: number; practice?: { direction: Direction } };
+
+/**
+ * A screen that starts solo duels: loads the chosen pack and the session,
+ * shows its menu (the hub or the Single player area), and swaps it for the
+ * duel until MENU brings the menu back.
+ */
+export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode }) {
   const pack = useChosenPack();
   const minigames = minigamesFor(pack);
-  const [view, setView] = useState<View>({ name: "title" });
+  const [view, setView] = useState<View>({ name: "menu" });
   const [minigameId, setMinigameId] = useState<string>(MINIGAMES[0].id);
-  const [direction, setDirection] = useState<Direction>("toTarget");
-  const [difficulty, setDifficulty] = useState<Difficulty>(DEFAULT_DIFFICULTY);
+  const settings = useSoloSettings();
   const account = useAccount(pack.meta.id);
   const [signInOpen, setSignInOpen] = useState(false);
   const openSignIn = () => setSignInOpen(true);
-  const [versusOpen, setVersusOpen] = useState(false);
-  const versusAvailable = minigames.some((m) => m.id === "word-strike");
-
-  // V opens versus from the title screen, unless typing or another panel or a menu is open.
-  useEffect(() => {
-    if (view.name !== "title" || !versusAvailable || versusOpen || signInOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() !== "v" || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
-      if (e.target instanceof Element && e.target.closest('input, textarea, [role="dialog"], [role="menu"]')) return;
-      e.preventDefault();
-      setVersusOpen(true);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [view.name, versusAvailable, versusOpen, signInOpen]);
   const best = useBestScores(
     pack.meta.id,
     minigames.map((m) => m.id),
   );
 
-  // Arriving from the Wordbook's PRACTISE MISSED WORDS: that way's ready
-  // screen, set to practise. Read once the session is known (accounts only;
-  // a guest just sees the title screen), then taken out of the address bar.
+  // Arriving from the Wordbook's PRACTISE MISSED WORDS (it links to the
+  // Single player area): that way's ready screen, set to practise. Read once
+  // the session is known (accounts only; a guest just sees the menu), then
+  // taken out of the address bar.
   const [arrived, setArrived] = useState(false);
   if (!account.pending && !arrived) {
     setArrived(true);
     const way = readPracticeWay();
     const minigame = way === "gap" ? gapGuard : wordStrike;
     if (way && account.user && minigame.hasContent(pack)) {
-      if (way !== "gap") setDirection(way);
       setMinigameId(minigame.id);
-      setView({ name: "duel", run: 1, practice: true });
+      setView({ name: "duel", run: 1, practice: { direction: way === "gap" ? settings.direction : way } });
     }
   }
   useEffect(() => {
@@ -87,63 +88,20 @@ export function GameScreen() {
     setView((v) => ({ name: "duel", run: (v.name === "duel" ? v.run : 0) + 1 }));
   };
 
-  const credits = pack.meta.credits?.length ? (
-    <footer className={t.credits}>
-      <span>{strings.creditsLabel} </span>
-      {pack.meta.credits.map((c, i) => (
-        <span key={c.url}>
-          {i > 0 && " · "}
-          <a href={c.url} target="_blank" rel="noreferrer">
-            {c.author}, {c.name}
-          </a>{" "}
-          ({c.licence})
-        </span>
-      ))}
-    </footer>
-  ) : null;
-
   return (
     <PortalRoot className={styles.page} style={packVars(pack)}>
       <PackFonts pack={pack} />
-      {view.name === "title" ? (
-        <TitleScreen
-          key={pack.meta.id}
-          pack={pack}
-          minigames={minigames}
-          best={best}
-          initialId={minigameId}
-          direction={direction}
-          onDirection={setDirection}
-          difficulty={difficulty}
-          onDifficulty={setDifficulty}
-          onPlay={play}
-          gameName={GAME_NAME}
-          lead={
-            <>
-              <Link href="/wordbook" className={t.wordbookLink}>
-                <BookIcon className={t.wordbookIcon} />
-                <span className={t.wordbookLabel}>{strings.wordbook.title}</span>
-              </Link>
-              <LanguagePicker pack={pack} onChoose={choosePack} />
-            </>
-          }
-          corner={
-            <div className={v.cornerRow}>
-              {versusAvailable && <VersusButton onOpen={() => setVersusOpen(true)} />}
-              <AccountCorner account={account} packId={pack.meta.id} onOpenSignIn={openSignIn} />
-            </div>
-          }
-          footer={credits}
-        />
+      {view.name === "menu" ? (
+        menu({ pack, minigames, best, account, settings, lastId: minigameId, play, openSignIn })
       ) : (
         <Duel
           key={view.run}
           pack={pack}
           minigame={getMinigame(minigameId)}
-          direction={direction}
-          difficulty={difficulty}
-          practice={view.practice ?? false}
-          onMenu={() => setView({ name: "title" })}
+          direction={view.practice?.direction ?? settings.direction}
+          difficulty={settings.difficulty}
+          practice={view.practice != null}
+          onMenu={() => setView({ name: "menu" })}
           gameOverExtra={
             account.pending ? null : account.user ? (
               <div className={a.wordbookNudge}>
@@ -163,9 +121,6 @@ export function GameScreen() {
             )
           }
         />
-      )}
-      {versusOpen && (
-        <VersusPanel pack={pack} direction={direction} difficulty={difficulty} onClose={() => setVersusOpen(false)} />
       )}
       {signInOpen && <SignInDialog onClose={() => setSignInOpen(false)} onSignIn={account.signIn} />}
     </PortalRoot>
