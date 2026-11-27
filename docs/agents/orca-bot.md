@@ -162,7 +162,11 @@ Matt reviews by watching the demo first, so it has to show the real flow working
 7. Put the GIF at the top of the PR body with `![desktop](https://github.com/matthewalton/word-duel/blob/demos/<branch>/desktop.gif?raw=true)`, and link the MP4 under it.
 8. Keep a copy in `~/word-duel-demos/<branch>/` as well.
 
-The demo runs as a **guest** by default. Account demos are allowed when the Demo flow says to sign in: the dev server uses the `dev` database, so what the demo writes never reaches prod. Only sign in if Orca's browser is already signed in, and never type a password.
+The demo runs as a **guest** by default. When the Demo flow needs an account, use **Demo Player**, the one account for testing and demoing signed-in flows end to end. Never sign in with a real account or type a password.
+
+- `pnpm db:demo-account` makes it on the `dev` database: Demo Player (`demo@example.invalid`, clearly fake), a 7-day session, and four days of word history in the default language pack (missed items with wrong answers and timeouts, enough for the practice chooser, and BEST items). Running it again replaces the account and its history. It refuses to run unless `DATABASE_URL` is the dev branch's host, so it can never write to prod.
+- It prints a session cookie. Set it in Orca's browser for your dev server's port: `orca exec --command "cookies set better-auth.session_token <value> --url http://localhost:<port> --http-only --same-site Lax"`, then reload.
+- Navigating resets the viewport, so set it after `goto`. Orca's tab only has keyboard focus after a real `click`; arrow keys on tabs, toggle groups and menus do nothing until then.
 - If something comes up that's on the short list, or outside the issue's scope, the worker asks you and waits. It doesn't guess.
 
 ## Speccing

@@ -15,8 +15,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { DIFFICULTIES } from "../config/game";
-import { MINIGAME_IDS } from "../game/minigames/ids";
+import { DIFFICULTIES } from "../config/game.ts";
+import { MINIGAME_IDS } from "../game/minigames/ids.ts";
 import type { Direction, PromptKind, Reason } from "../game/types";
 
 export const DIRECTIONS = ["toTarget", "toBase"] as const satisfies readonly Direction[];

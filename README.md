@@ -28,7 +28,7 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
 | `src/game/minigames/` | One module per minigame, plus the registry |
 | `src/components/` | Title screen, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
-| `src/components/ui/` | Shared controls: Button, Dialog, Menu, Toggle group, Panel (Radix behaviour, our pixel styles; ADR 0013) |
+| `src/components/ui/` | Shared controls: Button, Dialog, Menu, Toggle group, Tabs, Panel (Radix behaviour, our pixel styles; ADR 0013) |
 | `src/lib/progress.ts` | Best scores, for accounts only: a guest has none |
 | `src/lib/useAccount.ts` | Session in the browser, loading account best scores, sign in and out |
 | `src/server/` | Server only: Drizzle schema, database, Better Auth, server actions for account data |
@@ -46,6 +46,7 @@ A pack's content is **items** (what the player learns) and **prompts** (one way 
 
 A Word Strike round asks a word item directly; a gap tests the one item named by `tests`.
 
+- **Adjectives** show the masculine singular (`target`). In packs whose adjectives agree, the feminine singular goes in `targetAlt` when it is spelt differently, so it counts as right too, and on the list in `src/packs/feminineAdjectives.test.mts`; plurals stay out. Gap sentences test agreement on purpose.
 - **Ids are forever.** Word history points at item ids, so never change or reuse one, even to fix a typo in the word. Homographs get one entry and id per meaning (`눈.eye`, `눈.snow`).
 - **Retire, don't delete.** Set `"retired": true` on an entry to stop asking it; prompts that test a retired item stop too.
 - **Adding entries:** write them without `id`/`kind`, run `pnpm packs:ids` (it only fills in missing ids), add `tests` to new gaps, then run `pnpm check:packs`.
@@ -68,7 +69,7 @@ Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Roun
 
 Postgres (Neon, through the Vercel Marketplace) with Drizzle, and Better Auth for OAuth sign-in with Google, GitHub and Discord. Decisions are in ADR 0006.
 
-**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's.
+**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's. `pnpm db:demo-account` makes Demo Player, a fake account with word history for demos, on dev only (`docs/agents/orca-bot.md`, Demo recording).
 
 **Local setup**
 

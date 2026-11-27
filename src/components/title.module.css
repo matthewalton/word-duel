@@ -308,12 +308,6 @@
   container-type: size;
 }
 
-/* The wordbook's practice chooser still uses the old dialog close button. */
-.close:focus-visible {
-  outline: 4px solid var(--player);
-  outline-offset: 2px;
-}
-
 /* ---------- Preview pieces (used by minigame modules) ---------- */
 
 .preview {
@@ -580,54 +574,6 @@
 }
 
 /* ---------- How-to panel ---------- */
-
-/* The old dialog frame, still used by the wordbook's practice chooser. */
-.dialog {
-  box-sizing: border-box;
-  width: min(calc(820px * var(--s)), calc(100% - 32px));
-  max-height: calc(100dvh - 32px);
-  padding: calc(32px * var(--s)) calc(36px * var(--s));
-  color: var(--ink);
-  background: var(--board);
-  border: 4px solid var(--ink);
-  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--accent);
-  font-family: var(--font-ui);
-}
-
-.dialog::backdrop {
-  background: rgba(20, 16, 34, 0.6);
-}
-
-.dialogBody {
-  display: flex;
-  flex-direction: column;
-  gap: calc(24px * var(--s));
-}
-
-.dialogHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dialogTitle {
-  margin: 0;
-  font-size: calc(32px * var(--s));
-  font-weight: 700;
-  letter-spacing: calc(3px * var(--s));
-}
-
-.close {
-  width: 40px;
-  height: 40px;
-  font: inherit;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink);
-  background: transparent;
-  border: 3px solid var(--ink);
-  cursor: pointer;
-}
 
 .steps {
   margin: 0;
