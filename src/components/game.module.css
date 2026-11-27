@@ -797,24 +797,7 @@
   flex: 1;
   min-width: 0;
   padding: calc(10px * var(--s)) calc(14px * var(--s));
-  font-family: var(--font-words);
   font-size: calc(24px * var(--s));
-  color: var(--ink);
-  background: #fff;
-  border: var(--border);
-  outline: none;
-}
-
-.answerInput:focus {
-  border-color: var(--player);
-}
-
-.answerInput:disabled {
-  opacity: 0.6;
-}
-
-.answerInput::placeholder {
-  color: #8a7fa6;
 }
 
 /* The primary Button (GO, START, REMATCH) at board size, with an ink shadow. */

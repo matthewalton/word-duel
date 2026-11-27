@@ -1,5 +1,5 @@
 /*
- * The shared controls: button, choice button, dialog, menu,
+ * The shared controls: button, choice button, text input, dialog, menu,
  * toggle group, tabs and panel, and the pixel heart.
  * Pixel rules: hard square edges, 4px borders, unblurred offset shadows and
  * no eased motion (Radix adds none; only a breaking heart animates, in steps).
@@ -107,6 +107,29 @@
 
   .primary:disabled {
     opacity: 0.6;
+  }
+
+  /* ---------- Text input ---------- */
+
+  /* Focus shows as a player-green border rather than the ring. */
+  .textInput {
+    font-family: var(--font-words);
+    color: var(--ink);
+    background: #fff;
+    border: 4px solid var(--ink);
+    outline: none;
+  }
+
+  .textInput:focus {
+    border-color: var(--player);
+  }
+
+  .textInput:disabled {
+    opacity: 0.6;
+  }
+
+  .textInput::placeholder {
+    color: #8a7fa6;
   }
 
   /* ---------- Choice button ---------- */
