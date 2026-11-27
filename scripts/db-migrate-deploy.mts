@@ -5,7 +5,7 @@
  * deployment keeps serving. Every other build (previews, Checks, local) skips: it goes by
  * VERCEL_ENV (deploySkip).
  */
-import { deploySkip, migrate, migrationUrl } from "./migrate.mts";
+import { deploySkip, migrate } from "./migrate.mts";
 
 const skip = deploySkip(process.env);
 if (skip) {
@@ -13,9 +13,10 @@ if (skip) {
   process.exit(0);
 }
 
-const url = migrationUrl(process.env);
+// Only the direct connection: the advisory lock doesn't hold through the pooler (DATABASE_URL).
+const url = process.env.DATABASE_URL_UNPOOLED;
 if (!url) {
-  console.error("✗ The production build has no DATABASE_URL_UNPOOLED or DATABASE_URL; nothing was migrated.");
+  console.error("✗ The production build has no DATABASE_URL_UNPOOLED; nothing was migrated.");
   process.exit(1);
 }
 process.exit(await migrate(url, "production"));

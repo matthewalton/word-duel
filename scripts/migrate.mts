@@ -19,6 +19,8 @@ const DRIZZLE_KIT = join(ROOT, "node_modules", ".bin", "drizzle-kit");
  * build and db:migrate:prod) migrate one after the other. Any fixed number works; this one is ours.
  */
 const MIGRATION_LOCK = 680_221_968;
+/** How long a run waits for another run's lock before failing, so a stuck lock fails the build instead of hanging it. */
+const LOCK_TIMEOUT = "10min";
 
 /** The URL migrations use: the direct (unpooled) connection when Neon provides one. */
 export const migrationUrl = (env: NodeJS.Dict<string>) => env.DATABASE_URL_UNPOOLED || env.DATABASE_URL || "";
@@ -87,12 +89,25 @@ export async function migrate(url: string, label: string) {
     console.error(`✗ ${BAD_URL}; nothing was migrated.`);
     return 1;
   }
+  // A session lock taken through Neon's transaction pooler neither serializes runs nor reliably lets go.
+  if (host.includes("-pooler.")) {
+    console.error(`✗ ${host} is the pooled host: migrations need the direct (unpooled) connection; nothing was migrated.`);
+    return 1;
+  }
   console.log(`Migrating the ${label} database at ${host}`);
   const client = new Client(url);
   await client.connect();
   try {
     console.log("Waiting for the migration lock…");
-    await client.query("SELECT pg_advisory_lock($1)", [MIGRATION_LOCK]);
+    await client.query(`SET lock_timeout = '${LOCK_TIMEOUT}'`);
+    try {
+      await client.query("SELECT pg_advisory_lock($1)", [MIGRATION_LOCK]);
+    } catch (error) {
+      // 55P03: lock_not_available, the timeout ran out.
+      if (!(error instanceof Error && "code" in error && error.code === "55P03")) throw error;
+      console.error(`✗ Another migration held the lock for over ${LOCK_TIMEOUT}; nothing was migrated.`);
+      return 1;
+    }
     console.log("Holding the migration lock");
     const pending = pendingMigrations(readJournal(), await lastAppliedAt(client));
     if (pending.length === 0) {

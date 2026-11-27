@@ -56,7 +56,6 @@ if (!process.stdin.isTTY) fail("run it yourself in a terminal; it asks before to
 
 const url = (await askHidden("Prod connection string: ")).trim();
 const host = hostOf(url) ?? fail(`${BAD_URL}; nothing was migrated.`);
-if (host.includes("-pooler.")) fail(`${host} is the pooled host: copy the string with connection pooling off; nothing was migrated.`);
 
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 rl.on("SIGINT", () => process.exit(130));
