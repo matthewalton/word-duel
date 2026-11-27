@@ -13,6 +13,7 @@ import u from "./ui.module.css";
 export function Menu({
   trigger,
   label,
+  describedBy,
   align,
   open,
   onOpenChange,
@@ -23,6 +24,8 @@ export function Menu({
   trigger: ReactNode;
   /** The menu's accessible name. */
   label: string;
+  /** Id of a line inside the menu that describes it, read with its name. */
+  describedBy?: string;
   /** Which edge of the button the menu lines up with. */
   align: "start" | "end";
   /** Set both to control it; otherwise the menu keeps its own open state. */
@@ -39,6 +42,7 @@ export function Menu({
       <Radix.Portal container={container}>
         <Radix.Content
           aria-label={label}
+          aria-describedby={describedBy}
           align={align}
           sideOffset={12}
           collisionPadding={16}
@@ -54,6 +58,16 @@ export function Menu({
 /** One thing to pick. With asChild, it styles a Link or Button as the item. */
 export function MenuItem({ className, ...props }: ComponentProps<typeof Radix.Item>) {
   return <Radix.Item className={`${u.menuItem} ${className ?? ""}`} {...props} />;
+}
+
+/** Items that belong together, named by a MenuLabel's id (aria-labelledby). */
+export function MenuGroup(props: ComponentProps<typeof Radix.Group>) {
+  return <Radix.Group {...props} />;
+}
+
+/** A heading inside the menu; not an item, so arrow keys pass over it. */
+export function MenuLabel(props: ComponentProps<typeof Radix.Label>) {
+  return <Radix.Label {...props} />;
 }
 
 /** A set of items of which one is the current choice (the language picker). */

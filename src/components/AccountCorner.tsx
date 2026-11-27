@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { fill, strings } from "@/i18n/strings";
 import { authClient } from "@/lib/auth-client";
 import { PROVIDERS, type ProviderId } from "@/lib/providers";
@@ -11,7 +11,7 @@ import a from "./account.module.css";
 import { BookIcon } from "./BookIcon";
 import { ProviderMark } from "./ProviderMark";
 import { Button } from "./ui/Button";
-import { Menu, MenuItem } from "./ui/Menu";
+import { Menu, MenuGroup, MenuItem, MenuLabel } from "./ui/Menu";
 
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
 
@@ -32,6 +32,7 @@ export function AccountCorner({
   const [menuOpenState, setMenuOpen] = useState(false);
   const { user, linkResult, clearLinkResult } = account;
   const menuOpen = menuOpenState || linkResult != null;
+  const noteId = useId();
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
     clearLinkResult();
@@ -50,6 +51,7 @@ export function AccountCorner({
   return (
     <Menu
       label={accountAria}
+      describedBy={noteId}
       align="end"
       open={menuOpen}
       onOpenChange={(open) => (open ? setMenuOpen(true) : closeMenu())}
@@ -66,6 +68,7 @@ export function AccountCorner({
     >
       <AccountMenu
         name={user.name}
+        noteId={noteId}
         packId={packId}
         linkResult={linkResult}
         onLink={account.linkProvider}
@@ -86,12 +89,15 @@ function Initial({ name, large }: { name: string; large?: boolean }) {
 
 function AccountMenu({
   name,
+  noteId,
   packId,
   linkResult,
   onLink,
   onSignOut,
 }: {
   name: string;
+  /** The saved note's id: it describes the menu, since a menu reads only its items. */
+  noteId: string;
   packId: string;
   linkResult: LinkResult | null;
   onLink: (provider: ProviderId) => Promise<boolean>;
@@ -100,6 +106,7 @@ function AccountMenu({
   const [linked, setLinked] = useState<ProviderId[] | null>(null);
   const [linking, setLinking] = useState<ProviderId | null>(null);
   const [missed, setMissed] = useState<number | null>(null);
+  const methodsId = useId();
 
   // How many items the wordbook lists as missed, for its row.
   useEffect(() => {
@@ -148,52 +155,68 @@ function AccountMenu({
           <span aria-hidden="true">&gt;</span>
         </Link>
       </MenuItem>
-      <p className={a.menuNote}>{strings.account.savedNote}</p>
+      <p id={noteId} className={a.menuNote}>
+        {strings.account.savedNote}
+      </p>
       {linked && (
-        <div className={a.methods}>
-          <span className={a.methodsLabel}>{strings.account.signInMethods}</span>
-          <ul className={a.methodList}>
+        <MenuGroup className={a.methods} aria-labelledby={methodsId}>
+          <MenuLabel id={methodsId} className={a.methodsLabel}>
+            {strings.account.signInMethods}
+          </MenuLabel>
+          <div className={a.methodList}>
             {PROVIDERS.map((p) => {
               const providerName = strings.account.providers[p];
-              return (
-                <li key={p} className={a.method}>
+              const row = (
+                <>
                   <ProviderMark provider={p} className={a.mark} />
                   <span className={a.methodName}>{providerName.toUpperCase()}</span>
-                  {linked.includes(p) ? (
-                    <span className={a.linked}>
-                      <svg viewBox="0 0 6 5" shapeRendering="crispEdges" aria-hidden="true">
-                        <path
-                          fill="currentColor"
-                          d="M5 0h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM3 2h1v1h-1zM1 3h2v1h-2zM2 4h1v1h-1z"
-                        />
-                      </svg>
-                      {strings.account.linked}
-                    </span>
-                  ) : (
-                    <MenuItem
-                      asChild
-                      disabled={linking != null}
-                      // Stay open while the browser leaves for the provider.
-                      onSelect={(e) => {
-                        e.preventDefault();
-                        link(p);
-                      }}
+                </>
+              );
+              // A linked method is a disabled item, so a screen reader still reads it
+              // while the arrow keys pass over it; an unlinked one's LINK is the item.
+              return linked.includes(p) ? (
+                <MenuItem
+                  key={p}
+                  disabled
+                  className={a.method}
+                  aria-label={fill(strings.account.linkedAria, { provider: providerName })}
+                >
+                  {row}
+                  <span className={a.linked}>
+                    <svg viewBox="0 0 6 5" shapeRendering="crispEdges" aria-hidden="true">
+                      <path
+                        fill="currentColor"
+                        d="M5 0h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM3 2h1v1h-1zM1 3h2v1h-2zM2 4h1v1h-1z"
+                      />
+                    </svg>
+                    {strings.account.linked}
+                  </span>
+                </MenuItem>
+              ) : (
+                <div key={p} className={a.method}>
+                  {row}
+                  <MenuItem
+                    asChild
+                    disabled={linking != null}
+                    // Stay open while the browser leaves for the provider.
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      link(p);
+                    }}
+                  >
+                    <Button
+                      className={a.linkButton}
+                      aria-label={fill(strings.account.linkAria, { provider: providerName })}
+                      aria-busy={linking === p}
                     >
-                      <Button
-                        className={a.linkButton}
-                        aria-label={fill(strings.account.linkAria, { provider: providerName })}
-                        aria-busy={linking === p}
-                        disabled={linking != null}
-                      >
-                        {strings.account.link}
-                      </Button>
-                    </MenuItem>
-                  )}
-                </li>
+                      {strings.account.link}
+                    </Button>
+                  </MenuItem>
+                </div>
               );
             })}
-          </ul>
-        </div>
+          </div>
+        </MenuGroup>
       )}
       {linkResult?.error && (
         <p className={a.linkError} role="alert">

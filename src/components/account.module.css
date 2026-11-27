@@ -96,9 +96,6 @@
 }
 
 .methodList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
   display: flex;
   flex-direction: column;
 }
@@ -141,12 +138,14 @@
   box-shadow: 3px 3px 0 var(--ink);
 }
 
-.linkButton:active:not(:disabled) {
+.linkButton:active:not([data-disabled]) {
   transform: translate(3px, 3px);
   box-shadow: none;
 }
 
-.linkButton:disabled {
+/* Another method is being linked (the menu item is disabled). */
+.linkButton[data-disabled] {
+  cursor: default;
   opacity: 0.6;
 }
 
@@ -178,7 +177,6 @@
 }
 
 .body,
-.note,
 .error {
   margin: 0;
   font-family: var(--font-words);
@@ -188,11 +186,6 @@
 .body {
   font-size: calc(18px * var(--s));
   color: #4a4060;
-}
-
-.note {
-  font-size: calc(15px * var(--s));
-  color: var(--muted);
 }
 
 .error {
@@ -364,7 +357,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .provider:active:not(:disabled),
-  .linkButton:active:not(:disabled) {
+  .linkButton:active:not([data-disabled]) {
     transform: none;
   }
 }
