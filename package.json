@@ -13,6 +13,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate.mts",
     "db:migrate:prod": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate-prod.mts",
+    "db:demo-account": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/dev-demo-account.mts",
     "db:reset:dev": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-reset-dev.mts",
     "prepare": "git config core.hooksPath .githooks || true"
   },

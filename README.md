@@ -68,7 +68,7 @@ Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Roun
 
 Postgres (Neon, through the Vercel Marketplace) with Drizzle, and Better Auth for OAuth sign-in with Google, GitHub and Discord. Decisions are in ADR 0006.
 
-**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's.
+**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's. `pnpm db:demo-account` makes Demo Player, a fake account with word history for demos, on dev only (`docs/agents/orca-bot.md`, Demo recording).
 
 **Local setup**
 
