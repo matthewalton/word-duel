@@ -1193,6 +1193,14 @@
     font-size: calc(28px * var(--s));
   }
 
+  /* Taller than the board here, so it starts at the top and scrolls: centred,
+     the summary would overflow upwards out of reach. */
+  .gameOver {
+    align-content: start;
+    gap: calc(12px * var(--s));
+    padding: calc(12px * var(--s));
+  }
+
   .controlStrip {
     padding: calc(8px * var(--s)) calc(12px * var(--s));
   }
