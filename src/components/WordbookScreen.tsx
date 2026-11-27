@@ -19,6 +19,7 @@ import { BookIcon } from "./BookIcon";
 import styles from "./game.module.css";
 import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
+import { PracticeMissed } from "./PracticeMissed";
 import { SignInDialog } from "./SignInDialog";
 import w from "./wordbook.module.css";
 
@@ -69,7 +70,7 @@ export function WordbookScreen() {
   else if (!userId) body = <GuestPrompt onSignIn={() => setSignInOpen(true)} />;
   else if (current?.failed || !current?.book) body = <LoadFailed onRetry={() => setAttempt((n) => n + 1)} />;
   else if (current.book.seen === 0) body = <Empty />;
-  else body = <Book pack={pack} book={current.book} />;
+  else body = <Book pack={pack} book={current.book} userId={userId} />;
 
   return (
     <div className={styles.page} style={packVars(pack)}>
@@ -141,7 +142,7 @@ function LoadFailed({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-function Book({ pack, book }: { pack: LanguagePack; book: Wordbook }) {
+function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; userId: string }) {
   const id = useId();
   const [tab, setTab] = useState<Tab>("missed");
   const [order, setOrder] = useState<Order>("newest");
@@ -234,6 +235,7 @@ function Book({ pack, book }: { pack: LanguagePack; book: Wordbook }) {
           )
         ) : (
           <>
+            {tab === "missed" && <PracticeMissed pack={pack} userId={userId} />}
             <p className={w.intro}>
               {tab === "missed" ? s.missedIntro : fill(s.bestIntro, { n: WORDBOOK.bestMinAnswers })}
             </p>

@@ -16,6 +16,8 @@ export interface DuelState {
   /** The account's best score; null for a guest, who has none (ADR 0008). */
   best: number | null;
   newBest: boolean;
+  /** A practice duel: only missed items, and no best score is kept or shown. */
+  practice: boolean;
   /**
    * Ids of items whose last outcome for this duel's prompt kind was a miss,
    * still open for a comeback this duel. Null for a guest, who gets none.
@@ -71,7 +73,7 @@ function afterRounds(lastMissed: string[], rounds: PlayedRound[]): string[] {
   return [...missed];
 }
 
-export function initialDuel(sample: Round): DuelState {
+export function initialDuel(sample: Round, practice = false): DuelState {
   return {
     phase: "idle",
     stage: 1,
@@ -79,6 +81,7 @@ export function initialDuel(sample: Round): DuelState {
     combo: 0,
     best: null,
     newBest: false,
+    practice,
     lastMissed: null,
     hearts: { you: RULES.startHearts, rival: RULES.startHearts },
     maxHearts: RULES.startHearts,
@@ -105,7 +108,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "countdown":
       if (state.phase !== "idle" && state.phase !== "gameOver") return state;
       return {
-        ...initialDuel(state.round),
+        ...initialDuel(state.round, state.practice),
         best: state.best,
         lastMissed: state.lastMissed && afterRounds(state.lastMissed, state.rounds),
         phase: "countdown",
@@ -119,7 +122,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "start":
       if (state.phase !== "countdown") return state;
       return {
-        ...initialDuel(action.round),
+        ...initialDuel(action.round, state.practice),
         best: state.best,
         lastMissed: state.lastMissed,
         phase: "playing",
@@ -150,7 +153,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       const stageCleared = hearts.rival === 0;
       if (stageCleared) score += RULES.stageBonus;
       const gameOver = hearts.you === 0;
-      const newBest = gameOver && state.best != null && score > state.best;
+      const newBest = gameOver && !state.practice && state.best != null && score > state.best;
       const played: PlayedRound = {
         round: state.round,
         reason: action.reason,

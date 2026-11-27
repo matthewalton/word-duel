@@ -658,6 +658,14 @@
   animation: blink 900ms steps(1, end) infinite;
 }
 
+/* Where a new best would show, a practice duel says it keeps no best. */
+.practiceTag {
+  padding: calc(2px * var(--s)) calc(10px * var(--s));
+  font-size: calc(20px * var(--s));
+  color: var(--ink);
+  background: var(--board);
+}
+
 /* ---------- Game over and review ---------- */
 
 /* Covers the prompt area: the score on one side, the misses on the other. */

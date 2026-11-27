@@ -137,6 +137,13 @@ export interface Minigame {
    * been dealt; an account's missed items are worked in early (ADR 0010).
    */
   startDraw: (pack: LanguagePack, opts: MinigameOptions) => RoundDraw;
+  /** The missed items (ids) this minigame can ask, any tier: a practice duel's pool. */
+  practiceItems: (pack: LanguagePack, missedItemIds: readonly string[]) => string[];
+  /**
+   * Starts a practice duel's draw order: only these items (from
+   * `practiceItems`), any tier, shuffled with no repeat until all are dealt.
+   */
+  startPracticeDraw: (pack: LanguagePack, opts: MinigameOptions, itemIds: readonly string[]) => RoundDraw;
   Controls: ComponentType<ControlsProps>;
   /** Static picture of a round, shown on the title screen. */
   Preview: ComponentType<ShowcaseProps>;
