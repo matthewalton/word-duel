@@ -58,7 +58,7 @@ Follow every ADR in `docs/adr/`. A change that breaks one needs a new or updated
 - **Database only on the server**, through `src/server/`; the browser never talks to Postgres or Ably's publish API (ADR 0012).
 - **Two fonts**: Pixelify Sans for short game text (titles, minigame names, buttons, scores, labels); the pack's one smooth rounded font (`fonts.words`, Jua for Korean) for every target- or base-language word and anything read as sentences (descriptions, how-to steps, credits). Pixelated prompt text and pixel body text were rejected.
 - **Pixel style everywhere**: hard square edges, 4px borders, unblurred offset shadows, `steps()` motion only. Sizing steps through `--s` and `--px` in `src/app/globals.css`; the dark grid covers the whole page.
-- **New screens follow an agreed board in `design/`.**
+- **New screens follow an agreed board on the design canvas** (`docs/design.md`).
 
 ## 7. Tests
 
