@@ -37,7 +37,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 1. Find or open a GitHub issue for it.
 2. Shape it with `/grill-with-docs`, which updates `GLOSSARY.md` and adds ADRs as decisions land.
 3. For bigger work, `/to-spec` then `/to-tickets` to break it into issues.
-4. Visual changes: mock them up on the design canvas and agree before building (see `docs/design.md`). Once built, add the round to its "What was built" table.
+4. Visual changes: mock them up on the design canvas and agree before building (see `docs/design.md`). Once built, add a row for the design round to the "What was built" table in `docs/design.md`.
 
 ## Agent skills
 
