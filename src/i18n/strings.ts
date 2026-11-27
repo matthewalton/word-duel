@@ -186,6 +186,17 @@ export const strings = {
     rivalWins: "{rival} WINS",
     roundsWon: "ROUNDS WON",
     backToMenu: "BACK TO MENU",
+    /** Game over's answer bar. {rival} is the other player's name. */
+    rematch: "REMATCH",
+    rematchNote: "Same room, same settings, fresh hearts.",
+    rivalWantsRematch: "{rival} WANTS A REMATCH",
+    waitingForRival: "WAITING FOR {rival}…",
+    rivalLeft: "RIVAL LEFT",
+    /** Game over's tag when the other player left before the match was won. */
+    rivalLeftTag: "RIVAL LEFT",
+    /** Shown to a player who comes back after leaving or dropping out. */
+    youLeft: "You left this room",
+    youLeftBody: "Leaving before a match is won loses it. Make a new room to play again.",
   },
   wordbook: {
     title: "WORDBOOK",

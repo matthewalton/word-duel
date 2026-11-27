@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { listenToRoom } from "@/lib/versusChannel";
 import { keepSeat, readSeat } from "@/lib/versusSeat";
-import { answerRound, joinRoom, listenToken, roomState } from "@/server/versus";
+import { answerRound, joinRoom, leaveRoom, listenToken, requestRematch, roomState } from "@/server/versus";
 import type { RoomError, RoomSnapshot, RoomView, Seat } from "./versus";
 
 /** How often the room is asked for while the live connection is down. */
@@ -38,8 +38,10 @@ async function seatToken(code: string): Promise<{ token: string } | { error: Roo
 
 /**
  * The browser's side of a versus room (ADR 0012): takes or retakes this tab's
- * seat, listens for the server's snapshots on Ably, and sends answers. The
- * newest snapshot wins; `now` is the server's clock as best this tab knows it.
+ * seat, listens for the server's snapshots on Ably (present there, so the
+ * server knows it is still here), and sends answers, rematch asks and
+ * leaving. The newest snapshot wins; `now` is the server's clock as best this
+ * tab knows it.
  */
 export function useVersusRoom(code: string) {
   const [state, setState] = useState<VersusRoomState>({ status: "loading" });
@@ -93,27 +95,6 @@ export function useVersusRoom(code: string) {
     };
   }, [code, apply]);
 
-  // Listen once seated.
-  const seated = state.status === "ready";
-  useEffect(() => {
-    if (!seated) return;
-    return listenToRoom(
-      code,
-      () => (tokenRef.current ? listenToken(code, tokenRef.current) : Promise.resolve(null)),
-      (snapshot) => {
-        if (seatRef.current) apply({ ok: true, seat: seatRef.current, snapshot });
-      },
-      setLive,
-    );
-  }, [seated, code, apply]);
-
-  // Without the live connection, ask the server instead.
-  useEffect(() => {
-    if (!seated || live) return;
-    const id = window.setInterval(refresh, POLL_MS);
-    return () => window.clearInterval(id);
-  }, [seated, live, refresh]);
-
   const lastNudge = useRef(0);
   /** Ask the server to catch up, e.g. a round's time is up. At most every NUDGE_MS. */
   const nudge = useCallback(() => {
@@ -122,6 +103,34 @@ export function useVersusRoom(code: string) {
     lastNudge.current = t;
     refresh();
   }, [refresh]);
+
+  // Listen, and be present, once seated.
+  const seated = state.status === "ready";
+  useEffect(() => {
+    if (!seated) return;
+    return listenToRoom(
+      code,
+      () => (tokenRef.current ? listenToken(code, tokenRef.current) : Promise.resolve(null)),
+      {
+        onSnapshot: (snapshot) => {
+          if (seatRef.current) apply({ ok: true, seat: seatRef.current, snapshot });
+        },
+        // The other seat's presence went: the server decides whether that player has left.
+        onLeave: () => {
+          lastNudge.current = 0;
+          nudge();
+        },
+        onOpen: setLive,
+      },
+    );
+  }, [seated, code, apply, nudge]);
+
+  // Without the live connection, ask the server instead.
+  useEffect(() => {
+    if (!seated || live) return;
+    const id = window.setInterval(refresh, POLL_MS);
+    return () => window.clearInterval(id);
+  }, [seated, live, refresh]);
 
   const submit = useCallback(
     async (n: number, given: string) => {
@@ -136,7 +145,23 @@ export function useVersusRoom(code: string) {
     [code, apply, refresh],
   );
 
+  const rematch = useCallback(async () => {
+    const token = tokenRef.current;
+    if (!token) return;
+    try {
+      apply(await requestRematch(code, token));
+    } catch {
+      refresh();
+    }
+  }, [code, apply, refresh]);
+
+  /** Leaves the room for good (MENU): before the match is won, that loses it. */
+  const leave = useCallback(() => {
+    const token = tokenRef.current;
+    if (token) leaveRoom(code, token).catch(() => {});
+  }, [code]);
+
   const now = useCallback(() => Date.now() + offsetRef.current, []);
 
-  return { state, now, submit, nudge };
+  return { state, now, submit, nudge, rematch, leave };
 }

@@ -22,7 +22,7 @@ import v from "./versus.module.css";
 const minigameName = () => (strings.modes[wordStrike.id] ?? wordStrike.id).toUpperCase();
 const nameOf = (s: RoomSnapshot, seat: Seat) => (s.players[seat]?.name ?? strings.versus.guest).toUpperCase();
 
-/** A versus room at /versus/<code>: the waiting screen, then the race, then game over (ADR 0012). */
+/** A versus room at /versus/<code>: the waiting screen, then the race, then game over and rematches (ADR 0012). */
 export function VersusScreen({ code }: { code: string }) {
   const room = useVersusRoom(code);
   const { state, now } = room;
@@ -37,8 +37,9 @@ export function VersusScreen({ code }: { code: string }) {
     document.documentElement.removeAttribute(PACK_PENDING_ATTR);
   }, []);
 
-  // The waiting screen holds until the countdown is due.
+  // The waiting screen holds until the countdown is due, or a player has left before it.
   const countdownAt = state.status === "ready" && state.snapshot.rounds[0] ? state.snapshot.rounds[0].startsAt - COUNTDOWN_MS : null;
+  const forfeit = state.status === "ready" && state.snapshot.forfeit != null;
   const [inDuel, setInDuel] = useState(false);
   useEffect(() => {
     if (countdownAt == null || inDuel) return;
@@ -51,15 +52,28 @@ export function VersusScreen({ code }: { code: string }) {
   }, [countdownAt, inDuel, now]);
 
   let body: ReactNode;
-  if (state.status === "error") {
+  if (state.status === "error" && state.error === "left") {
+    body = <RoomMessage title={strings.versus.youLeft} body={strings.versus.youLeftBody} />;
+  } else if (state.status === "error") {
     body = <RoomMessage title={state.error === "full" ? strings.versus.full : state.error === "missing" ? strings.versus.missing : strings.versus.joinFailed} />;
   } else if (state.status === "loading") {
     body = <RoomMessage title={strings.versus.connecting} quiet />;
-  } else if (!inDuel) {
-    body = <Waiting snapshot={state.snapshot} seat={state.seat} pack={pack} />;
+  } else if (!inDuel && !forfeit) {
+    body = <Waiting snapshot={state.snapshot} seat={state.seat} pack={pack} onLeave={room.leave} />;
   } else {
+    // A rematch is a fresh duel controller: fresh hearts and the countdown again.
     body = (
-      <VersusDuel snapshot={state.snapshot} seat={state.seat} pack={pack} now={room.now} submit={room.submit} nudge={room.nudge} />
+      <VersusDuel
+        key={state.snapshot.match}
+        snapshot={state.snapshot}
+        seat={state.seat}
+        pack={pack}
+        now={room.now}
+        submit={room.submit}
+        nudge={room.nudge}
+        rematch={room.rematch}
+        leave={room.leave}
+      />
     );
   }
 
@@ -71,16 +85,17 @@ export function VersusScreen({ code }: { code: string }) {
   );
 }
 
-function MenuLink({ label = strings.menu }: { label?: string }) {
+/** Back to the title screen; `onLeave` gives up the seat first (leaving before a match is won loses it). */
+function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
-    <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria}>
+    <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria} onClick={onLeave}>
       &lt; {label}
     </Link>
   );
 }
 
 /** A room that can't be opened, or is still loading. */
-function RoomMessage({ title, quiet }: { title: string; quiet?: boolean }) {
+function RoomMessage({ title, body = strings.versus.errorBody, quiet }: { title: string; body?: string; quiet?: boolean }) {
   return (
     <main className={v.wait}>
       <div className={styles.modeBar}>
@@ -91,7 +106,7 @@ function RoomMessage({ title, quiet }: { title: string; quiet?: boolean }) {
         <h1 className={quiet ? v.messageQuiet : v.messageTitle}>{title}</h1>
         {!quiet && (
           <>
-            <p className={v.messageBody}>{strings.versus.errorBody}</p>
+            <p className={v.messageBody}>{body}</p>
             <Link href="/" className={styles.goldButton}>
               {strings.versus.backToMenu}
             </Link>
@@ -107,7 +122,17 @@ function Hearts({ n, color, label }: { n: number; color: string; label: string }
 }
 
 /** Two player cards face off; the code and its link wait under them until the friend joins. */
-function Waiting({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Seat; pack: LanguagePack }) {
+function Waiting({
+  snapshot,
+  seat,
+  pack,
+  onLeave,
+}: {
+  snapshot: RoomSnapshot;
+  seat: Seat;
+  pack: LanguagePack;
+  onLeave: () => void;
+}) {
   const rival = otherSeat(seat);
   const joined = snapshot.players[rival] != null;
   const seatNumber = (s: Seat) => fill(strings.versus.player, { n: s === "p1" ? 1 : 2 });
@@ -117,7 +142,7 @@ function Waiting({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Seat;
   return (
     <main className={v.wait}>
       <div className={styles.modeBar}>
-        <MenuLink />
+        <MenuLink onLeave={onLeave} />
         <span className={styles.duelName}>{strings.versus.title}</span>
       </div>
 
@@ -220,6 +245,8 @@ function VersusDuel({
   now,
   submit,
   nudge,
+  rematch,
+  leave,
 }: {
   snapshot: RoomSnapshot;
   seat: Seat;
@@ -227,6 +254,8 @@ function VersusDuel({
   now: () => number;
   submit: (n: number, given: string) => Promise<void>;
   nudge: () => void;
+  rematch: () => Promise<void>;
+  leave: () => void;
 }) {
   const { state, fuseLit, current, locked, onSubmit } = useVersusDuel({ snapshot, seat, now, submit, nudge });
   const rivalName = nameOf(snapshot, otherSeat(seat));
@@ -237,7 +266,7 @@ function VersusDuel({
     <main className={styles.screen}>
       {lost && <div key={state.fxKey} className={styles.hurtFlash} aria-hidden="true" />}
       <div className={styles.modeBar}>
-        <MenuLink />
+        <MenuLink onLeave={leave} />
         <span className={styles.duelName}>{fill(strings.versus.titleMinigame, { minigame: minigameName() })}</span>
         <span className={v.roomTag}>{fill(strings.versus.roomCode, { code: snapshot.code })}</span>
       </div>
@@ -253,7 +282,7 @@ function VersusDuel({
         />
         <div className={styles.controlStrip}>
           {state.phase === "gameOver" ? (
-            <OverBar />
+            <OverBar snapshot={snapshot} seat={seat} rematch={rematch} leave={leave} />
           ) : (
             <Controls
               pack={pack}
@@ -370,7 +399,9 @@ function VersusOver({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Se
     <div className={`${styles.gameOver} ${v.over}`} role="status">
       <div className={v.overSummary}>
         <span className={`${v.overTag} ${won ? v.overTagWin : v.overTagLose}`}>
-          {won
+          {won && snapshot.forfeit
+            ? strings.versus.rivalLeftTag
+            : won
             ? left === 1
               ? strings.versus.oneHeartLeft
               : fill(strings.versus.heartsLeft, { n: left })
@@ -398,17 +429,76 @@ function VersusOver({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Se
   );
 }
 
-/** The answer bar at game over: only the way back, until rematch comes (#36). */
-function OverBar() {
-  const ref = useRef<HTMLAnchorElement>(null);
+/**
+ * The answer bar at game over: REMATCH, which needs both players. Once the
+ * rival asks, their ask shows beside it; once you have, it waits for them. If
+ * the rival leaves, only the way back to the title screen remains.
+ */
+function OverBar({
+  snapshot,
+  seat,
+  rematch,
+  leave,
+}: {
+  snapshot: RoomSnapshot;
+  seat: Seat;
+  rematch: () => Promise<void>;
+  leave: () => void;
+}) {
+  const rival = otherSeat(seat);
+  const rivalName = nameOf(snapshot, rival);
+  const rivalGone = snapshot.left.includes(rival);
+  const asked = snapshot.rematch.includes(seat);
+  const rivalAsked = snapshot.rematch.includes(rival);
+  const [sending, setSending] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const backRef = useRef<HTMLAnchorElement>(null);
+
   useEffect(() => {
-    ref.current?.focus();
-  }, []);
-  return (
-    <div className={v.overBar}>
-      <Link ref={ref} href="/" className={styles.goldButton}>
+    (rivalGone ? backRef.current : buttonRef.current)?.focus();
+  }, [rivalGone]);
+
+  const press = () => {
+    setSending(true);
+    rematch().finally(() => setSending(false));
+  };
+
+  let note: ReactNode;
+  if (rivalGone) {
+    note = (
+      <Link ref={backRef} href="/" className={`${styles.goldButton} ${v.overBack}`} onClick={leave}>
         {strings.versus.backToMenu}
       </Link>
+    );
+  } else if (asked) {
+    note = (
+      <span className={v.overAsk} role="status">
+        {fill(strings.versus.waitingForRival, { rival: rivalName })}
+      </span>
+    );
+  } else if (rivalAsked) {
+    note = (
+      <span className={v.overAsk} role="status">
+        {fill(strings.versus.rivalWantsRematch, { rival: rivalName })}
+      </span>
+    );
+  } else {
+    note = <span className={v.overNote}>{strings.versus.rematchNote}</span>;
+  }
+
+  return (
+    <div className={v.overBar}>
+      {note}
+      <button
+        ref={buttonRef}
+        type="button"
+        className={`${styles.goldButton} ${v.rematchButton}`}
+        onClick={press}
+        disabled={rivalGone || asked || sending}
+        aria-pressed={asked}
+      >
+        {rivalGone ? strings.versus.rivalLeft : strings.versus.rematch}
+      </button>
     </div>
   );
 }
