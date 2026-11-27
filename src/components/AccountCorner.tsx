@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { fill, strings } from "@/i18n/strings";
 import { authClient } from "@/lib/auth-client";
 import { PROVIDERS, type ProviderId } from "@/lib/providers";
@@ -10,6 +10,8 @@ import { countMissed } from "@/server/wordbook";
 import a from "./account.module.css";
 import { BookIcon } from "./BookIcon";
 import { ProviderMark } from "./ProviderMark";
+import { Button } from "./ui/Button";
+import { Menu, MenuGroup, MenuItem, MenuLabel } from "./ui/Menu";
 
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
 
@@ -30,6 +32,7 @@ export function AccountCorner({
   const [menuOpenState, setMenuOpen] = useState(false);
   const { user, linkResult, clearLinkResult } = account;
   const menuOpen = menuOpenState || linkResult != null;
+  const noteId = useId();
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
     clearLinkResult();
@@ -39,40 +42,39 @@ export function AccountCorner({
 
   if (!user)
     return (
-      <button type="button" className={a.cornerButton} onClick={onOpenSignIn}>
+      <Button variant="outlined" onClick={onOpenSignIn}>
         {strings.account.signIn}
-      </button>
+      </Button>
     );
 
+  const accountAria = fill(strings.account.accountAria, { name: user.name });
   return (
-    <div className={a.corner}>
-      <button
-        type="button"
-        className={`${a.chip} ${menuOpen ? a.chipOpen : ""}`}
-        aria-label={fill(strings.account.accountAria, { name: user.name })}
-        aria-expanded={menuOpen}
-        onClick={() => (menuOpen ? closeMenu() : setMenuOpen(true))}
-      >
-        <Initial name={user.name} />
-        <span className={a.chipName}>{user.name.toUpperCase()}</span>
-        <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
-          <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
-        </svg>
-      </button>
-      {menuOpen && (
-        <AccountMenu
-          name={user.name}
-          packId={packId}
-          linkResult={linkResult}
-          onLink={account.linkProvider}
-          onClose={closeMenu}
-          onSignOut={() => {
-            closeMenu();
-            account.signOut();
-          }}
-        />
-      )}
-    </div>
+    <Menu
+      label={accountAria}
+      describedBy={noteId}
+      align="end"
+      open={menuOpen}
+      onOpenChange={(open) => (open ? setMenuOpen(true) : closeMenu())}
+      className={a.menu}
+      trigger={
+        <Button variant="outlined" className={a.chip} aria-label={accountAria}>
+          <Initial name={user.name} />
+          <span className={a.chipName}>{user.name.toUpperCase()}</span>
+          <svg className={a.caret} viewBox="0 0 5 3" shapeRendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M0 0h5v1h-5zM1 1h3v1h-3zM2 2h1v1h-1z" />
+          </svg>
+        </Button>
+      }
+    >
+      <AccountMenu
+        name={user.name}
+        noteId={noteId}
+        packId={packId}
+        linkResult={linkResult}
+        onLink={account.linkProvider}
+        onSignOut={account.signOut}
+      />
+    </Menu>
   );
 }
 
@@ -87,23 +89,24 @@ function Initial({ name, large }: { name: string; large?: boolean }) {
 
 function AccountMenu({
   name,
+  noteId,
   packId,
   linkResult,
   onLink,
-  onClose,
   onSignOut,
 }: {
   name: string;
+  /** The saved note's id: it describes the menu, since a menu reads only its items. */
+  noteId: string;
   packId: string;
   linkResult: LinkResult | null;
   onLink: (provider: ProviderId) => Promise<boolean>;
-  onClose: () => void;
   onSignOut: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
   const [linked, setLinked] = useState<ProviderId[] | null>(null);
   const [linking, setLinking] = useState<ProviderId | null>(null);
   const [missed, setMissed] = useState<number | null>(null);
+  const methodsId = useId();
 
   // How many items the wordbook lists as missed, for its row.
   useEffect(() => {
@@ -138,73 +141,82 @@ function AccountMenu({
     if (!(await onLink(provider))) setLinking(null);
   };
 
-  // Close on Escape or a click outside the menu and its chip.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const onDown = (e: PointerEvent) => {
-      const corner = ref.current?.parentElement;
-      if (corner && !corner.contains(e.target as Node)) onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onDown);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onDown);
-    };
-  }, [onClose]);
-
   return (
-    <div ref={ref} className={a.menu}>
+    <>
       <div className={a.menuHead}>
         <Initial name={name} large />
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
-      <Link href="/wordbook" className={a.menuWordbook}>
-        <BookIcon className={a.wordbookIcon} />
-        <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
-        {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
-        <span aria-hidden="true">&gt;</span>
-      </Link>
-      <p className={a.menuNote}>{strings.account.savedNote}</p>
+      <MenuItem asChild>
+        <Link href="/wordbook" className={a.menuWordbook}>
+          <BookIcon className={a.wordbookIcon} />
+          <span className={a.menuWordbookName}>{strings.wordbook.title}</span>
+          {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
+          <span aria-hidden="true">&gt;</span>
+        </Link>
+      </MenuItem>
+      <p id={noteId} className={a.menuNote}>
+        {strings.account.savedNote}
+      </p>
       {linked && (
-        <div className={a.methods}>
-          <span className={a.methodsLabel}>{strings.account.signInMethods}</span>
-          <ul className={a.methodList}>
+        <MenuGroup className={a.methods} aria-labelledby={methodsId}>
+          <MenuLabel id={methodsId} className={a.methodsLabel}>
+            {strings.account.signInMethods}
+          </MenuLabel>
+          <div className={a.methodList}>
             {PROVIDERS.map((p) => {
               const providerName = strings.account.providers[p];
-              return (
-                <li key={p} className={a.method}>
+              const row = (
+                <>
                   <ProviderMark provider={p} className={a.mark} />
                   <span className={a.methodName}>{providerName.toUpperCase()}</span>
-                  {linked.includes(p) ? (
-                    <span className={a.linked}>
-                      <svg viewBox="0 0 6 5" shapeRendering="crispEdges" aria-hidden="true">
-                        <path
-                          fill="currentColor"
-                          d="M5 0h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM3 2h1v1h-1zM1 3h2v1h-2zM2 4h1v1h-1z"
-                        />
-                      </svg>
-                      {strings.account.linked}
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
+                </>
+              );
+              // A linked method is a disabled item, so a screen reader still reads it
+              // while the arrow keys pass over it; an unlinked one's LINK is the item.
+              return linked.includes(p) ? (
+                <MenuItem
+                  key={p}
+                  disabled
+                  className={a.method}
+                  aria-label={fill(strings.account.linkedAria, { provider: providerName })}
+                >
+                  {row}
+                  <span className={a.linked}>
+                    <svg viewBox="0 0 6 5" shapeRendering="crispEdges" aria-hidden="true">
+                      <path
+                        fill="currentColor"
+                        d="M5 0h1v1h-1zM4 1h1v1h-1zM0 2h1v1h-1zM3 2h1v1h-1zM1 3h2v1h-2zM2 4h1v1h-1z"
+                      />
+                    </svg>
+                    {strings.account.linked}
+                  </span>
+                </MenuItem>
+              ) : (
+                <div key={p} className={a.method}>
+                  {row}
+                  <MenuItem
+                    asChild
+                    disabled={linking != null}
+                    // Stay open while the browser leaves for the provider.
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      link(p);
+                    }}
+                  >
+                    <Button
                       className={a.linkButton}
                       aria-label={fill(strings.account.linkAria, { provider: providerName })}
                       aria-busy={linking === p}
-                      disabled={linking != null}
-                      onClick={() => link(p)}
                     >
                       {strings.account.link}
-                    </button>
-                  )}
-                </li>
+                    </Button>
+                  </MenuItem>
+                </div>
               );
             })}
-          </ul>
-        </div>
+          </div>
+        </MenuGroup>
       )}
       {linkResult?.error && (
         <p className={a.linkError} role="alert">
@@ -213,9 +225,11 @@ function AccountMenu({
           })}
         </p>
       )}
-      <button type="button" className={a.signOut} onClick={onSignOut}>
-        {strings.account.signOut}
-      </button>
-    </div>
+      <MenuItem asChild onSelect={onSignOut}>
+        <Button variant="outlined" className={a.signOut}>
+          {strings.account.signOut}
+        </Button>
+      </MenuItem>
+    </>
   );
 }

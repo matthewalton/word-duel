@@ -45,13 +45,6 @@
   :root { --s: 2; --px: 10px; }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  border-radius: 0;
-}
-
 html,
 body {
   margin: 0;
@@ -76,10 +69,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button,
-input {
-  font: inherit;
-  color: inherit;
+/* Resets sit in the lowest layer, under the shared controls' `ui` layer
+   (src/components/ui/ui.module.css); unlayered screen styles beat both. */
+@layer base, ui;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-radius: 0;
+  }
+
+  button,
+  input {
+    font: inherit;
+    color: inherit;
+  }
 }
 
 /* A stored language pack other than the default: the page waits for it to render (see PACK_PENDING_ATTR). */
