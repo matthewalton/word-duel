@@ -51,7 +51,7 @@ describe("matchRowOf", () => {
     assert.deepEqual([row?.p1Hearts, row?.p2Hearts], [3, 1]);
   });
 
-  it("gives the same key when called again, so the match is written once", () => {
+  it("gives the same row key (room and match) on a repeat call", () => {
     const won = snapshot({ winner: "p1", hearts: { p1: 1, p2: 0 } });
     const first = matchRowOf(room, won, at);
     const again = matchRowOf(room, won, new Date(at.getTime() + 5000));
@@ -100,6 +100,14 @@ describe("versusRecordOf", () => {
       { name: "bo now", won: 1, lost: 1 },
     ]);
     assert.deepEqual([record.played, record.won, record.lost, record.winRate], [6, 2, 4, 33]);
+  });
+
+  it("lists rivals played equally often most recent first", () => {
+    const record = versusRecordOf([match("bo", true), match("cy", false), match("cy", true), match("bo", false)], "me");
+    assert.deepEqual(
+      record.headToHead.map((h) => h.name),
+      ["bo now", "cy now"],
+    );
   });
 
   it("reads the seat the account sat in, either one", () => {
