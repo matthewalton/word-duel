@@ -298,3 +298,6 @@ export const strings = {
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (m, k) => (k in values ? String(values[k]) : m));
 }
+
+/** A score as the four digits the game shows (0110). */
+export const padScore = (score: number) => String(score).padStart(4, "0");

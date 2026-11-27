@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DIFFICULTIES } from "@/config/game";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
-import { fill, strings } from "@/i18n/strings";
+import { fill, padScore, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
@@ -12,7 +12,6 @@ import { Button } from "./ui/Button";
 import { Panel } from "./ui/Panel";
 import { ToggleGroup } from "./ui/ToggleGroup";
 
-const pad = (n: number) => String(n).padStart(4, "0");
 
 /**
  * The minigame cards, the Single player area's contents (board NavKitCards):
@@ -141,7 +140,7 @@ export function MinigameCards({
                     <div className={t.infoHead}>
                       <h2 className={t.infoName}>{name.toUpperCase()}</h2>
                       {best && (
-                        <span className={t.best}>{fill(strings.best, { score: pad(best[m.id] ?? 0) })}</span>
+                        <span className={t.best}>{fill(strings.best, { score: padScore(best[m.id] ?? 0) })}</span>
                       )}
                     </div>
                     {info && (

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { VERSUS } from "@/config/game";
 import { cleanCode } from "@/game/versus";
-import { fill, strings } from "@/i18n/strings";
+import { fill, padScore, strings } from "@/i18n/strings";
 import { useRoomActions } from "@/lib/useRoomActions";
 import { BookIcon } from "./BookIcon";
-import { Brand } from "./Brand";
+import { Brand, HEART_PATH } from "./Brand";
 import { DirectionLabel } from "./DirectionLabel";
 import n from "./nav.module.css";
 import type { SoloMenuProps } from "./SoloScreen";
@@ -17,8 +17,6 @@ import { Panel } from "./ui/Panel";
 import { VersusPanel } from "./VersusPanel";
 
 const s = strings.nav;
-const HEART = "M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z";
-const pad = (score: number) => String(score).padStart(4, "0");
 
 /**
  * The hub (board NavSplitHub): SINGLE PLAYER with a quick PLAY per minigame,
@@ -70,7 +68,7 @@ export function Hub({ pack, minigames, best, account, settings, play, openSignIn
                   <span className={n.gameInfo}>
                     <span className={n.gameName}>{name.toUpperCase()}</span>
                     <span className={n.gameMeta}>
-                      {best && <span>{fill(strings.best, { score: pad(best[m.id] ?? 0) })}</span>}
+                      {best && <span>{fill(strings.best, { score: padScore(best[m.id] ?? 0) })}</span>}
                       {m.usesDirection && (
                         <span>
                           <DirectionLabel from={from} to={to} />
@@ -155,7 +153,7 @@ function QuickVersus({
       <h2 className={n.sideHead}>
         <Button className={n.sideDoor} aria-label={s.versusAria} onClick={onOpen}>
           <svg viewBox="0 0 7 6" className={n.sideIcon} shapeRendering="crispEdges" aria-hidden="true">
-            <path fill="var(--rival)" d={HEART} />
+            <path fill="var(--rival)" d={HEART_PATH} />
           </svg>
           {s.versus}
           <span className={n.sideArrow} aria-hidden="true">
