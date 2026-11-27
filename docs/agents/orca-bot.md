@@ -42,7 +42,7 @@ The short list, always asked:
 - anything that costs money, or adds a service, a dependency or an env var,
 - a database schema change or a migration,
 - auth, account data, or what guests can do (ADR 0006, 0008),
-- a brand-new screen with no agreed board in `design/`. That needs a design-canvas round with Matt (AGENTS.md "Working on a feature" step 4).
+- a brand-new screen with no agreed board on the design canvas (`docs/design.md`). That needs a design-canvas round with Matt (AGENTS.md "Working on a feature" step 4).
 
 You decide everything else once scope is set: behaviour details, rules and scoring within the scope, pack content (including retiring items, ADR 0007), copy, layout within existing screens, glossary terms and ADRs that record your decisions, and the Demo flow. Also everything a reviewer wouldn't notice: names in the code, how a module is split up, small refactors, fixes for check or lint failures.
 
@@ -170,7 +170,7 @@ The demo runs as a **guest** by default. Only sign in if the Demo flow says to, 
 Matt sets scope. You decide the rest and write the spec.
 
 1. For a feature, agree the scope with Matt: what's in now, and what's deferred to a later ticket. Ask about anything on the short list now, so the build doesn't stop for it. Use `/grill-with-docs` when the scope needs shaping. Bugs, small polish and pack content you found need no scope from Matt.
-2. If it needs a brand-new screen, agree a board with Matt on the design canvas, then export it into `design/`. Layout within existing screens is yours.
+2. If it needs a brand-new screen, agree a board with Matt on the design canvas. The spec names the agreed boards and links each one (`<canvas link>#artboard-<Board>`, see `docs/design.md`); there is no export step. Layout within existing screens is yours.
 3. Decide everything else within the scope yourself, taking your recommended option. Record lasting decisions in `GLOSSARY.md` or an ADR.
 4. For bigger work, split it with `/to-spec` and then `/to-tickets`, so each child issue fits in one PR. Pieces split off for size stay in scope. Deferred pieces become issues labelled `needs-triage`, waiting for Matt's go.
 5. Write the **Demo flow**: the numbered steps a player takes from the title screen to show the change working end to end. Include the edge cases worth seeing, such as a wrong answer, an expired fuse, or a long prompt, and say whether the demo is played as a guest or as an account.
