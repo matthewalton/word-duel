@@ -30,12 +30,13 @@ export const strings = {
   },
   /** The practice duel: only the account's missed items, no best score. */
   practice: {
-    toggle: "MISSED ONLY",
-    count: " · {n}",
-    toggleAria: "Missed only: practise the {n} words you last missed",
-    blurb: "Every word you last missed, any difficulty.",
-    tooFew: "Miss {n} words first to practise them",
-    signIn: "Sign in to practise the words you miss.",
+    button: "PRACTISE MISSED WORDS",
+    chooserTitle: "PRACTISE",
+    chooserBody: "A duel of only the words you last missed, from every difficulty. It keeps no best score.",
+    waysLabel: "Which words to practise",
+    tooFew: "Miss {n} to practise",
+    wayAria: "{way}: {n} missed",
+    directionWay: "{from} to {to}",
     tag: "PRACTICE",
   },
   start: "START",
@@ -72,8 +73,6 @@ export const strings = {
     /** When the pack has content for only one minigame. */
     navHintOne: "Enter to play",
     navHintOneDifficulty: "↑ ↓ difficulty · Enter to play",
-    /** Added before "Enter to play" for accounts. */
-    navHintMissed: "M missed only",
     play: "PLAY",
     choose: "Choose {name}",
     playName: "Play {name}",

@@ -171,6 +171,91 @@
   color: #4a4060;
 }
 
+/* ---------- Practise missed words ---------- */
+
+.practice {
+  padding: calc(16px * var(--s)) calc(24px * var(--s)) 0;
+}
+
+.chooser {
+  width: min(calc(560px * var(--s)), calc(100% - 32px));
+}
+
+.chooserBody {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(17px * var(--s));
+  line-height: 1.4;
+  color: #4a4060;
+}
+
+.ways {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10px * var(--s));
+}
+
+/* One row per way: its name, then the missed count on the end. */
+.way {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(6px * var(--s)) calc(14px * var(--s));
+  padding: calc(8px * var(--s)) calc(16px * var(--s));
+  font-size: calc(18px * var(--s));
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--board);
+  border: var(--border);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+a.way:hover {
+  background: var(--accent);
+}
+
+a.way:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+.wayName {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8px * var(--s));
+  font-family: var(--font-words);
+}
+
+.wayName:not(:has(span)) {
+  font-family: inherit;
+  letter-spacing: 2px;
+}
+
+.wayCount {
+  margin-inline-start: auto;
+  font-size: calc(22px * var(--s));
+}
+
+.wayOff {
+  color: var(--muted);
+  background: var(--track);
+  border-color: var(--muted);
+  box-shadow: none;
+}
+
+.wayHint {
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
 /* ---------- Rows ---------- */
 
 .list {
@@ -546,6 +631,18 @@
   .screen {
     padding: 20px 16px 24px;
     gap: 16px;
+  }
+
+  .practice {
+    padding: 16px 16px 0;
+  }
+
+  .practice .gold {
+    width: 100%;
+    justify-content: center;
+    padding: 0 12px;
+    font-size: 17px;
+    letter-spacing: 1px;
   }
 
   .title {
