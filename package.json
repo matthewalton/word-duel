@@ -2,6 +2,9 @@
   "name": "word-duel",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "26.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate-deploy.mts && next build",
