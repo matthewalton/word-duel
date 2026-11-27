@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/db-migrate-deploy.mts && next build",
     "start": "next start",
     "lint": "eslint",
     "check:packs": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-packs.mts",
