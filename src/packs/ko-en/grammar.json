@@ -20,5 +20,11 @@
   { "id": "grammar.counter-cups", "kind": "grammar", "target": "잔", "base": "counter for cups and glasses", "tier": 2 },
   { "id": "grammar.counter-books", "kind": "grammar", "target": "권", "base": "counter for books", "tier": 3 },
   { "id": "grammar.counter-sheets", "kind": "grammar", "target": "장", "base": "counter for flat things, sheets", "tier": 3 },
-  { "id": "grammar.counter-age", "kind": "grammar", "target": "살", "base": "counter for years of age", "tier": 2 }
+  { "id": "grammar.counter-age", "kind": "grammar", "target": "살", "base": "counter for years of age", "tier": 2 },
+  { "id": "grammar.if-when", "kind": "grammar", "target": "-(으)면", "base": "if, when", "tier": 3 },
+  { "id": "grammar.so-because", "kind": "grammar", "target": "-아서/-어서", "base": "so, because; and then", "tier": 3 },
+  { "id": "grammar.because-since", "kind": "grammar", "target": "-(으)니까", "base": "because, since", "tier": 3 },
+  { "id": "grammar.have-to", "kind": "grammar", "target": "-아야/-어야 해요", "base": "have to", "tier": 3 },
+  { "id": "grammar.can", "kind": "grammar", "target": "-(으)ㄹ 수 있어요", "base": "can", "tier": 3 },
+  { "id": "grammar.go-to-do", "kind": "grammar", "target": "-(으)러 가요", "base": "go (in order) to", "tier": 3 }
 ]
