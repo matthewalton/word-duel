@@ -12,31 +12,21 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. Next.js App Router + TypeScript; fully playable as a **guest**, with optional OAuth sign-in (Better Auth, Postgres on Neon, Drizzle; ADR 0006) that keeps best scores in an **account**. The player opens on a **title screen**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing piece), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean and Spanish (learned from English) are the **language packs**, switched with the **language picker**; more packs, weak-word tracking and a two-player versus mode are planned.
 
+**Follow `docs/standards.md`; reviewers check against it.** It holds every code rule (no language specifics, two fonts, pixel style, guest first and the rest); this file keeps the workflow and agent rules.
+
 ### Run and check
 
 - Use pnpm, not npm: `pnpm install`, then `pnpm dev` → http://localhost:3000
-- Before committing: `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit`. There are no automated tests yet; check changes in the browser at desktop and phone width.
+- Before committing: `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit && pnpm test`. Check UI changes in the browser at desktop and phone width.
 
 ### Read first
 
 - `GLOSSARY.md`: the project's vocabulary. Use these terms in code, issues and messages.
 - `docs/adr/`: decisions and why. ADR 0004 lists directions that were tried and rejected.
+- `docs/standards.md`: the code standards, and how review findings are graded.
 - `README.md`: code layout, how to add a language pack or a minigame.
 - GitHub issues: planned work (see Agent skills below).
 - `design/`: every mock-up from the design canvas as files, indexed round by round in `design/README.md` (the built title screen is round 4, "Lights off"). Read the agreed board before building a screen. The live canvas is https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis (private).
-
-### Rules that bite
-
-- **No language specifics in game code** (ADR 0001). Words, gap sentences, fonts, text direction, word-break, feedback phrases and matching settings live in `src/packs/<id>/` JSON. Set `lang`/`dir` from the pack on any target- or base-language text.
-- **All interface text** lives in `src/i18n/strings.ts`.
-- **Two fonts**: Pixelify Sans for short game text (titles, minigame names, buttons, scores, labels); the pack's one smooth rounded font (`fonts.words`, Jua for Korean) for every target- or base-language word (prompts, answers, choices, language names) and for anything read as sentences (descriptions, how-to steps and rules, credits). Pixelated prompt text and pixel body text were rejected.
-- **Pixel style everywhere**: hard square edges, 4px borders, unblurred offset shadows, `steps()` motion only.
-- **Text input must never submit during IME composition** (Korean, Japanese, Chinese).
-- **Answers are strictly right or wrong** via `src/lib/matching.ts`; no partial credit.
-- **Sizing** scales in steps through `--s` and `--px` in `src/app/globals.css`; the dark grid background covers the whole page. Respect `prefers-reduced-motion`.
-- **Outcomes are "whose heart broke"** (ADR 0002) so versus mode can reuse the duel reducer.
-- **Guest first** (ADR 0006, 0008): nothing may require signing in, but only accounts keep anything: no best scores or word history in the browser. Account data goes through `src/server/` server actions that read the session themselves; the title page stays static and reads the session in the browser.
-- **Items have stable ids** (ADR 0007): every pack item and prompt has an `id` that is never reused or changed; word history points at item ids. Retire an item instead of deleting it.
 
 ### Commits and pull requests
 
