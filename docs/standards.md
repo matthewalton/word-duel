@@ -33,13 +33,13 @@ React 19 and Next.js 16 App Router. Read `node_modules/next/dist/docs/` before u
 ## 4. Simplicity and reuse
 
 - **The smallest change that does the job.** No options, props or config nobody asked for; no abstraction for one caller. Why: every knob is code to read and test.
-- **Reuse before adding**: `isAcceptedAnswer` for any answer check, `LangSpan`/`Template` for tagged text, the registry helpers for pack content, `RULES`/`VERSUS` in `src/config/game.ts` for numbers, `strings.ts` for copy, the existing CSS modules and `--s`/`--px` for sizing. Why: two copies drift.
+- **Reuse before adding**: `isAcceptedAnswer` for any answer check, `LangSpan`/`Template` for tagged text, the registry helpers for pack content, `RULES`/`VERSUS` in `src/config/game.ts` for numbers, `strings.ts` for copy, the shared controls in `src/components/ui/` (ADR 0013), the existing CSS modules and `--s`/`--px` for sizing. Why: two copies drift.
 - **No dead code**: remove what the change made unused, and no commented-out code. Why: it misleads the next reader.
 - **Comments say why or what a value means, in glossary terms**, not what the next line does. Name things with **glossary** words (`round`, `fuse`, `missed item`, never `question`, `timer`, `weak word`). Why: one vocabulary in code, issues and the game.
 
 ## 5. Accessibility
 
-- **Real elements**: `<button type="button">` for actions, `<a>`/`Link` for navigation, `<input>` with a label, `<dialog>` with `showModal()` for modals (`HowToDialog`). No clickable `div`. Why: keyboard, focus and screen readers come for free.
+- **Real elements, through the shared set**: `Button` from `src/components/ui/` for actions (it renders `<button type="button">`), `<a>`/`Link` for navigation, `<input>` with a label, and the shared `Dialog` (Radix Dialog) for modals, `Menu` for menus and `ToggleGroup` for a one-of-several switch (`HowToDialog`, `LanguagePicker`, ADR 0013). No clickable `div`, no hand-built open state or key handling for a menu or dialog. Why: keyboard, focus and screen readers come for free, and every control shares one focus ring.
 - **Playable by keyboard**: focus moves to the answer input on each new prompt and to the next action at game over (`WordStrike.tsx`), Enter submits, Escape closes a dialog. Text input never submits during IME composition (check `isComposing` and `keyCode 229`, as in `WordStrike.tsx`). Why: Korean, Japanese and Chinese typists would submit half a word.
 - **`lang` and `dir` on every target- or base-language text**, taken from the pack (`LangSpan`, `FeedbackBand`). Why: screen readers and line breaking pick the right language; ADR 0001.
 - **Contrast and size**: text keeps at least 4.5:1 on the dark grid, and sizes scale with `--s`. Hearts and icons that carry meaning have a text label or `aria-label`; decorative ones are `aria-hidden`. Why: the game is read fast, under a fuse.
