@@ -6,6 +6,7 @@ import { WORDBOOK } from "@/config/game";
 import { langText, type PromptKind } from "@/game/types";
 import { fill, strings, UI_LANG } from "@/i18n/strings";
 import { useChosenPack } from "@/lib/packChoice";
+import { dateText, daysSince } from "@/lib/dates";
 import { useAccount } from "@/lib/useAccount";
 import type { Item, LanguagePack } from "@/packs/types";
 import {
@@ -34,7 +35,6 @@ type Order = (typeof ORDERS)[number];
 
 const s = strings.wordbook;
 const METER_SQUARES = 5;
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * The wordbook: an account's word history one item at a time, in MISSED and
@@ -256,21 +256,10 @@ function findItem(pack: LanguagePack, itemId: string): Item | undefined {
   return byId.get(itemId);
 }
 
-/** Whole days between two dates, by the player's local calendar. */
-function daysSince(d: Date): number {
-  const day = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
-  return Math.max(0, Math.round((day(new Date()) - day(d)) / DAY_MS));
-}
-
 function whenText(d: Date | null): string {
   if (!d) return s.none;
   const n = daysSince(d);
   return n === 0 ? s.today : n === 1 ? s.yesterday : fill(s.daysAgo, { n });
-}
-
-function dateText(d: Date): string {
-  if (daysSince(d) === 0) return s.today;
-  return new Intl.DateTimeFormat(UI_LANG, { day: "numeric", month: "short" }).format(d).toUpperCase();
 }
 
 const missesText = (n: number) => (n === 1 ? s.oneMiss : fill(s.misses, { n }));
