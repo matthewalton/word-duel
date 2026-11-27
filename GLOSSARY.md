@@ -114,7 +114,7 @@ _Avoid_: Weak word, mistake
 The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
 
 **Practice duel**:
-A duel, for an account, that asks only its missed items for one prompt kind, any tier, picked with MISSED ONLY on the minigame's card. Its rounds go into word history, but it never keeps a best score; game over shows PRACTICE instead. It needs at least 5 missed items (ADR 0010).
+A duel, for an account, that asks only its missed items for one prompt kind, any tier, started from PRACTISE MISSED WORDS in the Wordbook. Its rounds go into word history, but it never keeps a best score; the HUD and game over show PRACTICE instead. A prompt kind needs at least 5 missed items (ADR 0010).
 _Avoid_: Training, review mode, missed mode
 
 **Review list**:
