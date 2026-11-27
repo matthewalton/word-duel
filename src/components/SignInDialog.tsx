@@ -12,9 +12,12 @@ import t from "./title.module.css";
  * Uses <dialog> for focus and Escape, like the how-to panel.
  */
 export function SignInDialog({
+  note,
   onClose,
   onSignIn,
 }: {
+  /** Why signing in helps here, shown above the usual body (e.g. for MISSED ONLY). */
+  note?: string;
   onClose: () => void;
   onSignIn: (provider: ProviderId) => Promise<boolean>;
 }) {
@@ -58,6 +61,7 @@ export function SignInDialog({
             ×
           </button>
         </div>
+        {note && <p className={a.lead}>{note}</p>}
         <p className={a.body}>{strings.account.panelBody}</p>
         <div className={a.providers}>
           {PROVIDERS.map((p) => (
