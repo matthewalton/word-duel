@@ -950,3 +950,7 @@
     color: var(--line);
   }
 }
+
+/* Nothing here moves yet; any motion added later stops here. */
+@media (prefers-reduced-motion: reduce) {
+}
