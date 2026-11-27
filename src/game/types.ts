@@ -66,8 +66,8 @@ export type Side = "you" | "rival";
 export type Reason = "correct" | "wrong" | "timeout";
 
 export interface Outcome {
-  /** Whose heart broke. */
-  loser: Side;
+  /** Whose heart broke; null when none did (versus: nobody answered right). */
+  loser: Side | null;
   reason: Reason;
   /** Points gained by this outcome (0 on a loss), excluding stage bonus. */
   points: number;
@@ -108,6 +108,8 @@ export interface ControlsProps {
   outcome: Outcome | null;
   onSubmit: (answer: string) => void;
   onStart: () => void;
+  /** Versus: this player answered wrong and is out of the round. */
+  locked?: boolean;
 }
 
 /** A duel's draw order of rounds. */

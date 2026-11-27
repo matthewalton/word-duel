@@ -6,128 +6,19 @@ import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToP
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
 import { fill, strings } from "@/i18n/strings";
-import { drawOrder } from "@/lib/random";
-import { MAX_TIER } from "@/config/game";
-import { askableWords, wordsUpToTier } from "@/packs";
-import { normalizeAnswer } from "@/lib/matching";
-import type { LanguagePack, WordItem } from "@/packs/types";
+import { askableWords } from "@/packs";
+import type { LanguagePack } from "@/packs/types";
 import {
   langText,
   type ControlsProps,
   type LangText,
   type Minigame,
   type MinigameOptions,
-  type Round,
-  type RoundDraw,
   type ShowcaseProps,
 } from "../types";
+import { buildRound, practiceWords, startDraw, startPracticeDraw } from "./wordStrikeRounds";
 
-const unique = (items: string[]) => items.filter((x, i) => items.indexOf(x) === i);
-
-/**
- * Groups words by the prompt text they show. Word-class markers are kept, so
- * the verb "to sleep" (자다) and the noun "sleep" (잠) are different prompts.
- */
-const promptKey = (text: string, pack: LanguagePack, lang: string) =>
-  normalizeAnswer(text, pack.matching, lang, { keepWordClassMarkers: true });
-
-/**
- * Accepted answers are gathered across the whole pack, so homographs work:
- * 눈 accepts "eye" and "snow", and "teacher" accepts 선생님 and 선생.
- */
-function acceptedTargets(pack: LanguagePack, prompt: string): string[] {
-  const lang = pack.meta.base.code;
-  const key = promptKey(prompt, pack, lang);
-  return unique(
-    askableWords(pack)
-      .filter((w) => w.base.some((b) => promptKey(b, pack, lang) === key))
-      .flatMap((w) => [w.target, ...(w.targetAlt ?? [])]),
-  );
-}
-
-function acceptedBases(pack: LanguagePack, word: WordItem): string[] {
-  const forms = [word.target, ...(word.targetAlt ?? [])];
-  return unique(
-    askableWords(pack)
-      .filter((w) => forms.includes(w.target) || (w.targetAlt ?? []).some((a) => forms.includes(a)))
-      .flatMap((w) => w.base),
-  );
-}
-
-function buildRound(pack: LanguagePack, opts: MinigameOptions, word: WordItem): Round {
-  const { target, base } = pack.meta;
-  // A Word Strike prompt is the word item itself, asked in one direction.
-  const ids = { itemId: word.id, promptId: word.id, promptKind: opts.direction, tier: word.tier };
-  if (opts.direction === "toTarget") {
-    return {
-      ...ids,
-      hint: fill(strings.hintTypeIn, { language: target.name }),
-      prompt: langText(base, word.base[0]),
-      accepted: acceptedTargets(pack, word.base[0]),
-      reveal: langText(target, word.target),
-      answerLang: { code: target.code, dir: target.dir },
-    };
-  }
-  return {
-    ...ids,
-    hint: fill(strings.hintTypeIn, { language: base.name }),
-    prompt: langText(target, word.target),
-    accepted: acceptedBases(pack, word),
-    reveal: langText(base, word.base.slice(0, 3).join(" / ")),
-    answerLang: { code: base.code, dir: base.dir },
-  };
-}
-
-/**
- * The words in the difficulty's tiers, grouped by the prompt text they show in
- * this direction: "house" (집, 주택) or 눈 (eye, snow) is one card, asked once
- * per pass through the pool. Any word of the card's answers is accepted.
- */
-function promptCards(pack: LanguagePack, opts: MinigameOptions): WordItem[][] {
-  const lang = opts.direction === "toTarget" ? pack.meta.base.code : pack.meta.target.code;
-  const cards = new Map<string, WordItem[]>();
-  for (const word of wordsUpToTier(pack, MAX_TIER[opts.difficulty])) {
-    const text = opts.direction === "toTarget" ? word.base[0] : word.target;
-    const key = promptKey(text, pack, lang);
-    cards.set(key, [...(cards.get(key) ?? []), word]);
-  }
-  return [...cards.values()];
-}
-
-/**
- * Deals rounds from a shuffled draw order of prompt cards; each round records
- * against one of its card's words. A card counts as missed if any of its words is.
- */
-function startDraw(pack: LanguagePack, opts: MinigameOptions): RoundDraw {
-  const draw = drawOrder(promptCards(pack, opts));
-  return {
-    next: () => {
-      const card = draw.next();
-      return buildRound(pack, opts, card[Math.floor(Math.random() * card.length)]);
-    },
-    workIn: (missedItemIds) => {
-      const missed = new Set(missedItemIds);
-      draw.workIn((card) => card.some((word) => missed.has(word.id)));
-    },
-  };
-}
-
-/** Missed words that can still be asked, any tier. */
-function practiceWords(pack: LanguagePack, missedItemIds: readonly string[]): WordItem[] {
-  const missed = new Set(missedItemIds);
-  return askableWords(pack).filter((w) => missed.has(w.id));
-}
-
-/** A practice duel deals the missed words themselves, each its own round. */
-function startPracticeDraw(pack: LanguagePack, opts: MinigameOptions, itemIds: readonly string[]): RoundDraw {
-  const draw = drawOrder(practiceWords(pack, itemIds));
-  return {
-    next: () => buildRound(pack, opts, draw.next()),
-    workIn: () => {},
-  };
-}
-
-function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) {
+function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }: ControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const composing = useRef(false);
@@ -135,7 +26,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
   const inGame = phase === "countdown" || phase === "playing" || phase === "resolving";
   // Typing is allowed during the countdown so the input can hold focus, but
   // nothing submits until the round is live (and the input is cleared then).
-  const editable = phase === "countdown" || phase === "playing";
+  const editable = (phase === "countdown" || phase === "playing") && !locked;
 
   // Focus while the START press is still being handled, so phones open the
   // keyboard: a focus from the later timer would not count as a user gesture.
@@ -159,7 +50,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
 
   const submitNow = () => {
     const value = inputRef.current?.value ?? "";
-    if (phase !== "playing" || !value.trim()) return;
+    if (phase !== "playing" || locked || !value.trim()) return;
     onSubmit(value);
   };
 
@@ -181,7 +72,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         dir={round.answerLang.dir}
         aria-label={strings.inputLabel}
         placeholder={round.hint}
-        disabled={!inGame}
+        disabled={!inGame || locked}
         readOnly={!editable}
         autoComplete="off"
         autoCorrect="off"
@@ -197,7 +88,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) 
         type="button"
         className={styles.goldButton}
         onClick={phase === "gameOver" ? onStart : submitNow}
-        disabled={phase !== "gameOver" && phase !== "playing"}
+        disabled={phase !== "gameOver" && (phase !== "playing" || locked)}
       >
         {phase === "gameOver" ? strings.start : strings.go}
       </button>
