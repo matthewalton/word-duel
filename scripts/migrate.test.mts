@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ciRefusal, pendingMigrations, readJournal } from "./migrate.mts";
+import { ciRefusal, deploySkip, pendingMigrations, readJournal } from "./migrate.mts";
 
 const BRANCH = "ep-ci-branch.eu-west-2.aws.neon.tech";
 const PROD = "ep-prod.eu-west-2.aws.neon.tech";
@@ -50,4 +50,15 @@ test("the journal in drizzle/ reads, oldest first", () => {
     entries.map((entry) => entry.when),
     entries.map((entry) => entry.when).toSorted((a, b) => a - b),
   );
+});
+
+test("only a Vercel production build migrates at deploy time", () => {
+  assert.equal(deploySkip({ VERCEL_ENV: "production" }), null);
+});
+
+test("previews, development, Checks and local builds skip the deploy-time migration", () => {
+  assert.equal(deploySkip({ VERCEL_ENV: "preview" }), "Skipping migrations: VERCEL_ENV is preview; only production builds migrate");
+  assert.notEqual(deploySkip({ VERCEL_ENV: "development" }), null);
+  assert.equal(deploySkip({}), "Skipping migrations: VERCEL_ENV is unset; only production builds migrate");
+  assert.equal(deploySkip({ VERCEL_ENV: "" }), "Skipping migrations: VERCEL_ENV is unset; only production builds migrate");
 });

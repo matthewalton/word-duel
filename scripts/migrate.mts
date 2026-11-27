@@ -41,6 +41,16 @@ export function ciRefusal(host: string, env: NodeJS.Dict<string>) {
   return `Refusing to migrate ${host} from CI: it isn't this run's throwaway branch`;
 }
 
+/**
+ * Why the deploy-time migration skips this build, or null when it migrates. Only a Vercel
+ * production build migrates; it goes by VERCEL_ENV, not the URL, because a preview's URL may
+ * point at prod too.
+ */
+export function deploySkip(env: NodeJS.Dict<string>) {
+  if (env.VERCEL_ENV === "production") return null;
+  return `Skipping migrations: VERCEL_ENV is ${env.VERCEL_ENV || "unset"}; only production builds migrate`;
+}
+
 const journalSchema = z.object({ entries: z.array(z.object({ tag: z.string(), when: z.number() })) });
 export type JournalEntry = z.infer<typeof journalSchema>["entries"][number];
 

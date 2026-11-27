@@ -3,13 +3,13 @@
  * production build it applies the pending migrations to prod, with the database URL Vercel's Neon
  * integration puts in the build; a failure exits non-zero, which fails the build so the previous
  * deployment keeps serving. Every other build (previews, Checks, local) skips: it goes by
- * VERCEL_ENV, not the URL, because a preview's URL may point at prod too.
+ * VERCEL_ENV (deploySkip).
  */
-import { migrate, migrationUrl } from "./migrate.mts";
+import { deploySkip, migrate, migrationUrl } from "./migrate.mts";
 
-const target = process.env.VERCEL_ENV;
-if (target !== "production") {
-  console.log(`Skipping migrations: VERCEL_ENV is ${target || "unset"}; only production builds migrate`);
+const skip = deploySkip(process.env);
+if (skip) {
+  console.log(skip);
   process.exit(0);
 }
 
