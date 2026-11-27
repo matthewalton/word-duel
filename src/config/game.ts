@@ -67,6 +67,9 @@ export const DIFFICULTIES = ["easy", "normal", "hard"] as const;
 export const DEFAULT_DIFFICULTY = "normal";
 export const MAX_TIER = { easy: 1, normal: 2, hard: 3 } as const;
 
+/** Missed items an account needs before it can start a practice duel. */
+export const PRACTICE_MIN_MISSED = 5;
+
 export function fuseForStage(stage: number): number {
   return Math.max(RULES.fuseMinMs, RULES.fuseStartMs - (stage - 1) * RULES.fuseStepMs);
 }

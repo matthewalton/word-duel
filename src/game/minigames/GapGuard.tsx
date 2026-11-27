@@ -7,7 +7,8 @@ import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
-import { askableGaps, itemTier } from "@/packs";
+import { MAX_TIER } from "@/config/game";
+import { askableGaps, gapsUpToTier, itemTier } from "@/packs";
 import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
 import { langText, type ControlsProps, type Minigame, type Round, type RoundDraw, type ShowcaseProps } from "../types";
 
@@ -28,6 +29,13 @@ function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean)
     answerLang: { code: target.code, dir: target.dir },
     options: shuffleOptions ? shuffle(gap.options) : gap.options.slice(),
   };
+}
+
+/** The askable gap sentences for each item they test. */
+function gapsByItem(pack: LanguagePack): Map<string, GapPrompt[]> {
+  const byItem = new Map<string, GapPrompt[]>();
+  for (const gap of askableGaps(pack)) byItem.set(gap.tests, [...(byItem.get(gap.tests) ?? []), gap]);
+  return byItem;
 }
 
 const NO_OPTIONS: string[] = [];
@@ -160,17 +168,34 @@ function GapGuardHowTo({ pack }: ShowcaseProps) {
 export const gapGuard: Minigame = {
   id: "gap-guard",
   usesDirection: false,
-  usesDifficulty: false,
+  usesDifficulty: true,
   hasContent: (pack) => askableGaps(pack).length > 0,
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
-  startDraw: (pack): RoundDraw => {
-    const draw = drawOrder(askableGaps(pack));
+  /** Deals the gaps whose tested item is within the difficulty, in a shuffled draw order. */
+  startDraw: (pack, opts): RoundDraw => {
+    const draw = drawOrder(gapsUpToTier(pack, MAX_TIER[opts.difficulty]));
     return {
       next: () => buildRound(pack, draw.next(), true),
       workIn: (missedItemIds) => {
         const missed = new Set(missedItemIds);
         draw.workIn((gap) => missed.has(gap.tests));
       },
+    };
+  },
+  practiceItems: (pack, missedItemIds) => {
+    const byItem = gapsByItem(pack);
+    return missedItemIds.filter((id) => byItem.has(id));
+  },
+  /** Deals the missed items in a shuffled draw order, each as one of its gap sentences. */
+  startPracticeDraw: (pack, _opts, itemIds): RoundDraw => {
+    const byItem = gapsByItem(pack);
+    const draw = drawOrder(itemIds.filter((id) => byItem.has(id)));
+    return {
+      next: () => {
+        const gaps = byItem.get(draw.next()) as GapPrompt[];
+        return buildRound(pack, gaps[Math.floor(Math.random() * gaps.length)], true);
+      },
+      workIn: () => {},
     };
   },
   Controls: GapGuardControls,

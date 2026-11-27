@@ -8,8 +8,8 @@
   box-sizing: border-box;
   width: 100%;
   max-width: calc(1280px * var(--s));
-  height: 100dvh;
-  min-height: calc(560px * var(--s));
+  /* Fills the screen; a short window scrolls instead of squashing the preview. */
+  min-height: max(100dvh, calc(560px * var(--s)));
   margin-inline: auto;
   padding: calc(32px * var(--s)) calc(48px * var(--s)) calc(20px * var(--s));
   display: flex;
@@ -256,7 +256,6 @@
   align-self: stretch;
   display: flex;
   gap: var(--gap);
-  min-height: 0;
   max-height: calc(680px * var(--s));
 }
 
@@ -337,7 +336,8 @@
 
 .previewButton {
   flex: 1;
-  min-height: 0;
+  /* A floor that keeps the prompt readable; below it the page scrolls. */
+  min-height: 200px;
   padding: calc(16px * var(--s));
   display: flex;
   align-items: center;
@@ -887,7 +887,6 @@
 
 @media (max-width: 640px) {
   .titleScreen {
-    height: auto;
     min-height: 100dvh;
     padding: 24px 16px 16px;
     gap: 16px;
@@ -952,6 +951,10 @@
   .cardOn {
     flex: 1 1 auto;
     box-shadow: 6px 6px 0 var(--accent);
+  }
+
+  .previewButton {
+    min-height: 160px;
   }
 
   .cardOn .pvPrompt {

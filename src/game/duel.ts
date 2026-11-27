@@ -19,6 +19,8 @@ export interface DuelState {
   /** The account's best score; null for a guest, who has none (ADR 0008). */
   best: number | null;
   newBest: boolean;
+  /** A practice duel: only missed items, and no best score is kept or shown. */
+  practice: boolean;
   /**
    * Ids of items whose last outcome for this duel's prompt kind was a miss,
    * still open for a comeback this duel. Null for a guest, who gets none.
@@ -76,7 +78,13 @@ function afterRounds(lastMissed: string[], rounds: PlayedRound[]): string[] {
   return [...missed];
 }
 
-export function initialDuel(sample: Round, versus = false): DuelState {
+/** What kind of duel: a practice duel (only missed items, no best) or versus (ADR 0012); solo by default. */
+export interface DuelKind {
+  practice?: boolean;
+  versus?: boolean;
+}
+
+export function initialDuel(sample: Round, { practice = false, versus = false }: DuelKind = {}): DuelState {
   return {
     versus,
     phase: "idle",
@@ -85,6 +93,7 @@ export function initialDuel(sample: Round, versus = false): DuelState {
     combo: 0,
     best: null,
     newBest: false,
+    practice,
     lastMissed: null,
     hearts: { you: RULES.startHearts, rival: RULES.startHearts },
     maxHearts: RULES.startHearts,
@@ -111,7 +120,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "countdown":
       if (state.phase !== "idle" && state.phase !== "gameOver") return state;
       return {
-        ...initialDuel(state.round, state.versus),
+        ...initialDuel(state.round, state),
         best: state.best,
         lastMissed: state.lastMissed && afterRounds(state.lastMissed, state.rounds),
         phase: "countdown",
@@ -125,7 +134,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "start":
       if (state.phase !== "countdown") return state;
       return {
-        ...initialDuel(action.round, state.versus),
+        ...initialDuel(action.round, state),
         best: state.best,
         lastMissed: state.lastMissed,
         phase: "playing",
@@ -160,7 +169,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       const stageCleared = !versus && hearts.rival === 0;
       if (stageCleared) score += RULES.stageBonus;
       const gameOver = hearts.you === 0 || (versus && hearts.rival === 0);
-      const newBest = gameOver && state.best != null && score > state.best;
+      const newBest = gameOver && !state.practice && state.best != null && score > state.best;
       const played: PlayedRound = {
         round: state.round,
         reason: action.reason,

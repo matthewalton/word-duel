@@ -38,7 +38,7 @@ export function useVersusDuel({
   nudge: () => void;
 }) {
   const [state, dispatch] = useReducer(duelReducer, undefined, () =>
-    initialDuel(toRound(snapshot.rounds[0]), true),
+    initialDuel(toRound(snapshot.rounds[0]), { versus: true }),
   );
   const [fuseLit, setFuseLit] = useState(FUSE_SEGMENTS);
   const [pending, setPending] = useState<number | null>(null);

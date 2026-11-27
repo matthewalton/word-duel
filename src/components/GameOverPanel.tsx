@@ -29,7 +29,11 @@ export function GameOverPanel({
         <span className={styles.bannerTitle}>{strings.gameOver}</span>
         <span className={styles.gameOverScore}>
           <span className={styles.bannerSub}>{fill(strings.finalScore, { score: state.score })}</span>
-          {state.newBest && <span className={styles.newBest}>{strings.newBest}</span>}
+          {state.practice ? (
+            <span className={styles.practiceTag}>{strings.practice.tag}</span>
+          ) : (
+            state.newBest && <span className={styles.newBest}>{strings.newBest}</span>
+          )}
         </span>
         {pack.feedback.gameOver && (
           <span className={styles.bannerPhrase} lang={target.code} dir={target.dir}>

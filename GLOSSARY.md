@@ -46,7 +46,7 @@ _Avoid_: Level, wave
 The number of right answers in a row; it multiplies points up to a cap.
 
 **Difficulty**:
-Easy, Normal or Hard, picked on the title screen before a Word Strike duel. It decides which tiers the duel draws items from: Easy tier 1, Normal tiers 1–2, Hard every tier. It does not change the fuse.
+Easy, Normal or Hard, picked on the title screen before a Word Strike or Gap Guard duel; one setting shared by both minigames. It decides which tiers the duel draws items from: Easy tier 1, Normal tiers 1–2, Hard every tier. A gap sentence counts as the tier of the item it tests. It does not change the fuse.
 _Avoid_: Level (a stage is a level of the duel), mode
 _Avoid_: Streak
 
@@ -94,7 +94,7 @@ One thing the player learns in a language pack: a word, or a grammar point such 
 _Avoid_: Card, entry, vocab
 
 **Tier**:
-How hard an item is, from 1 (easiest) to 3, set in the language pack. A right answer is worth more points the higher its item's tier.
+How hard an item is, from 1 (easiest) to 3, set in the language pack: a word's comes from its grade or frequency band in the source list, a grammar point's is set by hand in the order a course teaches it. A right answer is worth more points the higher its item's tier.
 _Avoid_: Grade (that is the source list's word for it), level
 
 **Prompt**:
@@ -126,6 +126,10 @@ _Avoid_: Weak word, mistake
 
 **Comeback band**:
 The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
+
+**Practice duel**:
+A duel, for an account, that asks only its missed items for one prompt kind, any tier, started from PRACTISE MISSED WORDS in the Wordbook. Its rounds go into word history, but it never keeps a best score; the HUD and game over show PRACTICE instead. A prompt kind needs at least 5 missed items (ADR 0010).
+_Avoid_: Training, review mode, missed mode
 
 **Review list**:
 The rounds the player lost in a duel, each with its accepted answer and what they gave (or "too slow"), shown at game over. Kept in memory for the duel only.

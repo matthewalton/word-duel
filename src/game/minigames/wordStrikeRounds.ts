@@ -99,3 +99,18 @@ export function startDraw(pack: LanguagePack, opts: MinigameOptions): RoundDraw 
     },
   };
 }
+
+/** Missed words that can still be asked, any tier. */
+export function practiceWords(pack: LanguagePack, missedItemIds: readonly string[]): WordItem[] {
+  const missed = new Set(missedItemIds);
+  return askableWords(pack).filter((w) => missed.has(w.id));
+}
+
+/** A practice duel deals the missed words themselves, each its own round. */
+export function startPracticeDraw(pack: LanguagePack, opts: MinigameOptions, itemIds: readonly string[]): RoundDraw {
+  const draw = drawOrder(practiceWords(pack, itemIds));
+  return {
+    next: () => buildRound(pack, opts, draw.next()),
+    workIn: () => {},
+  };
+}

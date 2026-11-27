@@ -16,7 +16,7 @@ import {
   type MinigameOptions,
   type ShowcaseProps,
 } from "../types";
-import { buildRound, startDraw } from "./wordStrikeRounds";
+import { buildRound, practiceWords, startDraw, startPracticeDraw } from "./wordStrikeRounds";
 
 function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }: ControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -161,6 +161,8 @@ export const wordStrike: Minigame = {
   hasContent: (pack) => askableWords(pack).length > 0,
   sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
   startDraw,
+  practiceItems: (pack, missedItemIds) => practiceWords(pack, missedItemIds).map((w) => w.id),
+  startPracticeDraw,
   Controls: WordStrikeControls,
   Preview: WordStrikePreview,
   HowTo: WordStrikeHowTo,

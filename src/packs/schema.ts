@@ -24,6 +24,9 @@ const envelope = {
   retired: z.boolean().optional(),
 };
 
+/** An item's tier, 1 (easiest) to 3 (ADR 0009). */
+const tier = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+
 export const wordItemSchema = z.strictObject({
   ...envelope,
   kind: z.literal("word"),
@@ -33,8 +36,8 @@ export const wordItemSchema = z.strictObject({
   targetAlt: z.array(text).min(1).optional(),
   /** Accepted base-language answers; the first is the main one. */
   base: z.array(text).min(1),
-  /** How hard the word is, 1 (easiest) to 3 (ADR 0009). Difficulty picks which tiers a duel draws. */
-  tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  /** How hard the word is, 1 (easiest) to 3, from its source grade (ADR 0009). Difficulty picks which tiers a duel draws. */
+  tier,
 });
 
 /** A grammar point that isn't a word, e.g. the object particle 을/를. */
@@ -45,6 +48,8 @@ export const grammarItemSchema = z.strictObject({
   target: text,
   /** Short base-language description, e.g. "object particle". */
   base: text,
+  /** How hard the grammar point is, 1 (easiest) to 3, set by hand in course order (ADR 0009). */
+  tier,
 });
 
 export const gapPromptSchema = z.strictObject({

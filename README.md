@@ -7,6 +7,8 @@ pnpm install  # also enables the repo's git hooks (.githooks/)
 pnpm dev      # http://localhost:3000
 ```
 
+CI (`.github/workflows/checks.yml`, **Checks**) runs on every pull request and push to `main`: pack check, eslint, tsc, `pnpm test` and `pnpm build`, on the Node version in `.nvmrc`.
+
 Rename the game in `src/config/game.ts` (`GAME_NAME`).
 
 Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't complete. To work on accounts, see [Accounts](#accounts).
@@ -38,7 +40,7 @@ A pack's content is **items** (what the player learns) and **prompts** (one way 
 | File | Kind | Payload |
 | --- | --- | --- |
 | `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first), `tier` (1 easiest to 3; ADR 0009) |
-| `grammar.json` | item, `grammar` | `target` (e.g. `을/를`), `base` (short description) |
+| `grammar.json` | item, `grammar` | `target` (e.g. `을/를`), `base` (short description), `tier` (1 easiest to 3, set by hand; ADR 0009) |
 | `gaps.json` | prompt, `gap` | `tests` (an item id), `sentence` with one `___`, `translation`, `answer`, `options` |
 
 A Word Strike round asks a word item directly; a gap tests the one item named by `tests`.
@@ -59,7 +61,7 @@ A Word Strike round asks a word item directly; a gap tests the one item named by
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`, and give it blurbs in `strings.difficulty.blurbs`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Accounts
 

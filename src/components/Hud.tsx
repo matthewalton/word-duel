@@ -29,8 +29,10 @@ export function Hud({ state }: { state: DuelState }) {
           />
         </div>
         <div className={styles.scoreBox} aria-live="polite">
-          {state.best != null && (
-            <span className={styles.best}>{fill(strings.best, { score: pad(state.best) })}</span>
+          {state.practice ? (
+            <span className={styles.best}>{strings.practice.tag}</span>
+          ) : (
+            state.best != null && <span className={styles.best}>{fill(strings.best, { score: pad(state.best) })}</span>
           )}
           <span className={styles.scoreRow}>
             {scored && (

@@ -14,11 +14,30 @@ export const strings = {
   difficulty: {
     label: "Difficulty",
     names: { easy: "EASY", normal: "NORMAL", hard: "HARD" },
+    /** What each difficulty draws, per minigame. */
     blurbs: {
-      easy: "Everyday words only. 10 points each.",
-      normal: "Everyday and common words. Common ones are worth 20.",
-      hard: "Every word, rare ones too. Rare ones are worth 30.",
-    },
+      "word-strike": {
+        easy: "Everyday words only. 10 points each.",
+        normal: "Everyday and common words. Common ones are worth 20.",
+        hard: "Every word, rare ones too. Rare ones are worth 30.",
+      },
+      "gap-guard": {
+        easy: "First grammar and everyday words. 10 points each.",
+        normal: "Adds past tense, negatives and more counters. Worth up to 20.",
+        hard: "Every sentence, the hardest grammar too. Hard ones are worth 30.",
+      },
+    } as Record<string, Record<"easy" | "normal" | "hard", string>>,
+  },
+  /** The practice duel: only the account's missed items, no best score. */
+  practice: {
+    button: "PRACTISE MISSED WORDS",
+    chooserTitle: "PRACTISE",
+    chooserBody: "A duel of only the words you last missed, from every difficulty. It keeps no best score.",
+    waysLabel: "Which words to practise",
+    tooFew: "Miss {n} to practise",
+    wayAria: "{way}: {n} missed",
+    directionWay: "{from} to {to}",
+    tag: "PRACTICE",
   },
   start: "START",
   pressEnter: "OR PRESS ENTER",

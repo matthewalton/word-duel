@@ -2,9 +2,9 @@
 
 import { HISTORY_LIMITS } from "@/config/game";
 import type { DuelState } from "@/game/duel";
-import type { Direction } from "@/game/types";
+import type { Direction, PromptKind } from "@/game/types";
 import type { MinigameId } from "@/game/minigames/ids";
-import { recordDuel, type DuelRecord } from "@/server/history";
+import { loadLastMissed, recordDuel, type DuelRecord } from "@/server/history";
 import { hasAccount } from "./progress";
 
 /** A random v4 uuid; crypto.randomUUID needs a secure context, which a LAN address isn't. */
@@ -15,6 +15,18 @@ export function newDuelId(): string {
   b[8] = (b[8] & 0x3f) | 0x80;
   const h = [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+}
+
+/** Duels on their way to word history; the missed list waits for them. */
+const sending = new Set<Promise<void>>();
+
+/**
+ * The account's missed items for this prompt kind (null for a guest), once
+ * any duel still being sent is in, so a duel just left counts.
+ */
+export async function loadMissed(packId: string, promptKind: PromptKind): Promise<string[] | null> {
+  await Promise.all(sending);
+  return loadLastMissed(packId, promptKind);
 }
 
 /**
@@ -45,7 +57,10 @@ export function sendDuel(
       atMs: Math.round(p.atMs),
     })),
   };
-  recordDuel(record).catch(() => {
-    // Offline or signed out elsewhere: this duel isn't kept.
-  });
+  const sent = recordDuel(record)
+    .catch(() => {
+      // Offline or signed out elsewhere: this duel isn't kept.
+    })
+    .finally(() => sending.delete(sent));
+  sending.add(sent);
 }
