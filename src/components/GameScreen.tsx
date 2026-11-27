@@ -13,6 +13,7 @@ import { useAccount } from "@/lib/useAccount";
 import { choosePack, useChosenPack } from "@/lib/packChoice";
 import { readPracticeWay, stripPracticeWay } from "@/lib/practiceLink";
 import { useBestScores } from "@/lib/useBestScores";
+import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
 import { AccountCorner } from "./AccountCorner";
@@ -46,6 +47,8 @@ export function GameScreen() {
   const openSignIn = () => setSignInOpen(true);
   const [versusOpen, setVersusOpen] = useState(false);
   const versusAvailable = minigames.some((m) => m.id === "word-strike");
+  // The duel fits the visible height, so a phone keyboard doesn't push it off screen.
+  const viewportHeight = useViewportHeight();
 
   // V opens versus from the title screen, unless typing or another panel or a menu is open.
   useEffect(() => {
@@ -103,7 +106,10 @@ export function GameScreen() {
   ) : null;
 
   return (
-    <PortalRoot className={styles.page} style={packVars(pack)}>
+    <PortalRoot
+      className={styles.page}
+      style={{ ...packVars(pack), ...(view.name === "duel" ? viewportHeightVar(viewportHeight) : {}) }}
+    >
       <PackFonts pack={pack} />
       {view.name === "title" ? (
         <TitleScreen
