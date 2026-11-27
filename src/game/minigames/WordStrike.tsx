@@ -76,7 +76,7 @@ function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }:
         // it keeps focus and a phone keyboard stays open for the next round.
         disabled={!inGame}
         readOnly={!editable}
-        aria-disabled={locked}
+        aria-disabled={locked || undefined}
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
