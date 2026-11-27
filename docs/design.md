@@ -35,5 +35,6 @@ The code in `src/` is the source of truth for what shipped; the boards show the 
 | 17 · COMEBACK | B · band, sparks off the word, the stage chunk glints (`ComebackSparks`) | |
 | 18 · difficulty | A · three-way switch (`DifficultyRow`, `DifficultyPhone`) | |
 | 19 · versus | A · VERSUS in the title bar (`VersusTitleBar`), waiting 2 · player cards (`VersusWaitSlots`), the versus duel (`VersusDuel`), game over 1 · in the duel frame (`VersusOverPanel`), and their phone boards | REMATCH came with #36 (rival-asked state in the boards' Tweaks) |
+| 20 · navigation | Mixed: A's language step (`NavDoorsLanguage`), C's hub (`NavSplitHub`), A's area screens with the title strip and back button, no side tabs (`NavDoorsSingle`), and their phone boards | The language step, hub and Single player area today (#71); `NavDoorsVersus` and `NavDoorsStudy` follow in #81 |
 
 When a design round is agreed and built, add its row here.

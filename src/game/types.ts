@@ -147,7 +147,7 @@ export interface Minigame {
    */
   startPracticeDraw: (pack: LanguagePack, opts: MinigameOptions, itemIds: readonly string[]) => RoundDraw;
   Controls: ComponentType<ControlsProps>;
-  /** Static picture of a round, shown on the title screen. */
+  /** Static picture of a round, shown on its minigame card and the hub. */
   Preview: ComponentType<ShowcaseProps>;
   /** The three illustrated steps in the how-to panel. */
   HowTo: ComponentType<ShowcaseProps>;

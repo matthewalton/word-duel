@@ -87,7 +87,7 @@ export function VersusScreen({ code }: { code: string }) {
   );
 }
 
-/** Back to the title screen; `onLeave` gives up the seat first (leaving before a match is won loses it). */
+/** Back to the hub; `onLeave` gives up the seat first (leaving before a match is won loses it). */
 function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
     <Link href="/" className={buttonClass(`${styles.modeButton} ${v.menuLink}`)} aria-label={strings.menuAria} onClick={onLeave}>
@@ -441,7 +441,7 @@ function VersusOver({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Se
 /**
  * The answer bar at game over: REMATCH, which needs both players. Once the
  * rival asks, their ask shows beside it; once you have, it waits for them. If
- * the rival leaves, only the way back to the title screen remains.
+ * the rival leaves, only the way back to the hub remains.
  */
 function OverBar({
   snapshot,

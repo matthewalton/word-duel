@@ -1,204 +1,17 @@
 /*
- * Title screen, minigame previews and the how-to panel.
+ * Minigame cards (the Single player area), minigame previews and the how-to panel.
  * Previews read --pv-* colours, so the inactive card can turn the lights off
  * without the minigame modules knowing.
  */
 
-.titleScreen {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: calc(1280px * var(--s));
-  /* Fills the screen; a short window scrolls instead of squashing the preview. */
-  min-height: max(100dvh, calc(560px * var(--s)));
-  margin-inline: auto;
-  padding: calc(32px * var(--s)) calc(48px * var(--s)) calc(20px * var(--s));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(24px * var(--s));
-  color: var(--board);
-}
-
-/* Brand in the middle, the account corner on the right. */
-.top {
+/* The Single player area's contents: cards, key hint and the phone carousel. */
+.cardsArea {
+  flex: 1;
   align-self: stretch;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: calc(24px * var(--s));
-}
-
-.lead {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  justify-content: flex-start;
-  gap: calc(12px * var(--s));
-  min-width: 0;
-  /* A size container, so the wordbook link can drop its label when the
-     language picker leaves too little room. Em thresholds follow --s. */
-  container-type: inline-size;
-  font-size: calc(16px * var(--s));
-}
-
-/* The wordbook link: a book and its name; a phone shows the book alone. */
-.wordbookLink {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  gap: calc(10px * var(--s));
-  padding: 4px calc(14px * var(--s)) 4px calc(10px * var(--s));
-  font-size: calc(16px * var(--s));
-  letter-spacing: 1px;
-  color: var(--board);
-  text-decoration: none;
-  border: 4px solid var(--line);
-}
-
-.wordbookLink:hover {
-  border-color: var(--accent);
-}
-
-.wordbookLink:focus-visible {
-  outline: 4px solid var(--player);
-  outline-offset: 2px;
-}
-
-.wordbookIcon {
-  display: block;
-  flex: none;
-  width: calc(21px * var(--s));
-  height: calc(18px * var(--s));
-  color: var(--line);
-}
-
-@container (max-width: 17em) {
-  .wordbookLink {
-    width: 44px;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .wordbookLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-}
-
-/* The language picker: the target language's own name, opening a menu of packs. */
-.langButton {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: calc(10px * var(--s));
-  padding: 4px calc(12px * var(--s)) 4px calc(14px * var(--s));
-  letter-spacing: normal;
-}
-
-.langButton[data-state="open"] {
-  background: #4e4670;
-}
-
-.langButtonName {
-  font-family: var(--font-words);
-  font-size: calc(18px * var(--s));
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.langCaret {
-  flex: none;
-  width: 10px;
-  height: 6px;
-  color: var(--line);
-}
-
-.langMenu {
-  width: calc(240px * var(--s));
-  padding: calc(14px * var(--s));
-  gap: 8px;
-}
-
-.langMenuLabel {
-  font-size: calc(13px * var(--s));
-  letter-spacing: 2px;
-  color: var(--muted);
-}
-
-.langList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.langOption {
-  width: 100%;
-  min-height: 52px;
-  padding: 6px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 4px;
-  text-align: start;
-  border: 4px solid transparent;
-}
-
-.langOption:hover {
-  border-color: var(--line);
-}
-
-.langOption[data-state="checked"] {
-  background: var(--track);
-  border-color: var(--player);
-}
-
-.langOptionNative {
-  font-family: var(--font-words);
-  font-size: calc(20px * var(--s));
-  line-height: 1.1;
-}
-
-.langOptionName {
-  font-size: calc(13px * var(--s));
-  letter-spacing: 1px;
-  color: var(--muted);
-}
-
-.brand {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  align-items: center;
-  gap: calc(18px * var(--s));
-}
-
-.corner {
-  grid-column: 3;
-  grid-row: 1;
-  display: flex;
-  justify-content: flex-end;
-  min-width: 0;
-}
-
-.brandName {
-  margin: 0;
-  font-size: calc(30px * var(--s));
-  font-weight: 700;
-  letter-spacing: calc(5px * var(--s));
-}
-
-.brandHeart {
-  display: block;
-  width: calc(28px * var(--s));
-  height: calc(24px * var(--s));
 }
 
 /* ---------- Cards ---------- */
@@ -321,14 +134,15 @@
 .pvPrompt {
   max-width: 100%;
   font-family: var(--font-words);
-  font-size: calc(64px * var(--s));
+  /* --pv-* sizes let another box (the hub's quick PLAY cards) size the preview down. */
+  font-size: var(--pv-prompt, calc(64px * var(--s)));
   line-height: 1.1;
   text-align: center;
   overflow-wrap: anywhere;
 }
 
 .pvSentence {
-  font-size: calc(44px * var(--s));
+  font-size: var(--pv-sentence, calc(44px * var(--s)));
 }
 
 .cardOn .pvPrompt {
@@ -340,13 +154,14 @@
 }
 
 .pvInput {
+  /* --pv-detail: none leaves only the prompt, for a preview too small for more. */
+  display: var(--pv-detail, flex);
   box-sizing: border-box;
   width: 72%;
   padding: calc(8px * var(--s)) calc(14px * var(--s));
-  display: flex;
   align-items: center;
   font-family: var(--font-words);
-  font-size: calc(26px * var(--s));
+  font-size: var(--pv-input, calc(26px * var(--s)));
   background: var(--pv-panel);
   border: 4px solid var(--pv-accent);
 }
@@ -367,7 +182,7 @@
   width: 72%;
   height: calc(14px * var(--s));
   padding: 3px;
-  display: grid;
+  display: var(--pv-detail, grid);
   grid-template-columns: repeat(14, 1fr);
   gap: 3px;
   background: var(--pv-track);
@@ -387,7 +202,7 @@
 
 .pvChips {
   width: 82%;
-  display: grid;
+  display: var(--pv-detail, grid);
   grid-template-columns: repeat(3, 1fr);
   gap: calc(10px * var(--s));
 }
@@ -396,7 +211,7 @@
   padding-block: calc(8px * var(--s));
   text-align: center;
   font-family: var(--font-words);
-  font-size: calc(20px * var(--s));
+  font-size: var(--pv-chip, calc(20px * var(--s)));
   background: var(--pv-panel);
   border: 4px solid var(--pv-track);
 }
@@ -715,51 +530,8 @@
 /* ---------- Phone: one full-width card, always active ---------- */
 
 @media (max-width: 640px) {
-  .titleScreen {
-    min-height: 100dvh;
-    padding: 24px 16px 16px;
+  .cardsArea {
     gap: 16px;
-  }
-
-  /* Wordbook and corner on their own row above the brand: they don't fit side by side. */
-  .top {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 12px;
-  }
-
-  .brand {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    justify-self: center;
-  }
-
-  /* The column sizes to its content here, which a size container can't do. */
-  .lead {
-    grid-column: 1;
-    grid-row: 1;
-    container-type: normal;
-  }
-
-  .corner {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: stretch;
-    min-height: 44px;
-  }
-
-  .wordbookLink {
-    width: 44px;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .wordbookLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 
   .cards {
