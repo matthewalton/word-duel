@@ -8,24 +8,24 @@ import type {
   WordItem,
 } from "./types";
 
-import koEnMeta from "./ko-en/meta.json";
-import koEnWords from "./ko-en/words.json";
-import koEnGrammar from "./ko-en/grammar.json";
-import koEnGaps from "./ko-en/gaps.json";
-import koEnFeedback from "./ko-en/feedback.json";
-import koEnMatching from "./ko-en/matching.json";
-import esEnMeta from "./es-en/meta.json";
-import esEnWords from "./es-en/words.json";
-import esEnGrammar from "./es-en/grammar.json";
-import esEnGaps from "./es-en/gaps.json";
-import esEnFeedback from "./es-en/feedback.json";
-import esEnMatching from "./es-en/matching.json";
-import frEnMeta from "./fr-en/meta.json";
-import frEnWords from "./fr-en/words.json";
-import frEnGrammar from "./fr-en/grammar.json";
-import frEnGaps from "./fr-en/gaps.json";
-import frEnFeedback from "./fr-en/feedback.json";
-import frEnMatching from "./fr-en/matching.json";
+import koEnMeta from "./ko-en/meta.json" with { type: "json" };
+import koEnWords from "./ko-en/words.json" with { type: "json" };
+import koEnGrammar from "./ko-en/grammar.json" with { type: "json" };
+import koEnGaps from "./ko-en/gaps.json" with { type: "json" };
+import koEnFeedback from "./ko-en/feedback.json" with { type: "json" };
+import koEnMatching from "./ko-en/matching.json" with { type: "json" };
+import esEnMeta from "./es-en/meta.json" with { type: "json" };
+import esEnWords from "./es-en/words.json" with { type: "json" };
+import esEnGrammar from "./es-en/grammar.json" with { type: "json" };
+import esEnGaps from "./es-en/gaps.json" with { type: "json" };
+import esEnFeedback from "./es-en/feedback.json" with { type: "json" };
+import esEnMatching from "./es-en/matching.json" with { type: "json" };
+import frEnMeta from "./fr-en/meta.json" with { type: "json" };
+import frEnWords from "./fr-en/words.json" with { type: "json" };
+import frEnGrammar from "./fr-en/grammar.json" with { type: "json" };
+import frEnGaps from "./fr-en/gaps.json" with { type: "json" };
+import frEnFeedback from "./fr-en/feedback.json" with { type: "json" };
+import frEnMatching from "./fr-en/matching.json" with { type: "json" };
 
 /**
  * Pack registry: game code reads pack content only through here. To add a

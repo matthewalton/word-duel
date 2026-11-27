@@ -137,9 +137,11 @@ export const strings = {
     buttonShort: "VS",
     buttonAria: "Versus: race a friend",
     panelTitle: "VERSUS",
-    panelBody: "Race a friend on Word Strike. First right answer breaks a heart.",
+    panelBody: "Race a friend. First right answer breaks a heart.",
     createTitle: "CREATE A ROOM",
-    createBody: "Uses Word Strike's settings. You get a code to send your friend.",
+    createBody: "Pick a minigame. You get a code to send your friend.",
+    /** Under the minigame switch when the pack has no gap sentences at the title screen's difficulty. */
+    noGaps: "No gap sentences at {difficulty} in this language yet.",
     createButton: "CREATE ROOM",
     joinTitle: "JOIN A ROOM",
     joinBody: "Type the 4-letter code your friend sent you.",
@@ -161,6 +163,8 @@ export const strings = {
     guest: "GUEST",
     ready: "READY",
     joined: "JOINED",
+    /** On the joined player's card: the room's minigame. */
+    joinedMinigame: "PLAYING {minigame}",
     waiting: "WAITING…",
     waitingBody: "Your friend joins with the code below.",
     emptySlot: "Empty slot",

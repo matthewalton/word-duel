@@ -42,6 +42,8 @@ export function useVersusDuel({
   );
   const [fuseLit, setFuseLit] = useState(FUSE_SEGMENTS);
   const [pending, setPending] = useState<number | null>(null);
+  /** What this player answered, by round number: the result shows their pick against the answer. */
+  const given = useRef(new Map<number, string>());
   /** Rounds whose prompt has shown. */
   const [started, setStarted] = useState(0);
 
@@ -91,7 +93,14 @@ export function useVersusDuel({
         const current = s.rounds[d.started - 1];
         if (current?.result && d.resolved < d.started) {
           const { winner, reason } = current.result;
-          dispatch({ type: "resolve", loser: loserSide(winner, seat), reason, at: performance.now() });
+          dispatch({
+            type: "resolve",
+            loser: loserSide(winner, seat),
+            reason,
+            given: given.current.get(current.n),
+            round: toRound(current),
+            at: performance.now(),
+          });
           d.resolved += 1;
           d.resolvedAt = performance.now();
           continue;
@@ -133,12 +142,13 @@ export function useVersusDuel({
   const current = started > 0 ? (snapshot.rounds[started - 1] ?? null) : null;
 
   const onSubmit = useCallback(
-    (given: string) => {
+    (answer: string) => {
       const r = snapRef.current.rounds[done.current.started - 1];
       // Answers before the prompt shows or after it is decided aren't sent.
       if (!r || r.result) return;
       setPending(r.n);
-      submit(r.n, given).finally(() => setPending(null));
+      given.current.set(r.n, answer);
+      submit(r.n, answer).finally(() => setPending(null));
     },
     [submit],
   );
