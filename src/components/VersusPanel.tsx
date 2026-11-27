@@ -93,10 +93,14 @@ export function VersusPanel({
             {busy === "create" ? strings.versus.working : strings.versus.createButton}
           </Button>
         </section>
-        <form className={`${v.option} ${v.joinForm}`} aria-labelledby="versus-join" onSubmit={(e) => {
+        <form
+          className={`${v.option} ${v.joinForm}`}
+          aria-labelledby="versus-join"
+          onSubmit={(e) => {
             e.preventDefault();
             void join(code);
-          }}>
+          }}
+        >
           <h3 id="versus-join" className={v.optionTitle}>
             {strings.versus.joinTitle}
           </h3>
