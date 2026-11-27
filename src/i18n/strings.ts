@@ -23,7 +23,7 @@ export const strings = {
       },
       "gap-guard": {
         easy: "First grammar and everyday words. 10 points each.",
-        normal: "Adds past tense, negatives and more counters. Worth up to 20.",
+        normal: "Adds more grammar and common words. Worth up to 20.",
         hard: "Every sentence, the hardest grammar too. Hard ones are worth 30.",
       },
     } as Record<string, Record<"easy" | "normal" | "hard", string>>,
