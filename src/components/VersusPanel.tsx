@@ -64,7 +64,7 @@ export function VersusPanel({
   const create = async () => {
     setBusy("create");
     setError(null);
-    const made = await createRoom({ packId: pack.meta.id, direction, difficulty }).catch(() => null);
+    const made = await createRoom({ packId: pack.meta.id, minigame: "word-strike", direction, difficulty }).catch(() => null);
     if (made) return go(made.code, made.token);
     setBusy(null);
     setError(strings.versus.createFailed);

@@ -2,13 +2,10 @@ import "server-only";
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { and, asc, desc, eq, gt, isNull, lte, sql } from "drizzle-orm";
 import { COUNTDOWN_MS, RULES, VERSUS, versusFuse } from "@/config/game";
-import { promptCards, buildRound } from "@/game/minigames/wordStrikeRounds";
-import type { MinigameOptions, Round } from "@/game/types";
+import type { Round } from "@/game/types";
 import { otherSeat, roomChannel, seatClientId, type RoomSnapshot, type Seat, type VersusRound } from "@/game/versus";
-import { isAcceptedAnswer } from "@/lib/matching";
-import { drawOrder } from "@/lib/random";
+import { dealDraw, isRightAnswer, roomRound, type RoomSettings } from "@/game/versusRounds";
 import { getPack } from "@/packs";
-import type { LanguagePack } from "@/packs/types";
 import { presentClients, publish } from "./ably";
 import { getDb } from "./db";
 import { versusRoom, versusRound } from "./schema";
@@ -34,16 +31,11 @@ export function randomCode(): string {
 /** A timestamp for raw SQL on our `timestamp` (UTC, no time zone) columns. */
 const utc = (d: Date) => sql`(${d.toISOString()}::timestamptz at time zone 'UTC')`;
 
-const optsOf = (room: Room): MinigameOptions => ({ direction: room.direction, difficulty: room.difficulty });
-
-/** The word ids a new room deals, in order: Word Strike's shuffled draw within the difficulty. */
-export function dealDraw(pack: LanguagePack, opts: MinigameOptions): string[] {
-  const draw = drawOrder(promptCards(pack, opts));
-  return Array.from({ length: VERSUS.maxRounds }, () => {
-    const card = draw.next();
-    return card[randomInt(card.length)].id;
-  });
-}
+const settingsOf = (room: Room): RoomSettings => ({
+  minigame: room.minigame,
+  direction: room.direction,
+  difficulty: room.difficulty,
+});
 
 /** The live room with this code, if any. */
 export async function findRoom(code: string, now: Date): Promise<Room | null> {
@@ -66,10 +58,14 @@ export function seatOf(room: Room, token: string): Seat | null {
   return null;
 }
 
-function roundFor(pack: LanguagePack, room: Room, itemId: string): Round {
-  const word = pack.words.find((w) => w.id === itemId);
-  if (!word) throw new Error(`Unknown word ${itemId} in ${pack.meta.id}`);
-  return buildRound(pack, optsOf(room), word);
+/**
+ * Round `row.n` of the room's current match. A gap's option order is fixed by
+ * the room, match and round, which browsers never learn, so both players see
+ * the same order and it can't be worked out ahead.
+ */
+function roundFor(room: Room, row: RoundRow): Round {
+  const rank = (option: string) => hashToken(`${room.id}:${room.match}:${row.n}:${option}`);
+  return roomRound(getPack(room.packId), settingsOf(room), row.promptId, rank);
 }
 
 const loadRounds = (roomId: string) =>
@@ -107,7 +103,7 @@ async function dealRound(room: Room, n: number, startsAt: Date, heartsBroken: nu
     .values({
       roomId: room.id,
       n,
-      itemId: room.draw[n - 1],
+      promptId: room.draw[n - 1],
       fuseMs,
       startsAt,
       deadline: new Date(startsAt.getTime() + fuseMs),
@@ -155,9 +151,7 @@ export async function answer(room: Room, seat: Seat, n: number, given: string, n
     .from(versusRound)
     .where(and(eq(versusRound.roomId, room.id), eq(versusRound.n, n)));
   if (!row || row.outcome) return false;
-  const pack = getPack(room.packId);
-  const round = roundFor(pack, room, row.itemId);
-  const right = isAcceptedAnswer(given, round.accepted, pack.matching, round.answerLang.code);
+  const right = isRightAnswer(getPack(room.packId), roundFor(room, row), given);
 
   const mine = seat === "p1" ? versusRound.p1Given : versusRound.p2Given;
   const theirs = seat === "p1" ? versusRound.p2Given : versusRound.p1Given;
@@ -190,10 +184,9 @@ export async function answer(room: Room, seat: Seat, n: number, given: string, n
 /** The room as both browsers may see it. */
 export async function snapshotOf(room: Room, now: Date): Promise<RoomSnapshot> {
   const rows = await loadRounds(room.id);
-  const pack = getPack(room.packId);
   const hearts = heartsOf(rows);
   const rounds: VersusRound[] = rows.map((r) => {
-    const { accepted, reveal, ...prompt } = roundFor(pack, room, r.itemId);
+    const { accepted, reveal, ...prompt } = roundFor(room, r);
     return {
       n: r.n,
       round: prompt,
@@ -218,6 +211,7 @@ export async function snapshotOf(room: Room, now: Date): Promise<RoomSnapshot> {
   return {
     code: room.code,
     packId: room.packId,
+    minigame: room.minigame,
     direction: room.direction,
     difficulty: room.difficulty,
     players: { p1: { name: room.p1Name }, p2: room.p2Token ? { name: room.p2Name } : null },
@@ -333,8 +327,7 @@ export async function askRematch(room: Room, seat: Seat, now: Date): Promise<boo
   // Row locks make exactly one press see both: the second one, which starts the match.
   if (!asked.p1Rematch || !asked.p2Rematch) return true;
 
-  const pack = getPack(room.packId);
-  const draw = dealDraw(pack, optsOf(room));
+  const draw = dealDraw(getPack(room.packId), settingsOf(room));
   const fuseMs = versusFuse(0);
   const startsAt = new Date(now.getTime() + VERSUS.rematchLeadMs + COUNTDOWN_MS);
   await db.batch([
@@ -352,7 +345,7 @@ export async function askRematch(room: Room, seat: Seat, now: Date): Promise<boo
     db.insert(versusRound).values({
       roomId: room.id,
       n: 1,
-      itemId: draw[0],
+      promptId: draw[0],
       fuseMs,
       startsAt,
       deadline: new Date(startsAt.getTime() + fuseMs),
