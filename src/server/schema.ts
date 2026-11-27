@@ -16,13 +16,11 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { DIFFICULTIES } from "../config/game";
-import type { MinigameId } from "../game/minigames/ids";
+import { MINIGAME_IDS } from "../game/minigames/ids";
 import type { Direction, PromptKind, Reason } from "../game/types";
 
 export const DIRECTIONS = ["toTarget", "toBase"] as const satisfies readonly Direction[];
 export const PROMPT_KINDS = [...DIRECTIONS, "gap"] as const satisfies readonly PromptKind[];
-/** The minigames a versus room can run. */
-export const MINIGAME_IDS = ["word-strike", "gap-guard"] as const satisfies readonly MinigameId[];
 /** A round's outcome for the player: the duel's reason (correct, wrong, timeout). */
 export const OUTCOMES = ["correct", "wrong", "timeout"] as const satisfies readonly Reason[];
 /** A versus room's two seats: PLAYER 1 made the room, PLAYER 2 joined it. */

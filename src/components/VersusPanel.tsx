@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { VERSUS } from "@/config/game";
-import type { MinigameId } from "@/game/minigames/ids";
+import { MINIGAME_IDS, type MinigameId } from "@/game/minigames/ids";
 import type { Difficulty, Direction } from "@/game/types";
 import { cleanCode, isRoomCode } from "@/game/versus";
 import { canDeal } from "@/game/versusRounds";
@@ -33,9 +33,6 @@ export function VersusButton({ onOpen }: { onOpen: () => void }) {
 }
 
 type Busy = "create" | "join" | null;
-
-/** The minigames a room can run, in switch order; Word Strike is the default. */
-const ROOM_MINIGAMES = ["word-strike", "gap-guard"] as const satisfies readonly MinigameId[];
 
 /**
  * Create or join a versus room. A room runs the minigame picked here, with
@@ -117,7 +114,7 @@ export function VersusPanel({
           <p className={v.optionBody}>{strings.versus.createBody}</p>
           <ToggleGroup
             label={strings.modesLabel}
-            options={ROOM_MINIGAMES}
+            options={MINIGAME_IDS}
             value={minigame}
             onValueChange={setPicked}
             isDisabled={(m) => !dealable(m)}

@@ -4,13 +4,14 @@ import { and, eq, isNull, lt } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { DIFFICULTIES, HISTORY_LIMITS, VERSUS } from "@/config/game";
+import { MINIGAME_IDS } from "@/game/minigames/ids";
 import { isRoomCode, roomChannel, seatClientId, type RoomView, type Seat } from "@/game/versus";
 import { canDeal, dealDraw } from "@/game/versusRounds";
 import { getPack, listPacks } from "@/packs";
 import { subscribeToken } from "./ably";
 import { getAuth } from "./auth";
 import { getDb } from "./db";
-import { DIRECTIONS, MINIGAME_IDS, versusRoom } from "./schema";
+import { DIRECTIONS, versusRoom } from "./schema";
 import {
   advance,
   answer,
