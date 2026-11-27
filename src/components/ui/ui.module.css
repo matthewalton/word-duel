@@ -1,6 +1,6 @@
 /*
- * The shared controls: button, dialog, menu, toggle group, tabs and panel,
- * and the pixel heart.
+ * The shared controls: button, choice button, dialog, menu,
+ * toggle group, tabs and panel, and the pixel heart.
  * Pixel rules: hard square edges, 4px borders, unblurred offset shadows and
  * no eased motion (Radix adds none; only a breaking heart animates, in steps).
  *
@@ -107,6 +107,44 @@
 
   .primary:disabled {
     opacity: 0.6;
+  }
+
+  /* ---------- Choice button ---------- */
+
+  .choice {
+    position: relative;
+    font-family: var(--font-words);
+    color: var(--ink);
+    background: #fff;
+    border: 4px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .choice:hover:not(:disabled) {
+    background: var(--board);
+  }
+
+  .choiceKey {
+    position: absolute;
+    inset-block-start: calc(2px * var(--s));
+    inset-inline-start: calc(5px * var(--s));
+    font-family: var(--font-ui);
+    font-size: calc(11px * var(--s));
+    color: var(--muted);
+  }
+
+  /* Marks after the round: the pick right or wrong, and the answer shown. */
+  .choiceRight {
+    background: var(--player);
+  }
+
+  .choiceWrong {
+    background: var(--rival);
+  }
+
+  .choiceReveal {
+    background: var(--accent);
   }
 
   /* ---------- Dialog ---------- */
