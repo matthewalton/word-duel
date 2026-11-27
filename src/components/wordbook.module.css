@@ -1,7 +1,7 @@
 /*
- * The wordbook page: MISSED and BEST tabs of accordion rows. Same pixel rules
- * as the rest: 4px borders, square corners, unblurred offset shadows, no
- * smooth motion.
+ * The wordbook page: MISSED and BEST tabs of word rows that open one at a
+ * time. Same pixel rules as the rest: 4px borders, square corners, unblurred
+ * offset shadows, no smooth motion.
  */
 
 .screen {
@@ -82,6 +82,13 @@
 
 /* ---------- Tabs and order ---------- */
 
+/* Holds the tab bar and the panel under it, filling the panel box. */
+.book {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .bar {
   display: flex;
   flex-wrap: wrap;
@@ -94,30 +101,11 @@
 
 .tabs {
   flex: 0 1 calc(360px * var(--s));
-  display: flex;
-  gap: 10px;
 }
 
 .tab {
-  flex: 1 1 0;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
   padding: 0 calc(18px * var(--s));
   font-size: calc(18px * var(--s));
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--ink);
-  background: var(--board);
-  border: var(--border);
-  cursor: pointer;
-}
-
-.tabOn {
-  background: var(--accent);
-  box-shadow: 4px 4px 0 var(--ink);
 }
 
 .tabCount {
@@ -140,18 +128,23 @@
   color: var(--muted);
 }
 
+/* Small separate line boxes, not the toggle group's joined yellow ones. */
 .orderButton {
+  flex: none;
   min-height: 36px;
   padding: 0 12px;
   font-size: calc(14px * var(--s));
+  font-weight: 400;
   letter-spacing: 1px;
-  color: var(--ink);
   background: transparent;
   border: 3px solid var(--ink);
-  cursor: pointer;
 }
 
-.orderOn {
+.orderButton + .orderButton {
+  margin-inline-start: 8px;
+}
+
+.orderButton[data-state="on"] {
   color: var(--board);
   background: var(--ink);
 }
@@ -242,7 +235,10 @@ a.way:focus-visible {
   font-size: calc(22px * var(--s));
 }
 
+/* A way with too few missed items: a disabled button the width of the list. */
 .wayOff {
+  width: 100%;
+  text-align: start;
   color: var(--muted);
   background: var(--track);
   border-color: var(--muted);
@@ -283,8 +279,6 @@ a.way:focus-visible {
   text-align: start;
   color: var(--ink);
   background: #fff;
-  border: 0;
-  cursor: pointer;
 }
 
 .words {
@@ -603,16 +597,15 @@ a.way:focus-visible {
   background: transparent;
 }
 
+/* Links get the shared controls' focus ring by hand. */
 .back:focus-visible,
-.tab:focus-visible,
-.orderButton:focus-visible,
-.head:focus-visible,
-.gold:focus-visible,
-.plain:focus-visible {
+a.gold:focus-visible,
+a.plain:focus-visible {
   outline: 4px solid var(--player);
   outline-offset: 2px;
 }
 
+/* Inside the row's border, which would otherwise hide it. */
 .head:focus-visible {
   outline-offset: -4px;
 }
