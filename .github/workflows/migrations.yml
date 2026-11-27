@@ -151,10 +151,10 @@ jobs:
         if: steps.changes.outputs.test == 'true'
         run: pnpm test
 
-      # Runs whenever the create step ran, even if it or a later step failed or the run was cancelled.
+      # Runs whenever a branch was made, even if a later step failed or the run was cancelled.
       - name: Delete the throwaway Neon branch
         id: delete
-        if: always() && steps.branch.outcome != 'skipped'
+        if: always() && steps.branch.outcome != 'skipped' && steps.branch.outputs.branch_id != ''
         uses: neondatabase/delete-branch-action@v3
         with:
           api_key: ${{ secrets.NEON_API_KEY }}
