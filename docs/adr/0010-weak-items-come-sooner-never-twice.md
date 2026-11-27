@@ -6,6 +6,12 @@ The list is the one comebacks already load from item stats (ADR 0008). It is fix
 
 Difficulty still applies (ADR 0009): only missed items in the chosen tiers are in the pool to be worked in. Scoring, the fuse and comebacks don't change. Guests keep the plain shuffle; they have no word history.
 
+## Practice duels
+
+An account can also play a **practice duel**, picked with MISSED ONLY on a minigame's card on the title screen. It draws only the missed items for that card's prompt kind (Word Strike's direction, or gaps), any tier: difficulty doesn't apply, and the switch greys out. The list is fixed when the duel starts and dealt in the same shuffled no-repeat order, reshuffling once every item is dealt; play again starts from the list as the last duel left it. In Gap Guard each missed item is asked through one of its gap sentences, picked at random. It needs at least 5 missed items; the count shows on the toggle.
+
+Everything else plays as a normal duel, comebacks included. Its rounds go into word history like any duel's, so a missed item answered right leaves the list. It never saves a best score and game over never calls it a new best (it shows PRACTICE instead), so best scores stay comparable: a duel of only the words you got wrong isn't the same game. Guests see the toggle, but choosing it asks them to sign in (ADR 0008).
+
 ## Considered options
 
 - **Ask missed items twice, or more often than others.** Rejected: it breaks the no-repeat rule (nothing comes back until the whole pool has been dealt), and seeing the same word twice in a duel teaches its position, not the word. Coming early gets the same "meet it again soon" effect.

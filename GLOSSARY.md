@@ -113,6 +113,10 @@ _Avoid_: Weak word, mistake
 **Comeback band**:
 The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
 
+**Practice duel**:
+A duel, for an account, that asks only its missed items for one prompt kind, any tier, picked with MISSED ONLY on the minigame's card. Its rounds go into word history, but it never keeps a best score; game over shows PRACTICE instead. It needs at least 5 missed items (ADR 0010).
+_Avoid_: Training, review mode, missed mode
+
 **Review list**:
 The rounds the player lost in a duel, each with its accepted answer and what they gave (or "too slow"), shown at game over. Kept in memory for the duel only.
 _Avoid_: Missed-words list, mistakes
