@@ -50,7 +50,7 @@ For each product decision you take, pick the option you'd recommend and write it
 
 ## Never
 
-- Run `pnpm db:migrate` or anything else that writes to the database. The local `DATABASE_URL` is the **production** database. Write the migration file, say under **Needs you** in the PR that it hasn't been applied, and let Matt run it.
+- Write to the production database, or run `pnpm db:migrate:prod`. The local `DATABASE_URL` is the `dev` branch of the Neon database: there you may run `pnpm db:migrate` and write test data. A new migration reaches prod only when Matt runs `pnpm db:migrate:prod`, so say under **Needs you** in the PR that it isn't applied to prod yet.
 - Merge a PR, push to `main`, or force-push.
 - Build an issue that isn't `ready-for-agent`.
 - Open an issue for a new feature. You only open issues for bugs, small polish and pack content, labelled `found-by-bot`, with at most 2 of them open at once. Feature ideas go to Matt as suggestions (see Ideas).
@@ -113,7 +113,7 @@ Each run:
   1. the demo GIF, with the MP4 link under it,
   2. `Closes #n`,
   3. **Decisions**: one line per product decision (what players see or do differently, what was left out), each marked Matt or bot,
-  4. **Needs you**: only if Matt must do something, such as apply a migration,
+  4. **Needs you**: only if Matt must do something, such as apply a migration to prod,
   5. one line: "Checks pass."
 
   No file-by-file "what changed", no check output, no process notes.
@@ -162,7 +162,7 @@ Matt reviews by watching the demo first, so it has to show the real flow working
 7. Put the GIF at the top of the PR body with `![desktop](https://github.com/matthewalton/word-duel/blob/demos/<branch>/desktop.gif?raw=true)`, and link the MP4 under it.
 8. Keep a copy in `~/word-duel-demos/<branch>/` as well.
 
-The demo runs as a **guest** by default. Only sign in if the Demo flow says to, and only if Orca's browser is already signed in. Never type a password. Anything done as an account writes to the production database, so say under **Needs you** what the demo wrote.
+The demo runs as a **guest** by default. Account demos are allowed when the Demo flow says to sign in: the dev server uses the `dev` database, so what the demo writes never reaches prod. Only sign in if Orca's browser is already signed in, and never type a password.
 - If something comes up that's on the short list, or outside the issue's scope, the worker asks you and waits. It doesn't guess.
 
 ## Speccing

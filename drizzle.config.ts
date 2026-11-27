@@ -1,7 +1,8 @@
 import { loadEnvConfig } from "@next/env";
 import { defineConfig } from "drizzle-kit";
 
-loadEnvConfig(process.cwd());
+// Development mode: the same env files as `pnpm dev`, so db:generate and db:migrate reach dev.
+loadEnvConfig(process.cwd(), true);
 
 export default defineConfig({
   schema: "./src/server/schema.ts",

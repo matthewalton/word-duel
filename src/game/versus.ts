@@ -2,7 +2,7 @@
  * Versus: what the server tells both browsers about a room (ADR 0012). Plain
  * data and pure helpers, shared by the server and the browser.
  */
-import { VERSUS } from "@/config/game";
+import { VERSUS } from "../config/game.ts";
 import type { Difficulty, Direction, LangText, Reason, Round, Side } from "./types";
 
 /** PLAYER 1 made the room; PLAYER 2 joined it. */
@@ -63,8 +63,13 @@ export type RoomError = "missing" | "full" | "left";
 /** A seat's view of a room. */
 export type RoomView = { ok: true; seat: Seat; snapshot: RoomSnapshot } | { ok: false; error: RoomError };
 
-/** The Ably channel a room's snapshots go out on. */
-export const roomChannel = (code: string) => `versus:${code}`;
+/**
+ * The Ably channel a room's snapshots go out on. Local dev shares prod's Ably key, so in
+ * development the channel is `versus:dev-<code>` (still inside the key's `versus:*`) and a dev
+ * room never hears a prod room with the same code.
+ */
+export const roomChannel = (code: string, nodeEnv = process.env.NODE_ENV) =>
+  nodeEnv === "development" ? `versus:dev-${code}` : `versus:${code}`;
 
 /** The Ably client id a seat's browser listens and is present as. */
 export const seatClientId = (code: string, seat: Seat) => `${roomChannel(code)}:${seat}`;
