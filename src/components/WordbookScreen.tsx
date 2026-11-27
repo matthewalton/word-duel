@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { WORDBOOK } from "@/config/game";
 import { langText, type PromptKind } from "@/game/types";
 import { fill, strings, UI_LANG } from "@/i18n/strings";
@@ -21,11 +21,16 @@ import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
 import { PracticeMissed } from "./PracticeMissed";
 import { SignInDialog } from "./SignInDialog";
+import { Button } from "./ui/Button";
 import { PortalRoot } from "./ui/PortalRoot";
+import { Tab, TabList, TabPanel, Tabs } from "./ui/Tabs";
+import { ToggleGroup } from "./ui/ToggleGroup";
 import w from "./wordbook.module.css";
 
-type Tab = "missed" | "best";
-type Order = "newest" | "most";
+const TABS = ["missed", "best"] as const;
+const ORDERS = ["newest", "most"] as const;
+type BookTab = (typeof TABS)[number];
+type Order = (typeof ORDERS)[number];
 
 const s = strings.wordbook;
 const METER_SQUARES = 5;
@@ -110,9 +115,9 @@ function Message({ title, text, children }: { title: string; text: string; child
 function GuestPrompt({ onSignIn }: { onSignIn: () => void }) {
   return (
     <Message title={s.guestTitle} text={s.guestBody}>
-      <button type="button" className={w.gold} onClick={onSignIn}>
+      <Button className={w.gold} onClick={onSignIn}>
         {strings.account.signIn}
-      </button>
+      </Button>
       <Link href="/" className={w.plain}>
         {s.backToMenu}
       </Link>
@@ -135,9 +140,9 @@ function LoadFailed({ onRetry }: { onRetry: () => void }) {
     <div className={w.message} role="alert">
       <p className={w.messageText}>{s.loadFailed}</p>
       <div className={w.messageActions}>
-        <button type="button" className={w.plain} onClick={onRetry}>
+        <Button className={w.plain} onClick={onRetry}>
           {s.retry}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -145,23 +150,14 @@ function LoadFailed({ onRetry }: { onRetry: () => void }) {
 
 function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; userId: string }) {
   const id = useId();
-  const [tab, setTab] = useState<Tab>("missed");
+  const [tab, setTab] = useState<BookTab>("missed");
   const [order, setOrder] = useState<Order>("newest");
   const [openId, setOpenId] = useState<string | null>(null);
   const [details, setDetails] = useState<Record<string, WordbookDetail | "failed">>({});
-  const tabs: Tab[] = ["missed", "best"];
 
-  const pick = (t: Tab) => {
+  const pick = (t: BookTab) => {
     setTab(t);
     setOpenId(null);
-  };
-
-  const onTabKey = (e: KeyboardEvent) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    e.preventDefault();
-    const next = tabs[(tabs.indexOf(tab) + 1) % tabs.length];
-    pick(next);
-    document.getElementById(`${id}-tab-${next}`)?.focus();
   };
 
   const toggle = (itemId: string) => {
@@ -187,47 +183,34 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
         : book.missed;
 
   return (
-    <>
+    <Tabs tabs={TABS} value={tab} onValueChange={pick} className={w.book}>
       <div className={w.bar}>
-        <div role="tablist" aria-label={s.tabsLabel} className={w.tabs} onKeyDown={onTabKey}>
-          {tabs.map((t) => (
-            <button
-              key={t}
-              id={`${id}-tab-${t}`}
-              type="button"
-              role="tab"
-              aria-selected={tab === t}
-              aria-controls={`${id}-panel`}
-              tabIndex={tab === t ? 0 : -1}
-              className={`${w.tab} ${tab === t ? w.tabOn : ""}`}
-              onClick={() => pick(t)}
-            >
+        <TabList label={s.tabsLabel} className={w.tabs}>
+          {TABS.map((t) => (
+            <Tab key={t} value={t} className={w.tab}>
               {t === "missed" ? s.missed : s.best}
               <span className={w.tabCount}>{(t === "missed" ? book.missed : book.best).length}</span>
-            </button>
+            </Tab>
           ))}
-        </div>
+        </TabList>
         {tab === "missed" && book.missed.length > 1 && (
-          <div role="group" aria-label={s.order} className={w.order}>
+          <div className={w.order}>
             <span className={w.orderLabel} aria-hidden="true">
               {s.order}
             </span>
-            {(["newest", "most"] as const).map((o) => (
-              <button
-                key={o}
-                type="button"
-                aria-pressed={order === o}
-                className={`${w.orderButton} ${order === o ? w.orderOn : ""}`}
-                onClick={() => setOrder(o)}
-              >
-                {o === "newest" ? s.newest : s.mostMissed}
-              </button>
-            ))}
+            <ToggleGroup
+              label={s.order}
+              options={ORDERS}
+              value={order}
+              onValueChange={setOrder}
+              optionClassName={() => w.orderButton}
+              renderOption={(o) => (o === "newest" ? s.newest : s.mostMissed)}
+            />
           </div>
         )}
       </div>
 
-      <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-tab-${tab}`} className={w.tabPanel}>
+      <TabPanel value={tab} className={w.tabPanel}>
         {entries.length === 0 ? (
           tab === "missed" ? (
             <Message title={s.noMissesTitle} text={s.noMissesBody} />
@@ -257,8 +240,8 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
             </ol>
           </>
         )}
-      </div>
-    </>
+      </TabPanel>
+    </Tabs>
   );
 }
 
@@ -306,7 +289,7 @@ function Row({
   id: string;
   pack: LanguagePack;
   entry: WordbookEntry;
-  tab: Tab;
+  tab: BookTab;
   order: Order;
   open: boolean;
   detail: WordbookDetail | "failed" | undefined;
@@ -336,13 +319,7 @@ function Row({
 
   return (
     <li className={`${w.row} ${open ? w.rowOpen : ""}`}>
-      <button
-        type="button"
-        className={w.head}
-        aria-expanded={open}
-        aria-controls={`${id}-details`}
-        onClick={onToggle}
-      >
+      <Button className={w.head} aria-expanded={open} aria-controls={`${id}-details`} onClick={onToggle}>
         <span className={w.words}>
           <LangSpan t={langText(target, item.target)} className={w.target} />
           <LangSpan t={langText(base, baseWord)} className={w.base} />
@@ -359,7 +336,7 @@ function Row({
             />
           </svg>
         </span>
-      </button>
+      </Button>
       {open && <Details id={`${id}-details`} pack={pack} entry={entry} detail={detail} />}
     </li>
   );
