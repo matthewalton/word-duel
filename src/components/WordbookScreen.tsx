@@ -21,6 +21,7 @@ import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
 import { PracticeMissed } from "./PracticeMissed";
 import { SignInDialog } from "./SignInDialog";
+import { PortalRoot } from "./ui/PortalRoot";
 import w from "./wordbook.module.css";
 
 type Tab = "missed" | "best";
@@ -73,7 +74,7 @@ export function WordbookScreen() {
   else body = <Book pack={pack} book={current.book} userId={userId} />;
 
   return (
-    <div className={styles.page} style={packVars(pack)}>
+    <PortalRoot className={styles.page} style={packVars(pack)}>
       <PackFonts pack={pack} />
       <main className={w.screen}>
         <div className={w.top}>
@@ -91,7 +92,7 @@ export function WordbookScreen() {
         <div className={w.panel}>{body}</div>
       </main>
       {signInOpen && <SignInDialog onClose={() => setSignInOpen(false)} onSignIn={account.signIn} />}
-    </div>
+    </PortalRoot>
   );
 }
 

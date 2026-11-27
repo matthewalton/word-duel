@@ -25,6 +25,8 @@ import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
 import t from "./title.module.css";
 import { TitleScreen } from "./TitleScreen";
+import { Button } from "./ui/Button";
+import { PortalRoot } from "./ui/PortalRoot";
 import { VersusButton, VersusPanel } from "./VersusPanel";
 import v from "./versus.module.css";
 
@@ -45,12 +47,12 @@ export function GameScreen() {
   const [versusOpen, setVersusOpen] = useState(false);
   const versusAvailable = minigames.some((m) => m.id === "word-strike");
 
-  // V opens versus from the title screen, unless typing or another panel is open.
+  // V opens versus from the title screen, unless typing or another panel or a menu is open.
   useEffect(() => {
     if (view.name !== "title" || !versusAvailable || versusOpen || signInOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "v" || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
-      if (e.target instanceof Element && e.target.closest("input, textarea, dialog")) return;
+      if (e.target instanceof Element && e.target.closest('input, textarea, [role="dialog"], [role="menu"]')) return;
       e.preventDefault();
       setVersusOpen(true);
     };
@@ -101,7 +103,7 @@ export function GameScreen() {
   ) : null;
 
   return (
-    <div className={styles.page} style={packVars(pack)}>
+    <PortalRoot className={styles.page} style={packVars(pack)}>
       <PackFonts pack={pack} />
       {view.name === "title" ? (
         <TitleScreen
@@ -154,9 +156,9 @@ export function GameScreen() {
             ) : (
               <div className={a.nudge}>
                 <p className={a.nudgeText}>{strings.account.gameOverNudge}</p>
-                <button type="button" className={a.nudgeButton} onClick={openSignIn}>
+                <Button variant="outlined" className={a.nudgeButton} onClick={openSignIn}>
                   {strings.account.signIn}
-                </button>
+                </Button>
               </div>
             )
           }
@@ -166,7 +168,7 @@ export function GameScreen() {
         <VersusPanel pack={pack} direction={direction} difficulty={difficulty} onClose={() => setVersusOpen(false)} />
       )}
       {signInOpen && <SignInDialog onClose={() => setSignInOpen(false)} onSignIn={account.signIn} />}
-    </div>
+    </PortalRoot>
   );
 }
 
@@ -196,9 +198,9 @@ function Duel({
     <main className={styles.screen}>
       {lost && <div key={state.fxKey} className={styles.hurtFlash} aria-hidden="true" />}
       <div className={styles.modeBar}>
-        <button type="button" className={styles.modeButton} aria-label={strings.menuAria} onClick={onMenu}>
+        <Button className={styles.modeButton} aria-label={strings.menuAria} onClick={onMenu}>
           &lt; {strings.menu}
-        </button>
+        </Button>
         <span className={styles.duelName}>{(strings.modes[minigame.id] ?? minigame.id).toUpperCase()}</span>
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>

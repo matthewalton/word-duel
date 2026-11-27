@@ -122,6 +122,7 @@ export const strings = {
     accountAria: "Account: {name}",
     signInMethods: "SIGN-IN METHODS",
     linked: "LINKED",
+    linkedAria: "{provider}: linked",
     link: "LINK",
     linkAria: "Link {provider}",
     linkTaken: "That {provider} sign-in already has its own account, so it can't be linked to this one.",
