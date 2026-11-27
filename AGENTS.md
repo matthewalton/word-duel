@@ -17,7 +17,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 ### Run and check
 
 - Use pnpm, not npm: `pnpm install`, then `pnpm dev` → http://localhost:3000
-- The local database is the `dev` branch of the Neon database, never prod (README: Accounts). Agents may run `pnpm db:migrate` and write test data there, accounts included. Only Matt migrates prod, with `pnpm db:migrate:prod`; nothing else writes to prod.
+- The local database is the `dev` branch of the Neon database, never prod (README: Accounts). Agents may run `pnpm db:migrate` and write test data there, accounts included. Agents never touch prod: a migration reaches prod only through a merged PR's production build, after the Migration test tried it on a throwaway branch of prod (ADR 0014). `pnpm db:migrate:prod` (paste the Neon prod connection string) is Matt's escape hatch; nothing else writes to prod.
 - Before committing: `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit && pnpm test`. Check UI changes in the browser at desktop and phone width.
 
 ### Read first
