@@ -25,6 +25,8 @@ import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
 import t from "./title.module.css";
 import { TitleScreen } from "./TitleScreen";
+import { VersusButton, VersusPanel } from "./VersusPanel";
+import v from "./versus.module.css";
 
 /** A practice duel (from the Wordbook) asks only the account's missed items and keeps no best. */
 type View = { name: "title" } | { name: "duel"; run: number; practice?: boolean };
@@ -40,6 +42,21 @@ export function GameScreen() {
   const account = useAccount(pack.meta.id);
   const [signInOpen, setSignInOpen] = useState(false);
   const openSignIn = () => setSignInOpen(true);
+  const [versusOpen, setVersusOpen] = useState(false);
+  const versusAvailable = minigames.some((m) => m.id === "word-strike");
+
+  // V opens versus from the title screen, unless typing or another panel is open.
+  useEffect(() => {
+    if (view.name !== "title" || !versusAvailable || versusOpen || signInOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "v" || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      if (e.target instanceof Element && e.target.closest("input, textarea, dialog")) return;
+      e.preventDefault();
+      setVersusOpen(true);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [view.name, versusAvailable, versusOpen, signInOpen]);
   const best = useBestScores(
     pack.meta.id,
     minigames.map((m) => m.id),
@@ -108,7 +125,12 @@ export function GameScreen() {
               <LanguagePicker pack={pack} onChoose={choosePack} />
             </>
           }
-          corner={<AccountCorner account={account} packId={pack.meta.id} onOpenSignIn={openSignIn} />}
+          corner={
+            <div className={v.cornerRow}>
+              {versusAvailable && <VersusButton onOpen={() => setVersusOpen(true)} />}
+              <AccountCorner account={account} packId={pack.meta.id} onOpenSignIn={openSignIn} />
+            </div>
+          }
           footer={credits}
         />
       ) : (
@@ -139,6 +161,9 @@ export function GameScreen() {
             )
           }
         />
+      )}
+      {versusOpen && (
+        <VersusPanel pack={pack} direction={direction} difficulty={difficulty} onClose={() => setVersusOpen(false)} />
       )}
       {signInOpen && <SignInDialog onClose={() => setSignInOpen(false)} onSignIn={account.signIn} />}
     </div>

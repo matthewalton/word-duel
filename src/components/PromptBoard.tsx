@@ -19,17 +19,24 @@ export function PromptBoard({
   fuseLit,
   onStart,
   gameOverExtra,
+  band,
+  gameOverPanel,
 }: {
   state: DuelState;
   pack: LanguagePack;
   fuseLit: number;
   onStart: () => void;
   gameOverExtra?: ReactNode;
+  /** Versus: its own feedback band in place of the solo one. */
+  band?: ReactNode;
+  /** Versus: its own game over in place of the solo one. */
+  gameOverPanel?: ReactNode;
 }) {
   const { round, outcome, phase, fxKey } = state;
   const waiting = phase === "idle" || phase === "countdown";
-  const hit = outcome?.reason === "correct";
-  const lost = outcome != null && !hit;
+  // Whose heart broke colours the prompt; in versus nobody's may have.
+  const hit = outcome?.loser === "rival";
+  const lost = outcome?.loser === "you";
   const fxClass = hit ? styles.promptHit : lost ? styles.promptMiss : "";
   const comeback = phase === "resolving" && outcome?.comeback;
   const fuseActive = phase === "playing" || phase === "resolving";
@@ -91,9 +98,9 @@ export function PromptBoard({
         </>
       )}
 
-      <FeedbackBand state={state} pack={pack} />
+      {band !== undefined ? band : <FeedbackBand state={state} pack={pack} />}
 
-      {phase === "gameOver" && <GameOverPanel state={state} pack={pack} extra={gameOverExtra} />}
+      {phase === "gameOver" && (gameOverPanel ?? <GameOverPanel state={state} pack={pack} extra={gameOverExtra} />)}
     </div>
   );
 }

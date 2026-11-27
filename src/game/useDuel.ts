@@ -24,7 +24,7 @@ export const FUSE_SEGMENTS = 20;
 export function useDuel(pack: LanguagePack, minigame: Minigame, opts: MinigameOptions, practice = false) {
   // Opens on the ready screen; START runs the countdown, then the first round.
   const [state, dispatch] = useReducer(duelReducer, undefined, () =>
-    initialDuel(minigame.sampleRound(pack, opts), practice),
+    initialDuel(minigame.sampleRound(pack, opts), { practice }),
   );
   const [fuseLit, setFuseLit] = useState(FUSE_SEGMENTS);
 

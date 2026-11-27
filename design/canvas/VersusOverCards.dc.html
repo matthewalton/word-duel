@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Versus game over 2 · Winner's card rises</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&amp;family=Jua&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; padding: 28px 64px 36px; display: flex; flex-direction: column; align-items: center; gap: 26px; background-color: #2A2440; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 16px 16px; font-family: 'Pixelify Sans', sans-serif; color: #FBF7FC;">
+
+  <div style="align-self: stretch; display: flex; align-items: center; gap: 14px;">
+    <button style="padding: 6px 12px; font-family: 'Pixelify Sans', sans-serif; font-size: 16px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">&lt; MENU</button>
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: 2px;">VERSUS</span>
+  </div>
+
+  <span role="status" style="font-size: 72px; font-weight: 700; letter-spacing: 6px; line-height: 1; color: {{headColor}};">{{headline}}</span>
+
+  <div style="flex-grow: 1; align-self: stretch; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 36px;">
+
+    <div style="height: 320px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transform: translateY({{youLift}}); color: {{youFg}}; background: {{youBg}}; border: 4px solid {{youEdge}}; box-shadow: {{youShadow}};">
+      <sc-if value="{{youWon}}" hint-placeholder-val="{{ true }}">
+        <span style="padding: 4px 14px; font-size: 18px; font-weight: 700; letter-spacing: 3px; color: #2A2440; background: #FFD23F; border: 3px solid #2A2440;">WINNER</span>
+      </sc-if>
+      <span style="font-size: 48px; font-weight: 700; letter-spacing: 3px;">YOU</span>
+      <span role="img" aria-label="You: {{youLeft}} of 3 hearts" style="display: flex; gap: 6px;">
+        <sc-for list="{{youHearts}}" as="h" hint-placeholder-count="3">
+          <svg width="42" height="36" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="{{h.fill}}" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+        </sc-for>
+      </span>
+      <span style="font-size: 16px; letter-spacing: 2px;">{{youRounds}} ROUNDS WON</span>
+    </div>
+
+    <span style="font-size: 52px; font-weight: 700; letter-spacing: 4px; color: #6B5F7D;">VS</span>
+
+    <div style="height: 320px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transform: translateY({{rivalLift}}); color: {{rivalFg}}; background: {{rivalBg}}; border: 4px solid {{rivalEdge}}; box-shadow: {{rivalShadow}};">
+      <sc-if value="{{rivalWon}}" hint-placeholder-val="{{ false }}">
+        <span style="padding: 4px 14px; font-size: 18px; font-weight: 700; letter-spacing: 3px; color: #2A2440; background: #FFD23F; border: 3px solid #2A2440;">WINNER</span>
+      </sc-if>
+      <span style="font-size: 48px; font-weight: 700; letter-spacing: 3px;">GUEST</span>
+      <span role="img" aria-label="Guest: {{rivalLeft}} of 3 hearts" style="display: flex; gap: 6px;">
+        <sc-for list="{{rivalHearts}}" as="h" hint-placeholder-count="3">
+          <svg width="42" height="36" viewBox="0 0 7 6" shape-rendering="crispEdges" aria-hidden="true"><path fill="{{h.fill}}" d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"></path></svg>
+        </sc-for>
+      </span>
+      <span style="font-size: 16px; letter-spacing: 2px;">{{rivalRounds}} ROUNDS WON</span>
+      <sc-if value="{{rivalAsked}}" hint-placeholder-val="{{ false }}">
+        <span style="padding: 4px 12px; font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #2A2440; background: #FFD23F;">WANTS A REMATCH</span>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 18px;">
+    <button style="min-width: 260px; min-height: 60px; padding: 0 28px; font-family: 'Pixelify Sans', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 3px; color: #2A2440; background: #FFD23F; border: 4px solid #2A2440; box-shadow: 4px 4px 0 #000; cursor: pointer;">REMATCH</button>
+    <button style="min-height: 60px; padding: 0 24px; font-family: 'Pixelify Sans', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #FBF7FC; background: transparent; border: 4px solid #D6C9DD; cursor: pointer;">LEAVE ROOM</button>
+  </div>
+  <span lang="ko" style="font-family: 'Jua', sans-serif; font-size: 24px; color: #D6C9DD;">{{phrase}}</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"result":{"editor":"enum","options":["win","lose"],"default":"win"},"rematch":{"editor":"enum","options":["nobody yet","rival asked"],"default":"nobody yet"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+const win = (this.props.result ?? 'win') === 'win';
+const asked = (this.props.rematch ?? 'nobody yet') === 'rival asked';
+const youLeft = win ? 2 : 0;
+const rivalLeft = win ? 0 : 1;
+const heart = (alive, color) => ({ fill: alive ? color : '#4E4670' });
+const winnerCard = (color) => ({ bg: '#FBF7FC', fg: '#2A2440', edge: color, shadow: '10px 10px 0 ' + color, lift: '-24px' });
+const loserCard = { bg: '#332C4E', fg: '#8A7FA6', edge: '#6B5F7D', shadow: 'none', lift: '16px' };
+const you = win ? winnerCard('#3DD6C0') : loserCard;
+const rival = win ? loserCard : winnerCard('#FF4D6D');
+return {
+youWon: win, rivalWon: !win, rivalAsked: asked,
+headline: win ? 'YOU WIN!' : 'GUEST WINS',
+headColor: win ? '#3DD6C0' : '#FF4D6D',
+phrase: win ? '잘했어요!' : '다시 해 봐요!',
+youLeft: youLeft, rivalLeft: rivalLeft,
+youHearts: [0, 1, 2].map((i) => heart(i < youLeft, '#3DD6C0')),
+rivalHearts: [0, 1, 2].map((i) => heart(i < rivalLeft, '#FF4D6D')),
+youRounds: win ? '3' : '2', rivalRounds: win ? '1' : '3',
+youBg: you.bg, youFg: you.fg, youEdge: you.edge, youShadow: you.shadow, youLift: you.lift,
+rivalBg: rival.bg, rivalFg: rival.fg, rivalEdge: rival.edge, rivalShadow: rival.shadow, rivalLift: rival.lift
+};
+}
+}
+</script>
+</body>
+</html>

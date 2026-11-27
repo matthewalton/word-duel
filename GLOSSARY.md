@@ -16,7 +16,7 @@ _Avoid_: Lobby, start screen (that is the title screen)
 The 3, 2, 1, GO! after START and before the first round. It runs once per duel, not after a stage clear.
 
 **Rival**:
-The opponent whose hearts the player breaks. In solo play the rival is the CPU, and its hearts are drawn as stage progress rather than as hearts; in versus it would be the other player.
+The opponent whose hearts the player breaks. In solo play the rival is the CPU, and its hearts are drawn as stage progress rather than as hearts; in versus it is the other player, whose hearts are drawn as hearts.
 _Avoid_: Enemy, opponent, mascot
 
 **Heart**:
@@ -53,6 +53,20 @@ _Avoid_: Streak
 **Best score**:
 The highest score reached, kept per language pack and per minigame. Only an account has one; a guest has no best score, even for the page.
 _Avoid_: High score
+
+## Versus
+
+**Versus**:
+Two players racing each other on the same Word Strike prompts in a private room. The first right answer the server receives breaks the other player's heart; a wrong answer locks that player out of the round, and if nobody is right in time no heart breaks. The last player with hearts wins. Guests and accounts both play; nothing is kept (ADR 0012).
+_Avoid_: Multiplayer, PvP, online mode
+
+**Room**:
+Where one versus duel is played: two seats, PLAYER 1 who made it and PLAYER 2 who joined, with the maker's language pack, direction and difficulty. A room nobody joins expires after 30 minutes.
+_Avoid_: Lobby, match, game
+
+**Room code**:
+The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the versus panel, or opened as the link `/versus/<code>`.
+_Avoid_: Room ID, PIN, invite code
 
 ## Content
 
