@@ -97,13 +97,15 @@ Each run:
 3. Pick work: the `ready-for-agent` issues with no open blocker, oldest first, unless Matt set an order on the issue or in chat. Run at most **3** issues at once. Don't run two issues at the same time if they're likely to touch the same files. Put the second one in the queue instead.
 4. Find work: if fewer than 3 workers are running and fewer than 2 `found-by-bot` issues are open, find one bug, small polish or pack-content gap (play the game, read the packs, look at recent PRs). Open it as a spec (see Speccing), labelled `found-by-bot` and `ready-for-agent`, and pick it up like any other issue. If what you found is really a feature, save it for the Ideas check-in instead.
 5. For each picked issue, swap `ready-for-agent` for `in-progress` and start an Orca worker in a new top-level worktree named `issue-<n>-<slug>`. Give the worker a self-contained spec: the issue body and its decisions, this playbook's "What you decide" and "Never" sections, and what counts as done (below). Tell Matt you started it (see Telling Matt).
-6. When a worker reports back, check its evidence. Then remove `in-progress`, and tell Matt the PR is ready. The PR closes the issue when Matt merges it.
-7. End with a summary to Matt: one line per thing started and one line per PR ready, plus any questions waiting on him. If nothing changed, say nothing.
+6. When a build worker says its PR is open and Checks pass, start its reviewer (see Review).
+7. When a worker reports back, check its evidence, including that every High and Medium finding is answered. Then remove `in-progress`, and tell Matt the PR is ready. The PR closes the issue when Matt merges it.
+8. End with a summary to Matt: one line per thing started and one line per PR ready, plus any questions waiting on him. If nothing changed, say nothing.
 
 ### What counts as done for a worker
 
 - The branch is cut from `origin/main`, and each commit does one thing.
-- `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit` passes.
+- The code follows `docs/standards.md`, and `pnpm check:packs && pnpm exec eslint src scripts && pnpm exec tsc --noEmit` passes.
+- Once the PR is open and Checks pass, the worker tells you (one message, not `worker_done`) and keeps watching the PR. After the review lands it fixes or answers each finding (see Review), and only then reports done.
 - The issue's **Demo flow** is recorded at desktop and embedded in the PR (see Demo recording). Phone width too, only if the change is phone-specific UI. If the issue has no Demo flow, the worker records the shortest path from the title screen to the change.
 - Glossary terms are used in code, the PR and commits.
 - Every product decision the worker took is in the issue's **Decisions** as "bot (recommended)".
@@ -116,6 +118,33 @@ Each run:
 
   No file-by-file "what changed", no check output, no process notes.
 - The worktree stays open after the PR is opened, so Matt can run it himself.
+
+## Review
+
+Every PR gets one review from a separate **reviewer worker** before it is ready. Reviews are comments: a reviewer never approves, requests changes or merges.
+
+1. Start the reviewer in the build worker's worktree (`--worktree` set to it), with the PR number, the issue number and these steps.
+2. The reviewer reads `docs/standards.md`, the issue's spec (its **Behaviour** and **Decisions**) and the PR's diff (`gh pr diff <n>`), opening the files around each change. It grades findings only on lines the PR changed; anything older can become a `found-by-bot` issue suggestion in its report to you.
+3. It posts **one comment review**: `gh pr review <n> --comment --body-file <file>`, in this shape:
+
+   ```
+   **Spec:** matches #<issue> / differs: <how>
+
+   **High**
+   - H1 `src/game/duel.ts:142`: <what is wrong>. Breaks: <standards section and rule>. Fix: <suggested fix>.
+
+   **Medium**
+   - M1 …
+
+   **Low**
+   - L1 …
+   ```
+
+   An empty grade says "None." Findings are numbered so the builder can answer them by number.
+4. The reviewer sends you `worker_done` with the review's link and its counts per grade. Send the link to the build worker.
+5. The build worker fixes every High and Medium finding, or for a Medium explains why not, handles each Low by fixing it or listing it in the PR body as a possible follow-up, pushes, and posts one PR comment answering each finding by number (fixed in `<sha>`, or why not). Then it waits for Checks and reports done.
+
+A PR reopened by Matt's review comments isn't reviewed again unless the fixes are large; the build worker still follows the standards.
 
 ## Demo recording
 
