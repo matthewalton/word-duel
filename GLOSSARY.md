@@ -57,11 +57,11 @@ _Avoid_: High score
 ## Versus
 
 **Versus**:
-Two players racing each other on the same Word Strike prompts in a private room. The first right answer the server receives breaks the other player's heart; a wrong answer locks that player out of the round, and if nobody is right in time no heart breaks. The last player with hearts wins. Guests and accounts both play; nothing is kept (ADR 0012).
+Two players racing each other on the same Word Strike or Gap Guard prompts in a private room. The first right answer (or pick) the server receives breaks the other player's heart; a wrong one locks that player out of the round, and if nobody is right in time no heart breaks. The last player with hearts wins. Guests and accounts both play; nothing is kept (ADR 0012).
 _Avoid_: Multiplayer, PvP, online mode
 
 **Room**:
-Where one versus duel is played: two seats, PLAYER 1 who made it and PLAYER 2 who joined, with the maker's language pack, direction and difficulty. A room nobody joins expires after 30 minutes.
+Where one versus duel is played: two seats, PLAYER 1 who made it and PLAYER 2 who joined, with the maker's language pack, minigame, difficulty and (for Word Strike) direction. Every duel in the room, rematches included, plays its minigame. A room nobody joins expires after 30 minutes.
 _Avoid_: Lobby, match, game
 
 **Rematch**:
