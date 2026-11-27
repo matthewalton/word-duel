@@ -68,7 +68,7 @@ Postgres (Neon, through the Vercel Marketplace) with Drizzle, and Better Auth fo
 **Local setup**
 
 1. `vercel link` to the Word Duel project, then `vercel env pull .env.local`. It pulls the Development environment, which holds everything in `.env.example` with local values (`BETTER_AUTH_URL=http://localhost:3000`, the dev GitHub app). The pull overwrites `.env.local`; put local-only overrides in `.env.development.local`.
-2. Without Vercel access, fill `.env.local` from `.env.example` by hand: a Postgres `DATABASE_URL`, `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), `BETTER_AUTH_URL=http://localhost:3000`, and a client id and secret for each provider. A provider without both is left out.
+2. Without Vercel access, fill `.env.local` from `.env.example` by hand: a Postgres `DATABASE_URL`, `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), `BETTER_AUTH_URL=http://localhost:3000`, and a client id and secret for each provider. A provider without both is left out. Versus also needs `ABLY_API_KEY`, an Ably key with Publish, Subscribe and Presence, restricted to `versus:*` channels; it is read on the server only.
 3. `pnpm db:migrate` to create the tables.
 
 In Vercel, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` and the GitHub id and secret have different values for Production and Development. Google and Discord use one app for both.
@@ -79,9 +79,9 @@ In Vercel, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` and the GitHub id and secret 
 
 Server actions in `src/server/` check the session themselves; never trust a user id sent from the browser.
 
-## Versus mode (later)
+## Versus
 
-The reducer takes outcomes as *whose heart broke* (`loser: "you" | "rival"`), not as *was the answer right*. A versus controller can replace `useDuel`'s fuse and CPU logic with server messages ("rival answered first" → `loser: "you"`) while reusing `duelReducer`, the minigames and the whole screen. The rival's hearts take the CPU's place in the HUD.
+Two players race on Word Strike in a private room (ADR 0012). The server is the referee: `src/server/versus.ts` (server actions) and `src/server/versusRoom.ts` deal the prompts, check answers and decide each round in one conditional `UPDATE`, then publish the room's snapshot over Ably (`src/server/ably.ts`, REST only). Browsers only listen, over server-sent events with a subscribe-only token (`src/lib/versusChannel.ts`). `src/game/useVersusDuel.ts` replays snapshots through `duelReducer`, whose outcomes are *whose heart broke* (`loser: "you" | "rival" | null`), so the duel screen and Word Strike's controls are shared with solo.
 
 ## Credits (Korean pack)
 
