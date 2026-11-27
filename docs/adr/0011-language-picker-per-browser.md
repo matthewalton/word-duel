@@ -2,7 +2,7 @@
 
 The top bar has a **language picker**: a button naming the current pack's target language in its own words and font (한국어, Español) that opens a menu of every pack. Picking one switches the whole game to that pack: minigame cards, direction toggle, duels, Wordbook, best scores and word history, all of which were already kept per pack. The picker shows only when there are two or more packs. `DEFAULT_PACK_ID` in `src/config/game.ts` is the pack on a first visit (Korean).
 
-The choice is remembered in this browser (`localStorage`, read and written inside try/catch), not on the account. It is a setting, not progress, so ADR 0008 still holds: guests keep no best scores or word history in the browser. The hub, Single player and wordbook pages stay static: they render the default pack on the server and switch to the stored choice in the browser.
+The choice is remembered in this browser (`localStorage`, read and written inside try/catch), not on the account. It is a setting, not progress, so ADR 0008 still holds: guests keep no best scores or word history in the browser. The Single player (`/play`) and Wordbook pages stay static: they render the default pack on the server and switch to the stored choice in the browser. `/` renders only the bare grid until the browser picks the language step or the hub (see the update below).
 
 A **minigame** card shows only when the pack has something for it to ask (`Minigame.hasContent`), so a pack can ship with Word Strike only and gain Gap Guard later without an empty card.
 
