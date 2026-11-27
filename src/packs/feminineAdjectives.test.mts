@@ -39,9 +39,20 @@ const FR: Record<string, string> = {
   malheureux: "malheureuse", supérieur: "supérieure",
 };
 
+/**
+ * Packs have no word class, so the lists above are kept by hand. To catch an
+ * adjective added later without its feminine, a bare word (no article, not a
+ * verb) with a typically masculine adjective ending must be on the list,
+ * unless it's one of the few words with that ending that isn't an adjective.
+ */
+const none: string[] = [];
+
 const packs = [
-  { name: "es-en", lang: "es", words: esWords, matching: esMatching, feminine: ES },
-  { name: "fr-en", lang: "fr", words: frWords, matching: frMatching, feminine: FR },
+  { name: "es-en", lang: "es", words: esWords, matching: esMatching, feminine: ES, masculineEnding: /o$/, notAdjectives: none },
+  {
+    name: "fr-en", lang: "fr", words: frWords, matching: frMatching, feminine: FR,
+    masculineEnding: /(eux|if|el|er|et|é|al|on)$/, notAdjectives: ["hier"],
+  },
 ];
 
 for (const pack of packs) {
@@ -56,6 +67,14 @@ for (const pack of packs) {
         assert.notEqual(word.target, feminine, `${masculine}: the shown form stays masculine`);
         assert.ok(word.targetAlt?.includes(feminine), `${masculine} lists ${feminine} in targetAlt`);
         assert.ok(isAcceptedAnswer(feminine, [word.target, ...(word.targetAlt ?? [])], settings, pack.lang), feminine);
+      }
+    });
+
+    it("lists every bare word with a masculine adjective ending", () => {
+      const bare = words.filter((w) => !/[\s']/.test(w.target) && !w.base.some((b) => b.startsWith("to ")));
+      for (const w of bare) {
+        if (!pack.masculineEnding.test(w.target) || pack.notAdjectives.includes(w.target)) continue;
+        assert.ok(w.target in pack.feminine, `${w.id}: add its feminine to targetAlt and to this test's list`);
       }
     });
   });
