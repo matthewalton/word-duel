@@ -35,6 +35,33 @@ export const RULES = {
   countdownGoMs: 500,
 } as const;
 
+/** Versus rules (ADR 0012). Hearts and the fuse's start, step and floor are the solo ones. */
+export const VERSUS = {
+  /** Room code letters: consonants that can't be misread (no I, O, L, Y or vowels, so no words). */
+  codeLetters: "BCDFGHJKMNPQRSTVWXZ",
+  codeLength: 4,
+  /** A room nobody has joined expires after this long. */
+  waitMs: 30 * 60_000,
+  /** A joined room's code stays taken for this long. */
+  matchMs: 3 * 60 * 60_000,
+  /** The joined player card shows this long before the countdown starts. */
+  getReadyMs: 1_200,
+  /** How long a round's outcome stays on screen before the next prompt. */
+  roundPauseMs: 1_800,
+  /** Longest player name shown; longer names are cut. */
+  maxNameLength: 24,
+  /** Most rounds dealt in one room, far more than a duel can last. */
+  maxRounds: 200,
+} as const;
+
+/** The versus fuse: the solo start, 1 s shorter for every heart broken so far, down to the solo floor. */
+export function versusFuse(heartsBroken: number): number {
+  return Math.max(RULES.fuseMinMs, RULES.fuseStartMs - heartsBroken * RULES.fuseStepMs);
+}
+
+/** The countdown's length, 3, 2, 1 and GO. */
+export const COUNTDOWN_MS = RULES.countdownFrom * RULES.countdownBeatMs + RULES.countdownGoMs;
+
 /** Difficulties in switch order, and the highest item tier each draws (ADR 0009). */
 export const DIFFICULTIES = ["easy", "normal", "hard"] as const;
 export const DEFAULT_DIFFICULTY = "normal";
