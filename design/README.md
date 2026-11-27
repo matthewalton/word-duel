@@ -19,7 +19,7 @@ The code in `src/` is the source of truth for what shipped; these boards show th
 | 2 · minimal, full screen | C1 · minimal split (`MinSplit`, `MinPhone`) | Round 3 kept the split |
 | 3 · active card that expands | `StartSplit`, `StartCarousel` on a phone | The title screen today |
 | 4 · inactive card | 3 · Lights off (`InactiveDark`) | |
-| 5 · two fonts | C · Pixelify Sans for all game text, Jua for anything read | Now a rule in AGENTS.md |
+| 5 · two fonts | C · Pixelify Sans for all game text, Jua for anything read | Now a rule in docs/standards.md |
 | 6 · direction toggle | 1 · outlined, names with an arrow, one button (`ToggleOutline`) | `DirectionLabel` |
 | 7 · duel screen | Mixed: C's header and input, A's feedback band | Round 8 |
 | 8 · where the fuse goes | 3 · burns in under the word (`DuelTimerWord`) | Round 9 |
