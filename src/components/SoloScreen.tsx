@@ -13,6 +13,7 @@ import { useChosenPack } from "@/lib/packChoice";
 import { readPracticeWay, stripPracticeWay } from "@/lib/practiceLink";
 import { useSoloSettings, type SoloSettings } from "@/lib/soloSettings";
 import { useBestScores } from "@/lib/useBestScores";
+import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
 import { BookIcon } from "./BookIcon";
@@ -60,6 +61,8 @@ export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode
   const account = useAccount(pack.meta.id);
   const [signInOpen, setSignInOpen] = useState(false);
   const openSignIn = () => setSignInOpen(true);
+  // The duel fits the visible height, so a phone keyboard doesn't push it off screen.
+  const viewportHeight = useViewportHeight();
   const best = useBestScores(
     pack.meta.id,
     minigames.map((m) => m.id),
@@ -89,7 +92,10 @@ export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode
   };
 
   return (
-    <PortalRoot className={styles.page} style={packVars(pack)}>
+    <PortalRoot
+      className={styles.page}
+      style={{ ...packVars(pack), ...(view.name === "duel" ? viewportHeightVar(viewportHeight) : {}) }}
+    >
       <PackFonts pack={pack} />
       {view.name === "menu" ? (
         menu({ pack, minigames, best, account, settings, lastId: minigameId, play, openSignIn })

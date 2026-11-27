@@ -10,6 +10,7 @@ import { useVersusDuel } from "@/game/useVersusDuel";
 import { useVersusRoom } from "@/game/useVersusRoom";
 import { otherSeat, roundsWon, type RoomSnapshot, type Seat, type VersusRound } from "@/game/versus";
 import { fill, strings } from "@/i18n/strings";
+import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
 import { getPack, listPacks } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
@@ -27,6 +28,8 @@ const nameOf = (s: RoomSnapshot, seat: Seat) => (s.players[seat]?.name ?? string
 export function VersusScreen({ code }: { code: string }) {
   const room = useVersusRoom(code);
   const { state, now } = room;
+  // The duel fits the visible height, so a phone keyboard doesn't push it off screen.
+  const viewportHeight = useViewportHeight();
   const pack = getPack(
     state.status === "ready" && listPacks().some((p) => p.id === state.snapshot.packId)
       ? state.snapshot.packId
@@ -79,7 +82,7 @@ export function VersusScreen({ code }: { code: string }) {
   }
 
   return (
-    <div className={styles.page} style={packVars(pack)}>
+    <div className={styles.page} style={{ ...packVars(pack), ...viewportHeightVar(viewportHeight) }}>
       <PackFonts pack={pack} />
       {body}
     </div>
