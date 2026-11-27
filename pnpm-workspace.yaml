@@ -1,3 +1,0 @@
-allowBuilds:
-  # drizzle-kit works with esbuild's prebuilt binary; its install script is not needed.
-  esbuild: false

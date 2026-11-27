@@ -1,3 +1,0 @@
-# Language packs are data, with no language specifics in game code
-
-Korean is the only language shipped, but more are planned, so everything language-specific (words, gap sentences, fonts, text direction, word-break rules, feedback phrases, answer-matching settings, toggle labels) lives in a folder of JSON files per pack under `src/packs/`, read through one registry. Components, game logic and styles must not hard-code any language, script or font. This costs some indirection now (fonts load from pack data rather than being imported, `lang`/`dir` travel with every piece of text) in exchange for adding a language without touching game code.
