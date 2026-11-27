@@ -185,6 +185,7 @@ export const itemStat = pgTable(
  * A versus room: two players racing Word Strike with the room maker's pack,
  * direction and difficulty. A code is taken while its room hasn't expired;
  * expired rooms are deleted, rounds and all, when the next room is made.
+ * Only the current match's rounds are kept: a rematch deletes the last ones.
  */
 export const versusRoom = pgTable(
   "versus_room",
@@ -203,6 +204,14 @@ export const versusRoom = pgTable(
     p2Name: text("p2_name"),
     /** Null until someone joins. */
     p2Token: text("p2_token"),
+    /** Counts the room's matches: a rematch adds one and starts the rounds again. */
+    match: integer("match").notNull().default(1),
+    /** Who has pressed REMATCH since the current match ended. */
+    p1Rematch: boolean("p1_rematch").notNull().default(false),
+    p2Rematch: boolean("p2_rematch").notNull().default(false),
+    /** Who has left the room (MENU, or gone from Ably presence). Leaving before a match is won loses it. */
+    p1Left: boolean("p1_left").notNull().default(false),
+    p2Left: boolean("p2_left").notNull().default(false),
     createdAt: createdAt(),
     joinedAt: timestamp("joined_at"),
     expiresAt: timestamp("expires_at").notNull(),
