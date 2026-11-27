@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Project: Word Duel
 
-Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. Next.js App Router + TypeScript; fully playable as a **guest**, with optional OAuth sign-in (Better Auth, Postgres on Neon, Drizzle; ADR 0006) that keeps best scores in an **account**. The player opens on a **title screen**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing piece), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean, Spanish and French (learned from English) are the **language packs**, switched with the **language picker**; more packs, weak-word tracking and a two-player versus mode are planned.
+Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art browser game for practising vocabulary in a foreign language. Next.js App Router + TypeScript; fully playable as a **guest**, with optional OAuth sign-in (Better Auth, Postgres on Neon, Drizzle; ADR 0006) that keeps best scores in an **account**. The player picks a language on the **language step**, lands on the **hub**, picks a **minigame** (Word Strike: type the translation; Gap Guard: pick the missing piece), and fights a CPU **rival** in a **duel**: a right answer breaks one of the rival's pixel **hearts**, a wrong answer or an expired **fuse** breaks one of yours. Korean, Spanish and French (learned from English) are the **language packs**, switched with the **language picker**; more packs, weak-word tracking and a two-player versus mode are planned.
 
 **Follow `docs/standards.md`; reviewers check against it.** It holds every code rule (no language specifics, two fonts, pixel style, guest first and the rest); this file keeps the workflow and agent rules.
 
@@ -27,7 +27,7 @@ Word Duel (placeholder name: `GAME_NAME` in `src/config/game.ts`) is a pixel-art
 - `docs/standards.md`: the code standards, and how review findings are graded.
 - `README.md`: code layout, how to add a language pack or a minigame.
 - GitHub issues: planned work (see Agent skills below).
-- `docs/design.md`: the design canvas (https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis, private), the only home of the mock-ups: how to read a board, and which option was built in each round (the built title screen is round 4, "Lights off"). Read the agreed board before building a screen.
+- `docs/design.md`: the design canvas (https://claude.ai/artifact/4aRo9VYK8D2ZWZp2Nifpis, private), the only home of the mock-ups: how to read a board, and which option was built in each round (the built navigation is round 20). Read the agreed board before building a screen.
 
 ### Commits and pull requests
 

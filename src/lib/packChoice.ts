@@ -1,9 +1,11 @@
 "use client";
 
 import { useLayoutEffect, useSyncExternalStore } from "react";
-import { DEFAULT_PACK_ID, PACK_PENDING_ATTR, PACK_STORAGE_KEY } from "@/config/game";
+import { DEFAULT_PACK_ID, PACK_PENDING_ATTR, PACK_STORAGE_KEY, SETTING_KEYS } from "@/config/game";
 import { getPack, listPacks } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
+import { entryFor, type Entry } from "./entry";
+import { storedSetting } from "./storedSetting";
 
 /**
  * The language pack the player picked, remembered in this browser only, not
@@ -55,6 +57,34 @@ export function choosePack(id: string) {
     // Private window or blocked storage: the choice lasts until the page closes.
   }
   for (const l of listeners) l();
+}
+
+/** REMEMBER MY LANGUAGE: on unless the player turned it off on this device. */
+const rememberSetting = storedSetting(SETTING_KEYS.rememberPack, ["on", "off"] as const, "on");
+
+export const useRememberPack = () => rememberSetting.use() === "on";
+export const setRememberPack = (on: boolean) => rememberSetting.set(on ? "on" : "off");
+
+/**
+ * Which screen `/` shows, decided once per page load: turning REMEMBER off
+ * while on the hub only brings the language step back on the next visit.
+ */
+let entry: Entry | null = null;
+
+function currentEntry(): Entry {
+  entry ??= entryFor(rememberSetting.read() === "on", isPackId(readStored()));
+  return entry;
+}
+
+/** The language step's CONTINUE: switch to the pack and show the hub. */
+export function enterHub(id: string) {
+  entry = "hub";
+  choosePack(id);
+}
+
+/** The first screen at `/`; null on the server, which can't know it. */
+export function useEntry(): Entry | null {
+  return useSyncExternalStore(subscribe, currentEntry, () => null);
 }
 
 /**

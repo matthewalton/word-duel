@@ -1,10 +1,9 @@
 import { RULES } from "@/config/game";
 import type { DuelState } from "@/game/duel";
-import { fill, strings } from "@/i18n/strings";
+import { fill, padScore, strings } from "@/i18n/strings";
 import styles from "./game.module.css";
 import { HeartRow } from "./PixelHeart";
 
-const pad = (n: number) => String(n).padStart(4, "0");
 
 /** Top of the board: your hearts, the score, and stage progress underneath. */
 export function Hud({ state }: { state: DuelState }) {
@@ -32,7 +31,7 @@ export function Hud({ state }: { state: DuelState }) {
           {state.practice ? (
             <span className={styles.best}>{strings.practice.tag}</span>
           ) : (
-            state.best != null && <span className={styles.best}>{fill(strings.best, { score: pad(state.best) })}</span>
+            state.best != null && <span className={styles.best}>{fill(strings.best, { score: padScore(state.best) })}</span>
           )}
           <span className={styles.scoreRow}>
             {scored && (
@@ -41,7 +40,7 @@ export function Hud({ state }: { state: DuelState }) {
               </span>
             )}
             <span className={styles.score} aria-label={`${strings.score} ${state.score}`}>
-              {pad(state.score)}
+              {padScore(state.score)}
             </span>
           </span>
         </div>

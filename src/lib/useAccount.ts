@@ -21,7 +21,7 @@ let linkReturn: LinkResult | null | undefined;
 
 /**
  * The link result in the address bar, read once per page load. Null on the
- * server (the title page is static) and when there is none.
+ * server (the pages are static) and when there is none.
  */
 function readLinkResult(): LinkResult | null {
   if (typeof window === "undefined") return null;
@@ -90,7 +90,7 @@ export function useAccount(packId: string): Account {
   }, [userId, isPending, packId]);
 
   const signIn = useCallback(async (provider: ProviderId) => {
-    // Back to the page the player signed in from (the title screen or the wordbook).
+    // Back to the page the player signed in from (the hub, an area screen or the wordbook).
     const { error } = await authClient.signIn.social({ provider, callbackURL: window.location.pathname });
     return !error;
   }, []);

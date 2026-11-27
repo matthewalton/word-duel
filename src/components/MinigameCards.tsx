@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DIFFICULTIES } from "@/config/game";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
-import { fill, strings } from "@/i18n/strings";
+import { fill, padScore, strings } from "@/i18n/strings";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
@@ -12,31 +12,14 @@ import { Button } from "./ui/Button";
 import { Panel } from "./ui/Panel";
 import { ToggleGroup } from "./ui/ToggleGroup";
 
-const pad = (n: number) => String(n).padStart(4, "0");
-
-function Heart({ color }: { color: string }) {
-  return (
-    <svg
-      viewBox="0 0 7 6"
-      className={t.brandHeart}
-      shapeRendering="crispEdges"
-      aria-hidden="true"
-    >
-      <path
-        fill={color}
-        d="M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z"
-      />
-      <rect x={1} y={1} width={1} height={1} fill="#fff" />
-    </svg>
-  );
-}
 
 /**
- * Title screen: one card per minigame, one of them active. The active card
- * grows and shows details; the others keep their preview with the lights off.
- * On a phone only the active card shows, as a carousel.
+ * The minigame cards, the Single player area's contents (board NavKitCards):
+ * one card per minigame, one of them active. The active card grows and shows
+ * details; the others keep their preview with the lights off. On a phone only
+ * the active card shows, as a carousel.
  */
-export function TitleScreen({
+export function MinigameCards({
   pack,
   minigames,
   best,
@@ -46,10 +29,6 @@ export function TitleScreen({
   difficulty,
   onDifficulty,
   onPlay,
-  gameName,
-  lead,
-  corner,
-  footer,
 }: {
   pack: LanguagePack;
   minigames: Minigame[];
@@ -61,12 +40,6 @@ export function TitleScreen({
   difficulty: Difficulty;
   onDifficulty: (d: Difficulty) => void;
   onPlay: (id: string) => void;
-  gameName: string;
-  /** Top-left slot: the wordbook link. */
-  lead?: ReactNode;
-  /** Top-right slot: sign-in or the account chip. */
-  corner?: ReactNode;
-  footer?: ReactNode;
 }) {
   const [activeIndex, setActiveIndex] = useState(() =>
     Math.max(
@@ -130,17 +103,7 @@ export function TitleScreen({
   });
 
   return (
-    <div className={t.titleScreen}>
-      <div className={t.top}>
-        <div className={t.lead}>{lead}</div>
-        <div className={t.brand}>
-          <Heart color="var(--player)" />
-          <h1 className={t.brandName}>{gameName.toUpperCase()}</h1>
-          <Heart color="var(--rival)" />
-        </div>
-        <div className={t.corner}>{corner}</div>
-      </div>
-
+    <div className={t.cardsArea}>
       <div
         className={`${t.cards} ${minigames.length === 1 ? t.cardsOne : ""}`}
         style={{ "--cards": Math.max(2, minigames.length) } as CSSProperties}
@@ -177,7 +140,7 @@ export function TitleScreen({
                     <div className={t.infoHead}>
                       <h2 className={t.infoName}>{name.toUpperCase()}</h2>
                       {best && (
-                        <span className={t.best}>{fill(strings.best, { score: pad(best[m.id] ?? 0) })}</span>
+                        <span className={t.best}>{fill(strings.best, { score: padScore(best[m.id] ?? 0) })}</span>
                       )}
                     </div>
                     {info && (
@@ -279,8 +242,6 @@ export function TitleScreen({
           </Button>
         </div>
       )}
-
-      {footer}
 
       {helpFor && (
         <HowToDialog
