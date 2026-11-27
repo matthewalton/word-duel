@@ -99,9 +99,9 @@ function Chooser({ ways, onClose }: { ways: Way[]; onClose: () => void }) {
                   {inner}
                 </a>
               ) : (
-                <span className={`${w.way} ${w.wayOff}`} aria-label={aria} aria-disabled="true" role="link">
+                <Button className={`${w.way} ${w.wayOff}`} aria-label={aria} disabled>
                   {inner}
-                </span>
+                </Button>
               )}
             </li>
           );

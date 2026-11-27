@@ -1,7 +1,7 @@
 /*
- * The wordbook page: MISSED and BEST tabs of accordion rows. Same pixel rules
- * as the rest: 4px borders, square corners, unblurred offset shadows, no
- * smooth motion.
+ * The wordbook page: MISSED and BEST tabs of word rows that open one at a
+ * time. Same pixel rules as the rest: 4px borders, square corners, unblurred
+ * offset shadows, no smooth motion.
  */
 
 .screen {
@@ -235,7 +235,10 @@ a.way:focus-visible {
   font-size: calc(22px * var(--s));
 }
 
+/* A way with too few missed items: a disabled button the width of the list. */
 .wayOff {
+  width: 100%;
+  text-align: start;
   color: var(--muted);
   background: var(--track);
   border-color: var(--muted);
