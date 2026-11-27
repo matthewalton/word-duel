@@ -20,6 +20,12 @@ import esEnGrammar from "./es-en/grammar.json";
 import esEnGaps from "./es-en/gaps.json";
 import esEnFeedback from "./es-en/feedback.json";
 import esEnMatching from "./es-en/matching.json";
+import frEnMeta from "./fr-en/meta.json";
+import frEnWords from "./fr-en/words.json";
+import frEnGrammar from "./fr-en/grammar.json";
+import frEnGaps from "./fr-en/gaps.json";
+import frEnFeedback from "./fr-en/feedback.json";
+import frEnMatching from "./fr-en/matching.json";
 
 /**
  * Pack registry: game code reads pack content only through here. To add a
@@ -44,6 +50,14 @@ const PACKS: Record<string, LanguagePack> = {
     gaps: esEnGaps as GapPrompt[],
     feedback: esEnFeedback as FeedbackPhrases,
     matching: esEnMatching as MatchingSettings,
+  },
+  "fr-en": {
+    meta: frEnMeta as PackMeta,
+    words: frEnWords as WordItem[],
+    grammar: frEnGrammar as GrammarItem[],
+    gaps: frEnGaps as GapPrompt[],
+    feedback: frEnFeedback as FeedbackPhrases,
+    matching: frEnMatching as MatchingSettings,
   },
 };
 

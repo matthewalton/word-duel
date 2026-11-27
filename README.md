@@ -98,3 +98,10 @@ Credits are also in `src/packs/ko-en/meta.json` and shown under the game screen.
 - English answers: written by hand, with [English Wiktionary](https://en.wiktionary.org/) as reference. CC BY-SA 4.0.
 
 Credits are also in `src/packs/es-en/meta.json` and shown under the game screen.
+
+## Credits (French pack)
+
+- Word selection and tiers: Hermit Dave, [FrequencyWords](https://github.com/hermitdave/FrequencyWords) (French, OpenSubtitles 2018): each word's most frequent form ranked in the top 1,000, 3,000 or 6,000 sets tiers 1, 2 and 3 (ADR 0009). CC BY-SA 4.0.
+- English answers: written by hand, with [English Wiktionary](https://en.wiktionary.org/) as reference. CC BY-SA 4.0.
+
+Credits are also in `src/packs/fr-en/meta.json` and shown under the game screen.
