@@ -60,8 +60,8 @@ export function seatOf(room: Room, token: string): Seat | null {
 
 /**
  * Round `row.n` of the room's current match. A gap's option order is fixed by
- * the room, match and round, which browsers never learn, so both players see
- * the same order and it can't be worked out ahead.
+ * the room's id (which browsers never learn), the match and the round, so both
+ * players see the same order and it can't be worked out ahead.
  */
 function roundFor(room: Room, row: RoundRow): Round {
   const rank = (option: string) => hashToken(`${room.id}:${room.match}:${row.n}:${option}`);

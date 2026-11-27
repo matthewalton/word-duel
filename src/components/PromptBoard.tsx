@@ -37,6 +37,9 @@ export function PromptBoard({
   // Whose heart broke colours the prompt; in versus nobody's may have.
   const hit = outcome?.loser === "rival";
   const lost = outcome?.loser === "you";
+  // A gap fills with the answer when the player gets it; in versus, once anyone
+  // has, or nobody did, since the answer is shown to both then.
+  const filled = hit || (state.versus && outcome != null);
   const fxClass = hit ? styles.promptHit : lost ? styles.promptMiss : "";
   const comeback = phase === "resolving" && outcome?.comeback;
   const fuseActive = phase === "playing" || phase === "resolving";
@@ -77,8 +80,8 @@ export function PromptBoard({
             {round.gap ? (
               <>
                 {round.gap.before}
-                <span className={`${styles.blank} ${hit ? styles.blankFilled : ""}`}>
-                  {hit ? round.reveal.text : " "}
+                <span className={`${styles.blank} ${filled ? styles.blankFilled : ""}`}>
+                  {filled ? round.reveal.text : " "}
                 </span>
                 {round.gap.after}
               </>

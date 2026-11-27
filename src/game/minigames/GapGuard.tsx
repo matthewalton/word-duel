@@ -25,11 +25,12 @@ function gapsByItem(pack: LanguagePack): Map<string, GapPrompt[]> {
 
 const NO_OPTIONS: string[] = [];
 
-function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: ControlsProps) {
+function GapGuardControls({ round, phase, outcome, onSubmit, onStart, locked = false }: ControlsProps) {
   const startRef = useRef<HTMLButtonElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const options = round.options ?? NO_OPTIONS;
-  const live = phase === "playing";
+  // Versus: after a pick the options stay locked until the round's result arrives.
+  const live = phase === "playing" && !locked;
   // START on the ready screen lives on the board; this one is play again.
   const showStart = phase === "gameOver";
   // Before the first round the choices stay blank so they don't give the sample away.
@@ -59,10 +60,12 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
     return () => window.removeEventListener("keydown", onKey);
   }, [live, options, onSubmit]);
 
+  // The pick is judged by the answer, not the reason: in versus a round can be
+  // won by the other player after this one picked wrong.
   const stateClass = (option: string) => {
     if (!outcome) return "";
-    if (option === outcome.given) return outcome.reason === "correct" ? styles.choiceRight : styles.choiceWrong;
-    if (outcome.reason !== "correct" && option === round.reveal.text) return styles.choiceReveal;
+    if (option === outcome.given) return option === round.reveal.text ? styles.choiceRight : styles.choiceWrong;
+    if (option === round.reveal.text) return styles.choiceReveal;
     return "";
   };
 
