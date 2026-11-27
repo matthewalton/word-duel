@@ -73,7 +73,7 @@ export function VersusScreen({ code }: { code: string }) {
 
 function MenuLink({ label = strings.menu }: { label?: string }) {
   return (
-    <Link href="/" className={styles.modeButton} aria-label={strings.menuAria}>
+    <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria}>
       &lt; {label}
     </Link>
   );

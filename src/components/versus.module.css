@@ -452,6 +452,10 @@ dialog.panel {
 
 /* ---------- Versus duel ---------- */
 
+.menuLink {
+  text-decoration: none;
+}
+
 .roomTag {
   margin-inline-start: auto;
   font-size: calc(14px * var(--s));
