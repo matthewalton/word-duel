@@ -8,6 +8,16 @@ export const DEFAULT_PACK_ID = "ko-en";
 export const PACK_STORAGE_KEY = "word-duel:pack";
 
 /**
+ * Browser storage keys for the other settings (ADR 0011): whether `/` skips
+ * the language step, and the difficulty and direction quick PLAY uses.
+ */
+export const SETTING_KEYS = {
+  rememberPack: "word-duel:remember-pack",
+  difficulty: "word-duel:difficulty",
+  direction: "word-duel:direction",
+} as const;
+
+/**
  * Set on <html> before the first paint while a pack other than the default is
  * stored, so the static page (rendered with the default pack) stays hidden
  * until the chosen pack has rendered instead of flashing the default one.

@@ -18,9 +18,9 @@ import { VersusRecordDialog } from "./VersusRecordDialog";
 const isProvider = (id: string): id is ProviderId => (PROVIDERS as readonly string[]).includes(id);
 
 /**
- * Top corner of the title screen: SIGN IN for a guest, or the account chip
- * with a menu to the wordbook and the versus record, to link sign-in methods
- * and sign out. Shows nothing while the
+ * The top bar's corner: SIGN IN for a guest, or the account chip with a
+ * menu to the wordbook and the versus record, to link sign-in methods and
+ * sign out. Shows nothing while the
  * session loads. The menu opens by itself on return from linking a provider.
  */
 export function AccountCorner({
