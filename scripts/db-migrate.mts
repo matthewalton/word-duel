@@ -7,8 +7,8 @@
 import nextEnv from "@next/env";
 import { migrate, migrationUrl } from "./migrate.mts";
 
-// The same env files drizzle.config.ts reads.
-nextEnv.loadEnvConfig(process.cwd());
+// Development mode reads the same env files as `pnpm dev`, and never .env.production*.
+nextEnv.loadEnvConfig(process.cwd(), true);
 
 const url = migrationUrl(process.env);
 if (!url) {
