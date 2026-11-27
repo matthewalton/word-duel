@@ -16,6 +16,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { DIFFICULTIES } from "../config/game.ts";
+import { MINIGAME_IDS } from "../game/minigames/ids.ts";
 import type { Direction, PromptKind, Reason } from "../game/types";
 
 export const DIRECTIONS = ["toTarget", "toBase"] as const satisfies readonly Direction[];
@@ -182,8 +183,8 @@ export const itemStat = pgTable(
 );
 
 /**
- * A versus room: two players racing Word Strike with the room maker's pack,
- * direction and difficulty. A code is taken while its room hasn't expired;
+ * A versus room: two players racing one minigame with the room maker's pack
+ * and difficulty (and direction, for Word Strike). A code is taken while its room hasn't expired;
  * expired rooms are deleted, rounds and all, when the next room is made.
  * Only the current match's rounds are kept: a rematch deletes the last ones.
  */
@@ -193,9 +194,12 @@ export const versusRoom = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     code: text("code").notNull(),
     packId: text("pack_id").notNull(),
+    /** Every match and rematch in the room plays this minigame. Rooms made before Gap Guard rooms are Word Strike. */
+    minigame: text("minigame", { enum: MINIGAME_IDS }).notNull().default("word-strike"),
+    /** Word Strike only; a Gap Guard room keeps the maker's but ignores it. */
     direction: text("direction", { enum: DIRECTIONS }).notNull(),
     difficulty: text("difficulty", { enum: DIFFICULTIES }).notNull(),
-    /** Word ids in the order the rounds deal them. */
+    /** Prompt ids in the order the rounds deal them: words in Word Strike, gap sentences in Gap Guard. */
     draw: text("draw").array().notNull(),
     /** An account's name; null for a guest. */
     p1Name: text("p1_name"),
@@ -231,7 +235,12 @@ export const versusRound = pgTable(
       .references(() => versusRoom.id, { onDelete: "cascade" }),
     /** 1 for the first round. */
     n: integer("n").notNull(),
-    itemId: text("item_id").notNull(),
+    /**
+     * The prompt dealt: a word (Word Strike's prompt is the word itself) or a
+     * gap sentence. The column keeps its first name, so code already running
+     * keeps working when the migration lands.
+     */
+    promptId: text("item_id").notNull(),
     fuseMs: integer("fuse_ms").notNull(),
     startsAt: timestamp("starts_at").notNull(),
     /** Answers count until here: startsAt plus the fuse. */

@@ -17,6 +17,7 @@ export function ToggleGroup<T extends string>({
   value,
   onValueChange,
   optionClassName,
+  isDisabled,
   renderOption,
 }: {
   label: string;
@@ -25,6 +26,8 @@ export function ToggleGroup<T extends string>({
   onValueChange: (value: T) => void;
   /** A class per option, such as its colour when chosen. */
   optionClassName?: (option: T) => string;
+  /** Options that can't be chosen now; the arrow keys skip them. */
+  isDisabled?: (option: T) => boolean;
   renderOption: (option: T, index: number) => ReactNode;
 }) {
   const root = useRef<HTMLDivElement>(null);
@@ -54,6 +57,7 @@ export function ToggleGroup<T extends string>({
           key={option}
           value={option}
           className={`${u.toggleItem} ${optionClassName?.(option) ?? ""}`}
+          disabled={isDisabled?.(option)}
           onFocus={() => onValueChange(option)}
         >
           {renderOption(option, i)}

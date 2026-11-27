@@ -96,6 +96,19 @@
   color: #4a4060;
 }
 
+.minigameOption {
+  min-height: calc(44px * var(--s));
+  padding: 0 calc(8px * var(--s));
+  font-size: calc(16px * var(--s));
+}
+
+.minigameNote {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  color: var(--muted);
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

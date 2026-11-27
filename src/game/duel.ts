@@ -6,8 +6,8 @@
  * first → loser: "you", nobody right → loser: null) through the same reducer
  * (ADR 0002, 0012).
  */
-import { RULES, fuseForStage } from "@/config/game";
-import type { Miss, Outcome, Phase, PlayedRound, Reason, Round, Side } from "./types";
+import { RULES, fuseForStage } from "../config/game.ts";
+import type { Miss, Outcome, Phase, PlayedRound, Reason, Round, Side } from "./types.ts";
 
 export interface DuelState {
   /** Versus: no stages, scores, combos or comebacks, and the duel ends when either side runs out of hearts. */
@@ -54,8 +54,11 @@ export type DuelAction =
   | { type: "tick" }
   /** `fuseMs` is set by the versus server; solo takes it from the stage. */
   | { type: "start"; round: Round; at: number; fuseMs?: number }
-  /** `loser` is null when no heart breaks (versus: nobody answered right). */
-  | { type: "resolve"; loser: Side | null; reason: Reason; given?: string; at: number }
+  /**
+   * `loser` is null when no heart breaks (versus: nobody answered right).
+   * `round` is versus's decided round, now carrying the answers it was dealt without.
+   */
+  | { type: "resolve"; loser: Side | null; reason: Reason; given?: string; at: number; round?: Round }
   /** `forfeit`: versus, the other player left mid-match, so the duel ends wherever it is. */
   | { type: "gameOver"; forfeit?: boolean }
   | { type: "next"; round: Round; at: number; fuseMs?: number };
@@ -148,6 +151,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     case "resolve": {
       if (state.phase !== "playing") return state;
       const { versus } = state;
+      const round = action.round ?? state.round;
       const hearts = { ...state.hearts };
       if (action.loser) hearts[action.loser] = Math.max(0, hearts[action.loser] - 1);
 
@@ -172,7 +176,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       const gameOver = hearts.you === 0 || (versus && hearts.rival === 0);
       const newBest = gameOver && !state.practice && state.best != null && score > state.best;
       const played: PlayedRound = {
-        round: state.round,
+        round,
         reason: action.reason,
         given: action.given,
         answerMs: action.reason === "timeout" ? null : Math.max(0, action.at - state.roundShownAt),
@@ -184,6 +188,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
       return {
         ...state,
         phase: "resolving",
+        round,
         rounds: [...state.rounds, played],
         hearts,
         score,

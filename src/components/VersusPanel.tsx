@@ -3,15 +3,18 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { VERSUS } from "@/config/game";
+import { MINIGAME_IDS, type MinigameId } from "@/game/minigames/ids";
 import type { Difficulty, Direction } from "@/game/types";
 import { cleanCode, isRoomCode } from "@/game/versus";
-import { strings } from "@/i18n/strings";
+import { canDeal } from "@/game/versusRounds";
+import { fill, strings } from "@/i18n/strings";
 import { keepSeat } from "@/lib/versusSeat";
 import type { LanguagePack } from "@/packs/types";
 import { createRoom, joinRoom } from "@/server/versus";
 import { DirectionLabel } from "./DirectionLabel";
 import { Button } from "./ui/Button";
 import { Dialog } from "./ui/Dialog";
+import { ToggleGroup } from "./ui/ToggleGroup";
 import v from "./versus.module.css";
 
 const HEART = "M1 0h2v1h-2zM4 0h2v1h-2zM0 1h7v2h-7zM1 3h5v1h-5zM2 4h3v1h-3zM3 5h1v1h-1z";
@@ -32,9 +35,11 @@ export function VersusButton({ onOpen }: { onOpen: () => void }) {
 type Busy = "create" | "join" | null;
 
 /**
- * Create or join a versus room. A room takes Word Strike's direction and
- * difficulty from its card and the language picker's pack; joining by code
- * shows "no room" and "full" here, before leaving the title screen.
+ * Create or join a versus room. A room runs the minigame picked here, with
+ * the title screen's difficulty, Word Strike's direction and the language
+ * picker's pack. A minigame with nothing to deal at that difficulty can't be
+ * picked. Joining by code shows "no room" and "full" here, before leaving
+ * the title screen.
  */
 export function VersusPanel({
   pack,
@@ -48,9 +53,15 @@ export function VersusPanel({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const [picked, setPicked] = useState<MinigameId>("word-strike");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState<Busy>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const dealable = (m: MinigameId) => canDeal(pack, { minigame: m, direction, difficulty });
+  const minigame = dealable(picked) ? picked : "word-strike";
+  // Word Strike always has words at every difficulty; a pack may lack gap sentences.
+  const noGaps = !dealable("gap-guard");
 
   const go = (roomCode: string, token: string) => {
     keepSeat(roomCode, token);
@@ -64,7 +75,7 @@ export function VersusPanel({
   const create = async () => {
     setBusy("create");
     setError(null);
-    const made = await createRoom({ packId: pack.meta.id, direction, difficulty }).catch(() => null);
+    const made = await createRoom({ packId: pack.meta.id, minigame, direction, difficulty }).catch(() => null);
     if (made) return go(made.code, made.token);
     setBusy(null);
     setError(strings.versus.createFailed);
@@ -101,10 +112,25 @@ export function VersusPanel({
             {strings.versus.createTitle}
           </h3>
           <p className={v.optionBody}>{strings.versus.createBody}</p>
+          <ToggleGroup
+            label={strings.modesLabel}
+            options={MINIGAME_IDS}
+            value={minigame}
+            onValueChange={setPicked}
+            isDisabled={(m) => !dealable(m)}
+            optionClassName={() => v.minigameOption}
+            renderOption={(m) => strings.modes[m].toUpperCase()}
+          />
+          {noGaps && (
+            <p className={v.minigameNote}>{fill(strings.versus.noGaps, { difficulty: strings.difficulty.names[difficulty] })}</p>
+          )}
           <span className={v.chips}>
-            <span className={v.chip}>
-              <DirectionLabel from={from} to={to} />
-            </span>
+            <span className={v.chip}>{strings.modes[minigame].toUpperCase()}</span>
+            {minigame === "word-strike" && (
+              <span className={v.chip}>
+                <DirectionLabel from={from} to={to} />
+              </span>
+            )}
             <span className={v.chip}>{strings.difficulty.names[difficulty]}</span>
           </span>
           <Button variant="primary" className={v.createButton} disabled={busy != null} aria-busy={busy === "create" || undefined} onClick={create}>
