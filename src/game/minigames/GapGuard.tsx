@@ -31,6 +31,13 @@ function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean)
   };
 }
 
+/** The askable gap sentences for each item they test. */
+function gapsByItem(pack: LanguagePack): Map<string, GapPrompt[]> {
+  const byItem = new Map<string, GapPrompt[]>();
+  for (const gap of askableGaps(pack)) byItem.set(gap.tests, [...(byItem.get(gap.tests) ?? []), gap]);
+  return byItem;
+}
+
 const NO_OPTIONS: string[] = [];
 
 function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: ControlsProps) {
@@ -173,6 +180,22 @@ export const gapGuard: Minigame = {
         const missed = new Set(missedItemIds);
         draw.workIn((gap) => missed.has(gap.tests));
       },
+    };
+  },
+  practiceItems: (pack, missedItemIds) => {
+    const byItem = gapsByItem(pack);
+    return missedItemIds.filter((id) => byItem.has(id));
+  },
+  /** Deals the missed items in a shuffled draw order, each as one of its gap sentences. */
+  startPracticeDraw: (pack, _opts, itemIds): RoundDraw => {
+    const byItem = gapsByItem(pack);
+    const draw = drawOrder(itemIds.filter((id) => byItem.has(id)));
+    return {
+      next: () => {
+        const gaps = byItem.get(draw.next()) as GapPrompt[];
+        return buildRound(pack, gaps[Math.floor(Math.random() * gaps.length)], true);
+      },
+      workIn: () => {},
     };
   },
   Controls: GapGuardControls,

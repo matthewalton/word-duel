@@ -112,6 +112,21 @@ function startDraw(pack: LanguagePack, opts: MinigameOptions): RoundDraw {
   };
 }
 
+/** Missed words that can still be asked, any tier. */
+function practiceWords(pack: LanguagePack, missedItemIds: readonly string[]): WordItem[] {
+  const missed = new Set(missedItemIds);
+  return askableWords(pack).filter((w) => missed.has(w.id));
+}
+
+/** A practice duel deals the missed words themselves, each its own round. */
+function startPracticeDraw(pack: LanguagePack, opts: MinigameOptions, itemIds: readonly string[]): RoundDraw {
+  const draw = drawOrder(practiceWords(pack, itemIds));
+  return {
+    next: () => buildRound(pack, opts, draw.next()),
+    workIn: () => {},
+  };
+}
+
 function WordStrikeControls({ round, phase, onSubmit, onStart }: ControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -255,6 +270,8 @@ export const wordStrike: Minigame = {
   hasContent: (pack) => askableWords(pack).length > 0,
   sampleRound: (pack, opts) => buildRound(pack, opts, askableWords(pack)[0]),
   startDraw,
+  practiceItems: (pack, missedItemIds) => practiceWords(pack, missedItemIds).map((w) => w.id),
+  startPracticeDraw,
   Controls: WordStrikeControls,
   Preview: WordStrikePreview,
   HowTo: WordStrikeHowTo,
