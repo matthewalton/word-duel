@@ -156,5 +156,6 @@ export async function answerRound(rawCode: unknown, rawToken: unknown, n: unknow
 export async function listenToken(rawCode: unknown, rawToken: unknown): Promise<string | null> {
   const found = await seated(rawCode, rawToken, new Date());
   if (!found) return null;
-  return (await subscribeToken(roomChannel(found.room.code))).token;
+  const channel = roomChannel(found.room.code);
+  return (await subscribeToken(channel, `${channel}:${found.seat}`)).token;
 }
