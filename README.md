@@ -67,17 +67,19 @@ Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Roun
 
 Postgres (Neon, through the Vercel Marketplace) with Drizzle, and Better Auth for OAuth sign-in with Google, GitHub and Discord. Decisions are in ADR 0006.
 
+**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's.
+
 **Local setup**
 
-1. `vercel link` to the Word Duel project, then `vercel env pull .env.local`. It pulls the Development environment, which holds everything in `.env.example` with local values (`BETTER_AUTH_URL=http://localhost:3000`, the dev GitHub app). The pull overwrites `.env.local`; put local-only overrides in `.env.development.local`.
-2. Without Vercel access, fill `.env.local` from `.env.example` by hand: a Postgres `DATABASE_URL`, `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), `BETTER_AUTH_URL=http://localhost:3000`, and a client id and secret for each provider. A provider without both is left out. Versus also needs `ABLY_API_KEY`, an Ably key with Publish, Subscribe and Presence, restricted to `versus:*` channels; it is read on the server only.
-3. `pnpm db:migrate` to create the tables.
+1. Copy `.env.example` to `.env.local`; each value's comment says where its dev value comes from. `vercel link` to the Word Duel project and `vercel env pull .env.local` fills most of them from the Development environment (`BETTER_AUTH_URL=http://localhost:3000`, the dev GitHub app), but the Neon integration gives it prod's database: replace `DATABASE_URL` and `DATABASE_URL_UNPOOLED` with the `dev` branch's connection strings and delete the `PG*` and `POSTGRES_*` lines. Put local-only overrides in `.env.development.local`, which the pull doesn't touch.
+2. Without Vercel access, fill `.env.local` by hand: a Postgres `DATABASE_URL`, `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), `BETTER_AUTH_URL=http://localhost:3000`, and a client id and secret for each provider. A provider without both is left out. Versus also needs `ABLY_API_KEY`, an Ably key with Publish, Subscribe and Presence, restricted to `versus:*` channels; it is read on the server only. Dev shares prod's Ably key, so in development a room's channel is `versus:dev-<code>` and never meets a prod room.
+3. `pnpm db:migrate` to create the tables. It names the host it migrates: check that it's the dev branch.
 
 In Vercel, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` and the GitHub id and secret have different values for Production and Development. Google and Discord use one app for both.
 
 **OAuth apps**: each provider needs the callback `<BETTER_AUTH_URL>/api/auth/callback/<google|github|discord>`, once for `http://localhost:3000` and once for production. GitHub allows one callback per app, so make a dev app and a production app.
 
-**Schema changes**: edit `src/server/schema.ts`, run `pnpm db:generate` and commit the new file in `drizzle/`, then `pnpm db:migrate`. Better Auth's four tables (user, session, account, verification) must keep its field names.
+**Schema changes**: edit `src/server/schema.ts`, run `pnpm db:generate` and commit the new file in `drizzle/`, then `pnpm db:migrate` to apply it to dev. Prod gets it when Matt runs `pnpm db:migrate:prod` from a checkout linked to Vercel: it pulls the Production credentials into a private temp folder, shows the prod host and asks before migrating, and deletes the folder afterwards, even when the migration fails. `pnpm db:migrate:prod --dry-run` prints the steps without fetching anything. Better Auth's four tables (user, session, account, verification) must keep its field names.
 
 Server actions in `src/server/` check the session themselves; never trust a user id sent from the browser.
 
