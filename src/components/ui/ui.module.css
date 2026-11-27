@@ -378,6 +378,8 @@
     }
   }
 
+  /* Keyframes are scoped to their CSS module, so game.module.css keeps a twin
+     for its hurt flash; change both together. */
   @keyframes steadyFlash {
     0% {
       opacity: 1;

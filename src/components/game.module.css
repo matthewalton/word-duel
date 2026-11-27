@@ -962,6 +962,8 @@
   }
 }
 
+/* Keyframes are scoped to their CSS module, so ui.module.css keeps a twin
+   for the heart flash; change both together. */
 @keyframes steadyFlash {
   0% {
     opacity: 1;
