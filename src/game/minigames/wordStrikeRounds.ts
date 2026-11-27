@@ -1,14 +1,15 @@
 /**
  * Word Strike's rounds: plain functions with no React, so the versus server
- * can deal and check the same rounds the solo minigame does.
+ * can deal and check the same rounds the solo minigame does. Relative imports
+ * keep it loadable by `node --test`.
  */
-import { MAX_TIER } from "@/config/game";
-import { fill, strings } from "@/i18n/strings";
-import { normalizeAnswer } from "@/lib/matching";
-import { drawOrder } from "@/lib/random";
-import { askableWords, wordsUpToTier } from "@/packs";
-import type { LanguagePack, WordItem } from "@/packs/types";
-import { langText, type MinigameOptions, type Round, type RoundDraw } from "../types";
+import { MAX_TIER } from "../../config/game.ts";
+import { fill, strings } from "../../i18n/strings.ts";
+import { normalizeAnswer } from "../../lib/matching.ts";
+import { drawOrder } from "../../lib/random.ts";
+import { askableWords, wordsUpToTier } from "../../packs/index.ts";
+import type { LanguagePack, WordItem } from "../../packs/types.ts";
+import { langText, type MinigameOptions, type Round, type RoundDraw } from "../types.ts";
 
 const unique = (items: string[]) => items.filter((x, i) => items.indexOf(x) === i);
 

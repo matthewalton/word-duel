@@ -27,8 +27,8 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/game/duel.ts` | Pure duel reducer shared by every minigame |
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
 | `src/game/minigames/` | One module per minigame, plus the registry |
-| `src/components/` | Title screen, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
-| `src/components/ui/` | Shared controls: Button, Dialog, Menu, Toggle group, Panel (Radix behaviour, our pixel styles; ADR 0013) |
+| `src/components/` | Language step, hub, Single player area and top bar, how-to panel, duel screen, HUD, hearts, prompt board, effects, sign-in panel and account corner |
+| `src/components/ui/` | Shared controls: Button, Dialog, Menu, Toggle group, Tabs, Panel (Radix behaviour, our pixel styles; ADR 0013) |
 | `src/lib/progress.ts` | Best scores, for accounts only: a guest has none |
 | `src/lib/useAccount.ts` | Session in the browser, loading account best scores, sign in and out |
 | `src/server/` | Server only: Drizzle schema, database, Better Auth, server actions for account data |
@@ -63,13 +63,13 @@ A Word Strike round asks a word item directly; a gap tests the one item named by
 
 ## Adding a minigame
 
-Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`, and give it blurbs in `strings.difficulty.blurbs`) and renders its own controls, its title-screen `Preview` and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
+Write a module that implements `Minigame` (`src/game/types.ts`): it builds `Round`s from the pack (reading entries through the registry, skipping retired ones via `askableWords`/`askableGaps`, and setting each round's `itemId`, `promptId`, `promptKind` and `tier`; set `usesDifficulty` if it draws by `opts.difficulty`, and give it blurbs in `strings.difficulty.blurbs`) and renders its own controls, its card `Preview` (shown in the Single player area and on the hub) and its three `HowTo` steps. Hearts, scoring, fuse, banners and effects come from the shared duel. Then add it to `src/game/minigames/index.ts`, and give it a label in `strings.modes` and a description and steps in `strings.minigameInfo`.
 
 ## Accounts
 
 Postgres (Neon, through the Vercel Marketplace) with Drizzle, and Better Auth for OAuth sign-in with Google, GitHub and Discord. Decisions are in ADR 0006.
 
-**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's.
+**Databases**: prod is the main branch of the Neon project; local development and every agent use its `dev` branch, one shared by all worktrees. `.env.local` holds dev values only, and prod values live only in Vercel's Production environment. On dev you, and agents, may run migrations and write test data, accounts included. `pnpm db:reset:dev` prints how to reset dev from prod (Neon's "Reset from parent"), which replaces its schema and data with prod's. `pnpm db:demo-account` makes Demo Player, a fake account with word history for demos, on dev only (`docs/agents/orca-bot.md`, Demo recording).
 
 **Local setup**
 
@@ -81,13 +81,20 @@ In Vercel, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET` and the GitHub id and secret 
 
 **OAuth apps**: each provider needs the callback `<BETTER_AUTH_URL>/api/auth/callback/<google|github|discord>`, once for `http://localhost:3000` and once for production. GitHub allows one callback per app, so make a dev app and a production app.
 
-**Schema changes**: edit `src/server/schema.ts`, run `pnpm db:generate` and commit the new file in `drizzle/`, then `pnpm db:migrate` to apply it to dev. Prod gets it when Matt runs `pnpm db:migrate:prod` from a checkout linked to Vercel: it pulls the Production credentials into a private temp folder, shows the prod host and asks before migrating, and deletes the folder afterwards, even when the migration fails. `pnpm db:migrate:prod --dry-run` prints the steps without fetching anything. Better Auth's four tables (user, session, account, verification) must keep its field names.
+**Schema changes** (ADR 0014): edit `src/server/schema.ts`, run `pnpm db:generate` and commit the new file in `drizzle/`, then `pnpm db:migrate` to apply it to dev. Never edit a migration that is already on `main`; add a new one.
+
+- On the PR, the Migration test makes a throwaway Neon branch from prod, migrates it twice (the second run must find nothing), checks that `schema.ts` and `drizzle/` agree, runs the tests against it and deletes it, even on failure. A PR that touches neither passes in seconds. It needs the `NEON_API_KEY` secret and the `NEON_PROJECT_ID` variable in the repo's Actions settings.
+- On merge, the Vercel production build applies the pending migrations before `next build`, holding an advisory lock. A failing migration fails the deploy, and the previous deployment keeps serving. Every other build prints that it skips.
+- Migrations must work with the code that is live now: new tables, and new columns that are nullable or have a default. A destructive change takes two PRs: first stop using the column or table, then drop it once that is deployed (`docs/standards.md` §6).
+- Escape hatch, Matt only: `pnpm db:migrate:prod` asks for prod's direct connection string (Neon console → Word Duel → Connect → branch main, pooling off; it isn't shown or saved), shows the host and migrates once you type yes. It needs no Vercel CLI.
+
+Better Auth's four tables (user, session, account, verification) must keep its field names.
 
 Server actions in `src/server/` check the session themselves; never trust a user id sent from the browser.
 
 ## Versus
 
-Two players race on Word Strike in a private room (ADR 0012). The server is the referee: `src/server/versus.ts` (server actions) and `src/server/versusRoom.ts` deal the prompts, check answers and decide each round in one conditional `UPDATE`, then publish the room's snapshot over Ably (`src/server/ably.ts`, REST only). Browsers never publish: they listen and enter the channel's presence over Ably's realtime protocol on a plain WebSocket, with a token for their own room only (`src/lib/versusChannel.ts`); the server asks Ably who is present to tell when a player has dropped. A rematch starts the next match in the same room. `src/game/useVersusDuel.ts` replays snapshots through `duelReducer`, whose outcomes are *whose heart broke* (`loser: "you" | "rival" | null`), so the duel screen and Word Strike's controls are shared with solo.
+Two players race on Word Strike or Gap Guard in a private room (ADR 0012). The server is the referee: `src/server/versus.ts` (server actions) and `src/server/versusRoom.ts` deal the prompts (through `src/game/versusRounds.ts`, which builds rounds with the same pure modules solo uses, `wordStrikeRounds.ts` and `gapGuardRounds.ts`), check answers and decide each round in one conditional `UPDATE`, then publish the room's snapshot over Ably (`src/server/ably.ts`, REST only). Browsers never publish: they listen and enter the channel's presence over Ably's realtime protocol on a plain WebSocket, with a token for their own room only (`src/lib/versusChannel.ts`); the server asks Ably who is present to tell when a player has dropped. A rematch starts the next match in the same room. `src/game/useVersusDuel.ts` replays snapshots through `duelReducer`, whose outcomes are *whose heart broke* (`loser: "you" | "rival" | null`), so the duel screen and each minigame's controls are shared with solo.
 
 ## Credits (Korean pack)
 

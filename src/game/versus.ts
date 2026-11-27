@@ -3,6 +3,7 @@
  * data and pure helpers, shared by the server and the browser.
  */
 import { VERSUS } from "../config/game.ts";
+import type { MinigameId } from "./minigames/ids";
 import type { Difficulty, Direction, LangText, Reason, Round, Side } from "./types";
 
 /** PLAYER 1 made the room; PLAYER 2 joined it. */
@@ -34,6 +35,9 @@ export interface VersusRound {
 export interface RoomSnapshot {
   code: string;
   packId: string;
+  /** Every match in the room plays this minigame. */
+  minigame: MinigameId;
+  /** Word Strike only. */
   direction: Direction;
   difficulty: Difficulty;
   /** An account's name, or null for a guest. PLAYER 2 is absent until someone joins. */

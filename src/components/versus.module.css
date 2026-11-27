@@ -1,57 +1,18 @@
 /*
- * Versus (design canvas round 19, `VersusTitleBar` and its boards): the title
- * bar's VERSUS button and room panel, the waiting screen's player cards, and
- * the versus parts of the duel board.
+ * Versus (design canvas round 19, `VersusTitleBar` and its boards): the room
+ * panel, the waiting screen's player cards, and the versus parts of the duel
+ * board.
  * Same pixel rules: 4px borders, square corners, unblurred offset shadows,
  * steps() motion only.
  */
 
-/* ---------- Title bar ---------- */
-
-.cornerRow {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: calc(12px * var(--s));
-  min-width: 0;
-}
-
-.versusButton {
-  flex: none;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  gap: calc(8px * var(--s));
-  padding: 4px calc(14px * var(--s));
-  font-size: calc(16px * var(--s));
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--ink);
-  background: var(--rival);
-  border: 4px solid var(--rival);
-}
-
-.versusButton:hover {
-  border-color: var(--accent);
-}
+/* ---------- Room panel ---------- */
 
 .codeInput:focus-visible,
 .linkButton:focus-visible {
   outline: 4px solid var(--player);
   outline-offset: 2px;
 }
-
-.versusHeart {
-  display: block;
-  width: calc(18px * var(--s));
-  height: calc(15px * var(--s));
-}
-
-.short {
-  display: none;
-}
-
-/* ---------- Room panel ---------- */
 
 .panel {
   width: min(calc(860px * var(--s)), calc(100% - 32px));
@@ -94,6 +55,19 @@
   font-size: calc(17px * var(--s));
   line-height: 1.4;
   color: #4a4060;
+}
+
+.minigameOption {
+  min-height: calc(44px * var(--s));
+  padding: 0 calc(8px * var(--s));
+  font-size: calc(16px * var(--s));
+}
+
+.minigameNote {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  color: var(--muted);
 }
 
 .chips {
@@ -594,27 +568,6 @@
 /* ---------- Phone ---------- */
 
 @media (max-width: 640px) {
-  .long {
-    display: none;
-  }
-
-  .short {
-    display: inline;
-  }
-
-  .versusButton {
-    padding: 4px 10px;
-    font-size: 14px;
-  }
-
-  .versusHeart {
-    display: none;
-  }
-
-  .cornerRow {
-    gap: 6px;
-  }
-
   /* The panel is a sheet from the bottom. */
   .panel {
     width: 100%;

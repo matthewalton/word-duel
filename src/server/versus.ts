@@ -4,8 +4,10 @@ import { and, eq, isNull, lt } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { DIFFICULTIES, HISTORY_LIMITS, VERSUS } from "@/config/game";
+import { MINIGAME_IDS } from "@/game/minigames/ids";
 import { isRoomCode, roomChannel, seatClientId, type RoomView, type Seat } from "@/game/versus";
-import { askableWords, getPack, listPacks } from "@/packs";
+import { canDeal, dealDraw } from "@/game/versusRounds";
+import { getPack, listPacks } from "@/packs";
 import { subscribeToken } from "./ably";
 import { getAuth } from "./auth";
 import { getDb } from "./db";
@@ -17,7 +19,6 @@ import {
   broadcast,
   checkPresence,
   closeLater,
-  dealDraw,
   dealFirstRound,
   findRoom,
   hashToken,
@@ -42,6 +43,7 @@ const token = z.string().min(16).max(100);
 
 const settings = z.strictObject({
   packId: z.string().refine((id) => listPacks().some((p) => p.id === id)),
+  minigame: z.enum(MINIGAME_IDS),
   direction: z.enum(DIRECTIONS),
   difficulty: z.enum(DIFFICULTIES),
 });
@@ -78,13 +80,17 @@ async function view(room: Room, seat: Seat, now: Date, send: boolean): Promise<R
   return { ok: true, seat, snapshot };
 }
 
-/** Makes a room with the maker's pack, direction and difficulty. Returns its code and the maker's seat token. */
+/**
+ * Makes a room with the maker's pack, minigame, direction and difficulty.
+ * Returns its code and the maker's seat token; null if the settings are bad
+ * or leave nothing to deal.
+ */
 export async function createRoom(input: unknown): Promise<{ code: string; token: string } | null> {
   const parsed = settings.safeParse(input);
   if (!parsed.success) return null;
-  const { packId, direction, difficulty } = parsed.data;
+  const { packId, ...room } = parsed.data;
   const pack = getPack(packId);
-  if (askableWords(pack).length === 0) return null;
+  if (!canDeal(pack, room)) return null;
   const db = getDb();
   const now = new Date();
   // Expired rooms go, rounds and all: nothing is kept after a room is done.
@@ -96,9 +102,8 @@ export async function createRoom(input: unknown): Promise<{ code: string; token:
   await db.insert(versusRoom).values({
     code: roomCode,
     packId,
-    direction,
-    difficulty,
-    draw: dealDraw(pack, { direction, difficulty }),
+    ...room,
+    draw: dealDraw(pack, room),
     p1Name: await playerName(),
     p1Token: hashToken(secret),
     expiresAt: new Date(now.getTime() + VERSUS.waitMs),

@@ -10,3 +10,6 @@ export const MINIGAME_PROMPT_KINDS = {
 } as const satisfies Record<string, readonly PromptKind[]>;
 
 export type MinigameId = keyof typeof MINIGAME_PROMPT_KINDS;
+
+/** Every minigame id, in registry order: what a versus room can run, Word Strike first as its default. */
+export const MINIGAME_IDS = ["word-strike", "gap-guard"] as const satisfies readonly MinigameId[];

@@ -7,29 +7,14 @@ import t from "@/components/title.module.css";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
-import { MAX_TIER } from "@/config/game";
-import { askableGaps, gapsUpToTier, itemTier } from "@/packs";
-import { GAP_MARKER, type GapPrompt, type LanguagePack } from "@/packs/types";
-import { langText, type ControlsProps, type Minigame, type Round, type RoundDraw, type ShowcaseProps } from "../types";
+import { askableGaps } from "@/packs";
+import type { GapPrompt, LanguagePack } from "@/packs/types";
+import type { ControlsProps, Minigame, Round, RoundDraw, ShowcaseProps } from "../types";
+import { buildGapRound, gapPool } from "./gapGuardRounds";
 
-function buildRound(pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean): Round {
-  const { target, base } = pack.meta;
-  const [before, after = ""] = gap.sentence.split(GAP_MARKER);
-  return {
-    itemId: gap.tests,
-    promptId: gap.id,
-    promptKind: "gap",
-    tier: itemTier(pack, gap.tests),
-    hint: strings.hintFillGap,
-    prompt: langText(target, gap.sentence),
-    gap: { before, after },
-    translation: langText(base, gap.translation),
-    accepted: [gap.answer],
-    reveal: langText(target, gap.answer),
-    answerLang: { code: target.code, dir: target.dir },
-    options: shuffleOptions ? shuffle(gap.options) : gap.options.slice(),
-  };
-}
+/** A solo round shuffles its options; the preview and how-to keep the pack's order. */
+const buildRound = (pack: LanguagePack, gap: GapPrompt, shuffleOptions: boolean): Round =>
+  buildGapRound(pack, gap, shuffleOptions ? shuffle(gap.options) : gap.options);
 
 /** The askable gap sentences for each item they test. */
 function gapsByItem(pack: LanguagePack): Map<string, GapPrompt[]> {
@@ -40,11 +25,12 @@ function gapsByItem(pack: LanguagePack): Map<string, GapPrompt[]> {
 
 const NO_OPTIONS: string[] = [];
 
-function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: ControlsProps) {
+function GapGuardControls({ round, phase, outcome, onSubmit, onStart, locked = false }: ControlsProps) {
   const startRef = useRef<HTMLButtonElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const options = round.options ?? NO_OPTIONS;
-  const live = phase === "playing";
+  // Versus: after a pick the options stay locked until the round's result arrives.
+  const live = phase === "playing" && !locked;
   // START on the ready screen lives on the board; this one is play again.
   const showStart = phase === "gameOver";
   // Before the first round the choices stay blank so they don't give the sample away.
@@ -74,10 +60,12 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart }: Controls
     return () => window.removeEventListener("keydown", onKey);
   }, [live, options, onSubmit]);
 
+  // The pick is judged by the answer, not the reason: in versus a round can be
+  // won by the other player after this one picked wrong.
   const stateClass = (option: string) => {
     if (!outcome) return "";
-    if (option === outcome.given) return outcome.reason === "correct" ? styles.choiceRight : styles.choiceWrong;
-    if (outcome.reason !== "correct" && option === round.reveal.text) return styles.choiceReveal;
+    if (option === outcome.given) return option === round.reveal.text ? styles.choiceRight : styles.choiceWrong;
+    if (option === round.reveal.text) return styles.choiceReveal;
     return "";
   };
 
@@ -173,7 +161,7 @@ export const gapGuard: Minigame = {
   sampleRound: (pack) => buildRound(pack, askableGaps(pack)[0], false),
   /** Deals the gaps whose tested item is within the difficulty, in a shuffled draw order. */
   startDraw: (pack, opts): RoundDraw => {
-    const draw = drawOrder(gapsUpToTier(pack, MAX_TIER[opts.difficulty]));
+    const draw = drawOrder(gapPool(pack, opts.difficulty));
     return {
       next: () => buildRound(pack, draw.next(), true),
       workIn: (missedItemIds) => {

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { COUNTDOWN_MS, DEFAULT_PACK_ID, GAME_NAME, PACK_PENDING_ATTR, RULES } from "@/config/game";
 import type { DuelState } from "@/game/duel";
-import { wordStrike } from "@/game/minigames/WordStrike";
+import { getMinigame } from "@/game/minigames";
+import type { MinigameId } from "@/game/minigames/ids";
 import { useVersusDuel } from "@/game/useVersusDuel";
 import { useVersusRoom } from "@/game/useVersusRoom";
 import { otherSeat, roundsWon, type RoomSnapshot, type Seat, type VersusRound } from "@/game/versus";
@@ -20,7 +21,7 @@ import { HeartRow } from "./PixelHeart";
 import { PromptBoard } from "./PromptBoard";
 import v from "./versus.module.css";
 
-const minigameName = () => (strings.modes[wordStrike.id] ?? wordStrike.id).toUpperCase();
+const minigameName = (id: MinigameId) => (strings.modes[id] ?? id).toUpperCase();
 const nameOf = (s: RoomSnapshot, seat: Seat) => (s.players[seat]?.name ?? strings.versus.guest).toUpperCase();
 
 /** A versus room at /versus/<code>: the waiting screen, then the race, then game over and rematches (ADR 0012). */
@@ -88,7 +89,7 @@ export function VersusScreen({ code }: { code: string }) {
   );
 }
 
-/** Back to the title screen; `onLeave` gives up the seat first (leaving before a match is won loses it). */
+/** Back to the hub; `onLeave` gives up the seat first (leaving before a match is won loses it). */
 function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
     <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria} onClick={onLeave}>
@@ -167,6 +168,7 @@ function Waiting({
             <span className={v.cardName}>{nameOf(snapshot, rival)}</span>
             <Hearts n={RULES.startHearts} color="var(--rival)" label={fill(strings.heartsAria, { who: nameOf(snapshot, rival), n: RULES.startHearts, max: RULES.startHearts })} />
             <span className={v.cardState}>{strings.versus.joined}</span>
+            <span className={v.cardState}>{fill(strings.versus.joinedMinigame, { minigame: minigameName(snapshot.minigame) })}</span>
           </section>
         ) : (
           <section className={`${v.card} ${v.cardEmpty}`} aria-label={seatNumber(rival)}>
@@ -189,7 +191,13 @@ function Waiting({
       )}
 
       <span className={v.settings}>
-        {strings.modes[wordStrike.id]} · <DirectionLabel from={from} to={to} /> · {strings.difficulty.names[snapshot.difficulty]}
+        {strings.modes[snapshot.minigame]} ·{" "}
+        {snapshot.minigame === "word-strike" && (
+          <>
+            <DirectionLabel from={from} to={to} /> ·{" "}
+          </>
+        )}
+        {strings.difficulty.names[snapshot.difficulty]}
       </span>
     </main>
   );
@@ -263,14 +271,14 @@ function VersusDuel({
   const { state, fuseLit, current, locked, onSubmit } = useVersusDuel({ snapshot, seat, now, submit, nudge });
   const rivalName = nameOf(snapshot, otherSeat(seat));
   const lost = state.phase === "resolving" && state.outcome?.loser === "you";
-  const Controls = wordStrike.Controls;
+  const Controls = getMinigame(snapshot.minigame).Controls;
 
   return (
     <main className={styles.screen}>
       {lost && <div key={state.fxKey} className={styles.hurtFlash} aria-hidden="true" />}
       <div className={styles.modeBar}>
         <MenuLink onLeave={leave} />
-        <span className={styles.duelName}>{fill(strings.versus.titleMinigame, { minigame: minigameName() })}</span>
+        <span className={styles.duelName}>{fill(strings.versus.titleMinigame, { minigame: minigameName(snapshot.minigame) })}</span>
         <span className={v.roomTag}>{fill(strings.versus.roomCode, { code: snapshot.code })}</span>
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
@@ -435,7 +443,7 @@ function VersusOver({ snapshot, seat, pack }: { snapshot: RoomSnapshot; seat: Se
 /**
  * The answer bar at game over: REMATCH, which needs both players. Once the
  * rival asks, their ask shows beside it; once you have, it waits for them. If
- * the rival leaves, only the way back to the title screen remains.
+ * the rival leaves, only the way back to the hub remains.
  */
 function OverBar({
   snapshot,

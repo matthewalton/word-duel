@@ -50,7 +50,7 @@ For each product decision you take, pick the option you'd recommend and write it
 
 ## Never
 
-- Write to the production database, or run `pnpm db:migrate:prod`. The local `DATABASE_URL` is the `dev` branch of the Neon database: there you may run `pnpm db:migrate` and write test data. A new migration reaches prod only when Matt runs `pnpm db:migrate:prod`, so say under **Needs you** in the PR that it isn't applied to prod yet.
+- Write to the production database, or run `pnpm db:migrate:prod`. The local `DATABASE_URL` is the `dev` branch of the Neon database: there you may run `pnpm db:migrate` and write test data. A PR's migrations reach prod automatically when Matt merges it: the Migration test tries them on a throwaway branch of prod, and the production build applies them (ADR 0014). They must work with the code that is live now (`docs/standards.md` §6).
 - Merge a PR, push to `main`, or force-push.
 - Build an issue that isn't `ready-for-agent`.
 - Open an issue for a new feature. You only open issues for bugs, small polish and pack content, labelled `found-by-bot`, with at most 2 of them open at once. Feature ideas go to Matt as suggestions (see Ideas).
@@ -109,11 +109,12 @@ Each run:
 - The issue's **Demo flow** is recorded at desktop and embedded in the PR (see Demo recording). Phone width too, only if the change is phone-specific UI. If the issue has no Demo flow, the worker records the shortest path from the title screen to the change.
 - Glossary terms are used in code, the PR and commits.
 - Every product decision the worker took is in the issue's **Decisions** as "bot (recommended)".
+- A migration in the PR is additive (`docs/standards.md` §6), passes the Migration test, and is never applied to prod by the worker: it reaches prod when Matt merges. The PR's **Decisions** says "Migration `00NN_…` applies to prod automatically on merge (tested on a Neon branch in Migration test)".
 - The PR body is short, for Matt to read in a minute:
   1. the demo GIF, with the MP4 link under it,
   2. `Closes #n`,
   3. **Decisions**: one line per product decision (what players see or do differently, what was left out), each marked Matt or bot,
-  4. **Needs you**: only if Matt must do something, such as apply a migration to prod,
+  4. **Needs you**: only if Matt must do something,
   5. one line: "Checks pass."
 
   No file-by-file "what changed", no check output, no process notes.
@@ -162,7 +163,11 @@ Matt reviews by watching the demo first, so it has to show the real flow working
 7. Put the GIF at the top of the PR body with `![desktop](https://github.com/matthewalton/word-duel/blob/demos/<branch>/desktop.gif?raw=true)`, and link the MP4 under it.
 8. Keep a copy in `~/word-duel-demos/<branch>/` as well.
 
-The demo runs as a **guest** by default. Account demos are allowed when the Demo flow says to sign in: the dev server uses the `dev` database, so what the demo writes never reaches prod. Only sign in if Orca's browser is already signed in, and never type a password.
+The demo runs as a **guest** by default. When the Demo flow needs an account, use **Demo Player**, the one account for testing and demoing signed-in flows end to end. Never sign in with a real account or type a password.
+
+- `pnpm db:demo-account` makes it on the `dev` database: Demo Player (`demo@example.invalid`, clearly fake), a 7-day session, and four days of word history in the default language pack (missed items with wrong answers and timeouts, enough for the practice chooser, and BEST items). Running it again replaces the account and its history. It refuses to run unless `DATABASE_URL` is the dev branch's host, so it can never write to prod.
+- It prints a session cookie. Set it in Orca's browser for your dev server's port: `orca exec --command "cookies set better-auth.session_token <value> --url http://localhost:<port> --http-only --same-site Lax"`, then reload.
+- Navigating resets the viewport, so set it after `goto`. Orca's tab only has keyboard focus after a real `click`; arrow keys on tabs, toggle groups and menus do nothing until then.
 - If something comes up that's on the short list, or outside the issue's scope, the worker asks you and waits. It doesn't guess.
 
 ## Speccing

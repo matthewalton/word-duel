@@ -1,5 +1,5 @@
 /*
- * Sign-in: the title screen's corner (SIGN IN or the account chip and menu),
+ * Sign-in: the top bar's corner (SIGN IN or the account chip and menu),
  * the sign-in panel and the game-over nudge. Same pixel rules as the rest:
  * 4px borders, square corners, unblurred offset shadows.
  */
@@ -341,6 +341,11 @@
 }
 
 @media (max-width: 640px) {
+  /* The initial alone (board NavSplitHubPhone); the name is the chip's aria-label. */
+  .chipName {
+    display: none;
+  }
+
   .dialog {
     width: 100%;
     max-width: 100%;

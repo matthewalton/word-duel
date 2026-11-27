@@ -29,6 +29,13 @@
       "when": 1795775892918,
       "tag": "0003_versus_rematch",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795797141838,
+      "tag": "0004_versus_minigame",
+      "breakpoints": true
     }
   ]
 }

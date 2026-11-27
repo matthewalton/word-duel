@@ -1,0 +1,1 @@
+ALTER TABLE "versus_room" ADD COLUMN "minigame" text DEFAULT 'word-strike' NOT NULL;

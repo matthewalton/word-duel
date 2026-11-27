@@ -66,13 +66,51 @@ export const strings = {
   stageProgressAria: "Stage {stage}: {n} of {max} right answers to the next stage",
   timeLeftAria: "Time left",
   menu: "MENU",
-  menuAria: "Back to the title screen",
+  menuAria: "Back to the menu",
+  /** The language step, the hub, the area screens and the top bar they share. */
+  nav: {
+    languageHeading: "WHAT ARE YOU LEARNING?",
+    /** Under the heading when every pack is learned from one base language. */
+    languageLead: "Every language is taught from {base}.",
+    languagesLabel: "Language",
+    /** A pack's sample word on its language step tile. */
+    sample: "{target} = {base}",
+    moreSoon: "MORE SOON",
+    remember: "REMEMBER MY LANGUAGE",
+    rememberNote: "Next time, go straight to the hub. Switch from the top bar.",
+    continue: "CONTINUE",
+    /** The language chip's menu. */
+    learning: "LEARNING",
+    rememberDevice: "REMEMBER ON THIS DEVICE",
+    back: "HUB",
+    backAria: "Back to the hub",
+    single: "SINGLE PLAYER",
+    /** The Single player area's page title. */
+    singleTitle: "Single player",
+    allOptions: "ALL OPTIONS",
+    singleAria: "Single player: all options",
+    versus: "VERSUS",
+    versusAria: "Versus: make or join a room",
+    versusLine: "Race a friend on Word Strike. Make a room or type their code.",
+    versusLineShort: "Race a friend in a room.",
+    guestsWelcome: "GUESTS WELCOME",
+    codePlaceholder: "CODE",
+    study: "STUDY",
+    studyAria: "Study: your Wordbook",
+    studyLine: "Your Wordbook and a practice duel of the words you missed.",
+    studyLineGuest: "Your Wordbook keeps every word you miss, once you sign in.",
+    studyLineShort: "Wordbook and missed words.",
+    practise: "PRACTISE",
+    signInToKeep: "SIGN IN TO KEEP WORDS",
+    signInToKeepShort: "SIGN IN TO KEEP",
+    wordbookShort: "WORDBOOK",
+  },
   title: {
-    navHint: "← → or click to choose · Enter to play · V versus",
-    navHintDifficulty: "← → choose · ↑ ↓ difficulty · Enter to play · V versus",
+    navHint: "← → or click to choose · Enter to play · Esc back",
+    navHintDifficulty: "← → choose · ↑ ↓ difficulty · Enter to play · Esc back",
     /** When the pack has content for only one minigame. */
-    navHintOne: "Enter to play · V versus",
-    navHintOneDifficulty: "↑ ↓ difficulty · Enter to play · V versus",
+    navHintOne: "Enter to play · Esc back",
+    navHintOneDifficulty: "↑ ↓ difficulty · Enter to play · Esc back",
     play: "PLAY",
     choose: "Choose {name}",
     playName: "Play {name}",
@@ -132,14 +170,12 @@ export const strings = {
     gameOverNudge: "Sign in to track history.",
   },
   versus: {
-    button: "VERSUS",
-    /** The title bar button on a phone. */
-    buttonShort: "VS",
-    buttonAria: "Versus: race a friend",
     panelTitle: "VERSUS",
-    panelBody: "Race a friend on Word Strike. First right answer breaks a heart.",
+    panelBody: "Race a friend. First right answer breaks a heart.",
     createTitle: "CREATE A ROOM",
-    createBody: "Uses Word Strike's settings. You get a code to send your friend.",
+    createBody: "Pick a minigame. You get a code to send your friend.",
+    /** Under the minigame switch when the pack has no gap sentences at the saved difficulty. */
+    noGaps: "No gap sentences at {difficulty} in this language yet.",
     createButton: "CREATE ROOM",
     joinTitle: "JOIN A ROOM",
     joinBody: "Type the 4-letter code your friend sent you.",
@@ -161,6 +197,8 @@ export const strings = {
     guest: "GUEST",
     ready: "READY",
     joined: "JOINED",
+    /** On the joined player's card: the room's minigame. */
+    joinedMinigame: "PLAYING {minigame}",
     waiting: "WAITING…",
     waitingBody: "Your friend joins with the code below.",
     emptySlot: "Empty slot",
@@ -260,3 +298,6 @@ export const strings = {
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (m, k) => (k in values ? String(values[k]) : m));
 }
+
+/** A score as the four digits the game shows (0110). */
+export const padScore = (score: number) => String(score).padStart(4, "0");
