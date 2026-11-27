@@ -202,7 +202,7 @@ export function TitleScreen({
                             </button>
                           ))}
                         </div>
-                        <p className={t.difficultyBlurb}>{strings.difficulty.blurbs[difficulty]}</p>
+                        <p className={t.difficultyBlurb}>{strings.difficulty.blurbs[m.id]?.[difficulty]}</p>
                       </>
                     )}
                     <div className={t.langRow}>
