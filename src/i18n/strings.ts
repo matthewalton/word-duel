@@ -174,7 +174,7 @@ export const strings = {
     panelBody: "Race a friend. First right answer breaks a heart.",
     createTitle: "CREATE A ROOM",
     createBody: "Pick a minigame. You get a code to send your friend.",
-    /** Under the minigame switch when the pack has no gap sentences at the title screen's difficulty. */
+    /** Under the minigame switch when the pack has no gap sentences at the saved difficulty. */
     noGaps: "No gap sentences at {difficulty} in this language yet.",
     createButton: "CREATE ROOM",
     joinTitle: "JOIN A ROOM",
