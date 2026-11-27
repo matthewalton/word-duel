@@ -207,6 +207,12 @@
     background: var(--accent);
   }
 
+  .toggleItem:disabled {
+    color: var(--muted);
+    background: var(--board);
+    cursor: default;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .primary:active:not(:disabled) {
       transform: none;
