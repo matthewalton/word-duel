@@ -28,6 +28,17 @@ export const strings = {
       },
     } as Record<string, Record<"easy" | "normal" | "hard", string>>,
   },
+  /** The practice duel: only the account's missed items, no best score. */
+  practice: {
+    button: "PRACTISE MISSED WORDS",
+    chooserTitle: "PRACTISE",
+    chooserBody: "A duel of only the words you last missed, from every difficulty. It keeps no best score.",
+    waysLabel: "Which words to practise",
+    tooFew: "Miss {n} to practise",
+    wayAria: "{way}: {n} missed",
+    directionWay: "{from} to {to}",
+    tag: "PRACTICE",
+  },
   start: "START",
   pressEnter: "OR PRESS ENTER",
   countdownGo: "GO!",

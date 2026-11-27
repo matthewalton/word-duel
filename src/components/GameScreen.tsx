@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { DEFAULT_DIFFICULTY, GAME_NAME } from "@/config/game";
 import { getMinigame, MINIGAMES, minigamesFor } from "@/game/minigames";
+import { gapGuard } from "@/game/minigames/GapGuard";
+import { wordStrike } from "@/game/minigames/WordStrike";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import { useAccount } from "@/lib/useAccount";
 import { choosePack, useChosenPack } from "@/lib/packChoice";
+import { readPracticeWay, stripPracticeWay } from "@/lib/practiceLink";
 import { useBestScores } from "@/lib/useBestScores";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
@@ -23,7 +26,8 @@ import { SignInDialog } from "./SignInDialog";
 import t from "./title.module.css";
 import { TitleScreen } from "./TitleScreen";
 
-type View = { name: "title" } | { name: "duel"; run: number };
+/** A practice duel (from the Wordbook) asks only the account's missed items and keeps no best. */
+type View = { name: "title" } | { name: "duel"; run: number; practice?: boolean };
 
 /** Top level: loads the chosen pack, switches between the title screen and a duel. */
 export function GameScreen() {
@@ -40,6 +44,24 @@ export function GameScreen() {
     pack.meta.id,
     minigames.map((m) => m.id),
   );
+
+  // Arriving from the Wordbook's PRACTISE MISSED WORDS: that way's ready
+  // screen, set to practise. Read once the session is known (accounts only;
+  // a guest just sees the title screen), then taken out of the address bar.
+  const [arrived, setArrived] = useState(false);
+  if (!account.pending && !arrived) {
+    setArrived(true);
+    const way = readPracticeWay();
+    const minigame = way === "gap" ? gapGuard : wordStrike;
+    if (way && account.user && minigame.hasContent(pack)) {
+      if (way !== "gap") setDirection(way);
+      setMinigameId(minigame.id);
+      setView({ name: "duel", run: 1, practice: true });
+    }
+  }
+  useEffect(() => {
+    if (arrived) stripPracticeWay();
+  }, [arrived]);
 
   const play = (id: string) => {
     setMinigameId(id);
@@ -96,6 +118,7 @@ export function GameScreen() {
           minigame={getMinigame(minigameId)}
           direction={direction}
           difficulty={difficulty}
+          practice={view.practice ?? false}
           onMenu={() => setView({ name: "title" })}
           gameOverExtra={
             account.pending ? null : account.user ? (
@@ -127,6 +150,7 @@ function Duel({
   minigame,
   direction,
   difficulty,
+  practice,
   onMenu,
   gameOverExtra,
 }: {
@@ -134,11 +158,12 @@ function Duel({
   minigame: Minigame;
   direction: Direction;
   difficulty: Difficulty;
+  practice: boolean;
   onMenu: () => void;
   gameOverExtra?: ReactNode;
 }) {
   const opts: MinigameOptions = useMemo(() => ({ direction, difficulty }), [direction, difficulty]);
-  const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts);
+  const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts, practice);
   const lost = state.outcome != null && state.outcome.reason !== "correct";
   const Controls = minigame.Controls;
 
