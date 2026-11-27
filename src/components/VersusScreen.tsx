@@ -90,7 +90,7 @@ export function VersusScreen({ code }: { code: string }) {
 /** Back to the title screen; `onLeave` gives up the seat first (leaving before a match is won loses it). */
 function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
-    <Link href="/" className={buttonClass(undefined, `${styles.modeButton} ${v.menuLink}`)} aria-label={strings.menuAria} onClick={onLeave}>
+    <Link href="/" className={buttonClass(`${styles.modeButton} ${v.menuLink}`)} aria-label={strings.menuAria} onClick={onLeave}>
       &lt; {label}
     </Link>
   );
@@ -109,7 +109,7 @@ function RoomMessage({ title, body = strings.versus.errorBody, quiet }: { title:
         {!quiet && (
           <>
             <p className={v.messageBody}>{body}</p>
-            <Link href="/" className={buttonClass("primary", styles.goldButton)}>
+            <Link href="/" className={buttonClass(styles.goldButton, "primary")}>
               {strings.versus.backToMenu}
             </Link>
           </>
@@ -475,7 +475,7 @@ function OverBar({
   let note: ReactNode;
   if (rivalGone) {
     note = (
-      <Link ref={backRef} href="/" className={buttonClass("primary", `${styles.goldButton} ${v.overBack}`)} onClick={leave}>
+      <Link ref={backRef} href="/" className={buttonClass(`${styles.goldButton} ${v.overBack}`, "primary")} onClick={leave}>
         {strings.versus.backToMenu}
       </Link>
     );
