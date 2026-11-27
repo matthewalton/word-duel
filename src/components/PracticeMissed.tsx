@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { minigamesFor, practiceCount, promptKindOf } from "@/game/minigames";
 import type { Direction, Minigame, PromptKind } from "@/game/types";
@@ -9,7 +9,8 @@ import { practiceHref } from "@/lib/practiceLink";
 import { useLastMissed } from "@/lib/useLastMissed";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
-import t from "./title.module.css";
+import { Button } from "./ui/Button";
+import { Dialog } from "./ui/Dialog";
 import w from "./wordbook.module.css";
 
 type Way = { kind: PromptKind; label: ReactNode; name: string; count: number };
@@ -61,72 +62,51 @@ export function PracticeMissed({ pack, userId }: { pack: LanguagePack; userId: s
   if (!ways?.some((way) => way.count >= PRACTICE_MIN_MISSED)) return null;
   return (
     <div className={w.practice}>
-      <button type="button" className={w.gold} aria-haspopup="dialog" onClick={() => setOpen(true)}>
+      <Button className={w.gold} aria-haspopup="dialog" onClick={() => setOpen(true)}>
         {strings.practice.button}
-      </button>
+      </Button>
       {open && <Chooser ways={ways} onClose={() => setOpen(false)} />}
     </div>
   );
 }
 
 function Chooser({ ways, onClose }: { ways: Way[]; onClose: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  // Open as a modal on mount; see HowToDialog for why there is no cleanup.
-  useEffect(() => {
-    const dialog = ref.current;
-    if (dialog && !dialog.open) dialog.showModal();
-  }, []);
-
   return (
-    <dialog
-      ref={ref}
-      className={`${t.dialog} ${w.chooser}`}
-      aria-labelledby="practice-title"
+    <Dialog
+      title={strings.practice.chooserTitle}
+      closeLabel={strings.title.close}
       onClose={onClose}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      className={w.chooser}
     >
-      <div className={t.dialogBody}>
-        <div className={t.dialogHead}>
-          <h2 id="practice-title" className={t.dialogTitle}>
-            {strings.practice.chooserTitle}
-          </h2>
-          <button type="button" className={t.close} aria-label={strings.title.close} onClick={onClose}>
-            ×
-          </button>
-        </div>
-        <p className={w.chooserBody}>{strings.practice.chooserBody}</p>
-        <ul className={w.ways} aria-label={strings.practice.waysLabel}>
-          {ways.map((way) => {
-            const aria = fill(strings.practice.wayAria, { way: way.name, n: way.count });
-            const inner = (
-              <>
-                <span className={w.wayName}>{way.label}</span>
-                {way.count < PRACTICE_MIN_MISSED && (
-                  <span className={w.wayHint}>{fill(strings.practice.tooFew, { n: PRACTICE_MIN_MISSED })}</span>
-                )}
-                <span className={w.wayCount}>{way.count}</span>
-              </>
-            );
-            return (
-              <li key={way.kind}>
-                {way.count >= PRACTICE_MIN_MISSED ? (
-                  // A full page load, so the title page reads the way on arrival.
-                  <a href={practiceHref(way.kind)} className={w.way} aria-label={aria}>
-                    {inner}
-                  </a>
-                ) : (
-                  <span className={`${w.way} ${w.wayOff}`} aria-label={aria} aria-disabled="true" role="link">
-                    {inner}
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </dialog>
+      <p className={w.chooserBody}>{strings.practice.chooserBody}</p>
+      <ul className={w.ways} aria-label={strings.practice.waysLabel}>
+        {ways.map((way) => {
+          const aria = fill(strings.practice.wayAria, { way: way.name, n: way.count });
+          const inner = (
+            <>
+              <span className={w.wayName}>{way.label}</span>
+              {way.count < PRACTICE_MIN_MISSED && (
+                <span className={w.wayHint}>{fill(strings.practice.tooFew, { n: PRACTICE_MIN_MISSED })}</span>
+              )}
+              <span className={w.wayCount}>{way.count}</span>
+            </>
+          );
+          return (
+            <li key={way.kind}>
+              {way.count >= PRACTICE_MIN_MISSED ? (
+                // A full page load, so the title page reads the way on arrival.
+                <a href={practiceHref(way.kind)} className={w.way} aria-label={aria}>
+                  {inner}
+                </a>
+              ) : (
+                <span className={`${w.way} ${w.wayOff}`} aria-label={aria} aria-disabled="true" role="link">
+                  {inner}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </Dialog>
   );
 }
