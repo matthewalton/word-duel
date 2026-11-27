@@ -57,7 +57,7 @@ _Avoid_: High score
 ## Versus
 
 **Versus**:
-Two players racing each other on the same Word Strike or Gap Guard prompts in a private room. The first right answer (or pick) the server receives breaks the other player's heart; a wrong one locks that player out of the round, and if nobody is right in time no heart breaks. The last player with hearts wins. Guests and accounts both play; nothing is kept (ADR 0012).
+Two players racing each other on the same Word Strike or Gap Guard prompts in a private room. The first right answer (or pick) the server receives breaks the other player's heart; a wrong one locks that player out of the round, and if nobody is right in time no heart breaks. The last player with hearts wins. Guests and accounts both play; only an account keeps a versus record (ADR 0012).
 _Avoid_: Multiplayer, PvP, online mode
 
 **Room**:
@@ -71,6 +71,10 @@ _Avoid_: Play again (that is solo), replay
 **Leaving**:
 A player leaves a room by pressing MENU, or by being gone (tab closed, connection lost) for 15 seconds. Leaving before a versus duel is won loses it: the other player sees "Rival left: you win". A player who has left can't come back to the room.
 _Avoid_: Quitting, forfeiting, disconnecting
+
+**Versus record**:
+An account's versus duels, read from the account menu's VERSUS RECORD: played, won, lost (and win rate from 5 played), head-to-head against each rival account, and the 10 most recent. A rival who leaves loses; duels against guests count in the totals only. Only duels won after it shipped are in it. Interface text says "match" here, as in "Recent matches".
+_Avoid_: Stats, versus history, ladder
 
 **Room code**:
 The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the versus panel, or opened as the link `/versus/<code>`.

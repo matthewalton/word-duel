@@ -25,6 +25,7 @@ import {
   leave,
   newToken,
   randomCode,
+  recordMatch,
   reload,
   seatOf,
   snapshotOf,
@@ -35,7 +36,8 @@ import {
  * Versus server actions (ADR 0012). Browsers only listen on Ably; everything
  * they do comes through here, and the reply is the room as it now stands.
  * A seat is held by a secret token the browser keeps for the tab; guests and
- * accounts both play, and an account only lends its name.
+ * accounts both play. An account lends the room its name, and its id from
+ * the session, so a won match goes into its versus record.
  */
 
 const code = z.string().refine(isRoomCode);
@@ -48,13 +50,16 @@ const settings = z.strictObject({
   difficulty: z.enum(DIFFICULTIES),
 });
 
-/** The signed-in player's name, cut to fit, or null for a guest. */
-async function playerName(): Promise<string | null> {
+/**
+ * Who takes a seat, from the session only: the account's id and its name,
+ * cut to fit, or nulls for a guest (and if the session can't be read).
+ */
+async function seatPlayer(): Promise<{ userId: string | null; name: string | null }> {
   const session = await getAuth()
     .api.getSession({ headers: await headers() })
     .catch(() => null);
   const name = session?.user.name.trim();
-  return name ? name.slice(0, VERSUS.maxNameLength) : null;
+  return { userId: session?.user.id ?? null, name: name ? name.slice(0, VERSUS.maxNameLength) : null };
 }
 
 type Seated = { room: Room; seat: Seat } | { error: "missing" | "left" };
@@ -99,12 +104,14 @@ export async function createRoom(input: unknown): Promise<{ code: string; token:
   let roomCode = randomCode();
   for (let i = 0; i < 10 && (await findRoom(roomCode, now)); i++) roomCode = randomCode();
   const secret = newToken();
+  const player = await seatPlayer();
   await db.insert(versusRoom).values({
     code: roomCode,
     packId,
     ...room,
     draw: dealDraw(pack, room),
-    p1Name: await playerName(),
+    p1Name: player.name,
+    p1UserId: player.userId,
     p1Token: hashToken(secret),
     expiresAt: new Date(now.getTime() + VERSUS.waitMs),
   });
@@ -119,10 +126,12 @@ export async function joinRoom(rawCode: unknown): Promise<{ ok: true; token: str
   const room = await findRoom(c.data, now);
   if (!room) return { ok: false, error: "missing" };
   const secret = newToken();
+  const player = await seatPlayer();
   const [joined] = await getDb()
     .update(versusRoom)
     .set({
-      p2Name: await playerName(),
+      p2Name: player.name,
+      p2UserId: player.userId,
       p2Token: hashToken(secret),
       joinedAt: now,
       expiresAt: new Date(now.getTime() + VERSUS.matchMs),
@@ -148,6 +157,8 @@ export async function roomState(rawCode: unknown, rawToken: unknown): Promise<Ro
   await advance(room, now);
   const snapshot = await snapshotOf(room, now);
   if (snapshot.seq !== before) await broadcast(snapshot);
+  // Also catches a rival who just left, and retries a write that failed before.
+  await recordMatch(room, snapshot, now);
   return { ok: true, seat: found.seat, snapshot };
 }
 
@@ -171,6 +182,7 @@ export async function answerRound(rawCode: unknown, rawToken: unknown, n: unknow
   const snapshot = await snapshotOf(found.room, now);
   if (snapshot.winner) await closeLater(found.room, now);
   await broadcast(snapshot);
+  await recordMatch(found.room, snapshot, now);
   return { ok: true, seat: found.seat, snapshot };
 }
 
@@ -188,7 +200,11 @@ export async function leaveRoom(rawCode: unknown, rawToken: unknown): Promise<vo
   const now = new Date();
   const found = await seated(rawCode, rawToken, now);
   if ("error" in found) return;
-  if (await leave(found.room, found.seat, now)) await broadcast(await snapshotOf(await reload(found.room), now));
+  if (!(await leave(found.room, found.seat, now))) return;
+  const room = await reload(found.room);
+  const snapshot = await snapshotOf(room, now);
+  await broadcast(snapshot);
+  await recordMatch(room, snapshot, now);
 }
 
 /** A token that lets this seat's browser listen to its room's channel and be present on it, and nothing else. */
