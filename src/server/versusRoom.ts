@@ -19,7 +19,9 @@ import { versusRoom, versusRound } from "./schema";
 export type Room = typeof versusRoom.$inferSelect;
 type RoundRow = typeof versusRound.$inferSelect;
 
-export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
+const sha256Hex = (text: string) => createHash("sha256").update(text).digest("hex");
+/** A seat token as the room stores it. */
+export const hashToken = sha256Hex;
 export const newToken = () => randomBytes(24).toString("base64url");
 
 export function randomCode(): string {
@@ -64,7 +66,7 @@ export function seatOf(room: Room, token: string): Seat | null {
  * players see the same order and it can't be worked out ahead.
  */
 function roundFor(room: Room, row: RoundRow): Round {
-  const rank = (option: string) => hashToken(`${room.id}:${room.match}:${row.n}:${option}`);
+  const rank = (option: string) => sha256Hex(`${room.id}:${room.match}:${row.n}:${option}`);
   return roomRound(getPack(room.packId), settingsOf(room), row.promptId, rank);
 }
 
