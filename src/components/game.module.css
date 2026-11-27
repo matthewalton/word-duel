@@ -877,7 +877,8 @@
   border-color: var(--player);
 }
 
-.answerInput:disabled {
+.answerInput:disabled,
+.answerInput[aria-disabled="true"] {
   opacity: 0.6;
 }
 

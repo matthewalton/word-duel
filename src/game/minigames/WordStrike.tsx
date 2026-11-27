@@ -72,8 +72,11 @@ function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }:
         dir={round.answerLang.dir}
         aria-label={strings.inputLabel}
         placeholder={round.hint}
-        disabled={!inGame || locked}
+        // Locked out of a versus round, the input stays enabled (read-only) so
+        // it keeps focus and a phone keyboard stays open for the next round.
+        disabled={!inGame}
         readOnly={!editable}
+        aria-disabled={locked}
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
