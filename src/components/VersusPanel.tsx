@@ -60,6 +60,10 @@ export function VersusPanel({
 
   const go = (roomCode: string, token: string) => {
     keepSeat(roomCode, token);
+    // Close the modal first: the title page stays mounted (hidden) after the
+    // move, and an open modal would leave the room page inert, so the answer
+    // box couldn't take typing.
+    ref.current?.close();
     router.push(`/versus/${roomCode}`);
   };
 
