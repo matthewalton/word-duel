@@ -1,0 +1,166 @@
+# Migration test (ADR 0014): every PR's migrations are applied to a throwaway Neon branch made from
+# prod, checked there, and the branch is deleted again, even when a step fails. A PR that changes
+# nothing under drizzle/ or src/server/schema.ts passes in seconds without making a branch.
+name: Migration test
+
+on:
+  pull_request:
+
+# A new push cancels the PR's earlier run; its delete step still runs.
+concurrency:
+  group: migrations-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  migrations:
+    name: Migration test
+    # Secrets aren't given to PRs from forks, and the branch copies prod's data: this repo's PRs only.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        # Adds pipefail, so a failing command piped into tee still fails its step.
+        shell: bash
+    env:
+      BRANCH: ci-pr-${{ github.event.pull_request.number }}-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      # The PR merged into main: the migrations are tested on top of everything main already has.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Look at the PR's migration changes
+        id: changes
+        run: |
+          # HEAD is the merge commit, and its first parent is main, so this is exactly the PR's diff.
+          changes=$(git diff --name-status HEAD^1 HEAD -- drizzle src/server/schema.ts)
+          if [ -z "$changes" ]; then
+            echo "No migration changes: skipped"
+            echo "test=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "$changes"
+          # A migration file already on main that this PR edits, deletes or renames. The journal
+          # always changes when one is added, so it is left out.
+          edited=$(echo "$changes" | awk '$1 !~ /^A/ && $2 ~ /^drizzle\// && $2 != "drizzle/meta/_journal.json" { print $2 }')
+          if [ -n "$edited" ]; then
+            echo "$edited"
+            echo "::error::Migrations already on main are never edited: add a new one with \`pnpm db:generate\`"
+            exit 1
+          fi
+          # Breaking changes in a new migration: a warning, not a failure.
+          for file in $(echo "$changes" | awk '$1 ~ /^A/ && $2 ~ /^drizzle\/.*\.sql$/ { print $2 }'); do
+            if grep -inE '\bDROP\b|\bRENAME\b|ALTER COLUMN .* (SET DATA )?TYPE\b' "$file"; then
+              echo "::warning file=$file::This migration drops, renames or changes the type of something. Migrations must work with the code that is live now (docs/standards.md section 6): make a destructive change in two PRs."
+            fi
+          done
+          echo "test=true" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@v6
+        if: steps.changes.outputs.test == 'true'
+
+      - uses: actions/setup-node@v5
+        if: steps.changes.outputs.test == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        if: steps.changes.outputs.test == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Look up prod's host
+        if: steps.changes.outputs.test == 'true'
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+        run: |
+          api="https://console.neon.tech/api/v2/projects/$NEON_PROJECT_ID"
+          auth="Authorization: Bearer $NEON_API_KEY"
+          main_id=$(curl -fsS -H "$auth" "$api/branches" | jq -r '.branches[] | select(.name == "main") | .id')
+          prod_host=$(curl -fsS -H "$auth" "$api/endpoints" | jq -r --arg id "$main_id" '.endpoints[] | select(.branch_id == $id and .type == "read_write") | .host')
+          if [ -z "$prod_host" ]; then
+            echo "::error::Couldn't find the main branch's host in Neon project $NEON_PROJECT_ID"
+            exit 1
+          fi
+          echo "Prod host: $prod_host"
+          echo "NEON_PROD_HOST=$prod_host" >> "$GITHUB_ENV"
+
+      - name: Set the branch to expire in an hour
+        id: expiry
+        if: steps.changes.outputs.test == 'true'
+        run: echo "at=$(date -u --date '+1 hour' +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Create the throwaway Neon branch
+        id: branch
+        if: steps.changes.outputs.test == 'true'
+        uses: neondatabase/create-branch-action@v6
+        with:
+          api_key: ${{ secrets.NEON_API_KEY }}
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          parent_branch: main
+          branch_name: ${{ env.BRANCH }}
+          # Removed by Neon after an hour in case the delete step never runs.
+          expires_at: ${{ steps.expiry.outputs.at }}
+
+      - name: Use the throwaway branch
+        if: steps.changes.outputs.test == 'true'
+        env:
+          DB_URL: ${{ steps.branch.outputs.db_url }}
+          DB_PASSWORD: ${{ steps.branch.outputs.password }}
+          DB_HOST: ${{ steps.branch.outputs.db_host }}
+        run: |
+          echo "::add-mask::$DB_PASSWORD"
+          echo "::add-mask::$DB_URL"
+          echo "Created Neon branch $BRANCH from main at $DB_HOST"
+          {
+            echo "DATABASE_URL=$DB_URL"
+            echo "DATABASE_URL_UNPOOLED=$DB_URL"
+            echo "CI_DB_HOST=$DB_HOST"
+          } >> "$GITHUB_ENV"
+
+      - name: Migrate the throwaway branch
+        if: steps.changes.outputs.test == 'true'
+        run: pnpm db:migrate
+
+      - name: Migrate again, which finds nothing to apply
+        if: steps.changes.outputs.test == 'true'
+        run: |
+          pnpm db:migrate | tee "$RUNNER_TEMP/migrate-again.log"
+          if ! grep -q "No pending migrations" "$RUNNER_TEMP/migrate-again.log"; then
+            echo "::error::The second db:migrate still found migrations to apply"
+            exit 1
+          fi
+
+      - name: Check drizzle/ against the schema
+        if: steps.changes.outputs.test == 'true'
+        run: |
+          pnpm exec drizzle-kit check
+          pnpm db:generate
+          if [ -n "$(git status --porcelain drizzle)" ]; then
+            git status --porcelain drizzle
+            echo "::error::src/server/schema.ts and drizzle/ disagree: run \`pnpm db:generate\` and commit the new migration"
+            exit 1
+          fi
+
+      - name: Test
+        if: steps.changes.outputs.test == 'true'
+        run: pnpm test
+
+      # Runs whenever the create step ran, even if it or a later step failed or the run was cancelled.
+      - name: Delete the throwaway Neon branch
+        id: delete
+        if: always() && steps.branch.outcome != 'skipped'
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          api_key: ${{ secrets.NEON_API_KEY }}
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch: ${{ env.BRANCH }}
+
+      - name: Report the deletion
+        if: always() && steps.delete.outcome == 'success'
+        run: echo "Deleted Neon branch $BRANCH"
