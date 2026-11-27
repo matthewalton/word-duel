@@ -78,3 +78,8 @@ export function MenuRadioGroup(props: ComponentProps<typeof Radix.RadioGroup>) {
 export function MenuRadioItem({ className, ...props }: ComponentProps<typeof Radix.RadioItem>) {
   return <Radix.RadioItem className={`${u.menuItem} ${className ?? ""}`} {...props} />;
 }
+
+/** An item that switches a setting on or off (REMEMBER ON THIS DEVICE); data-state is checked or unchecked. */
+export function MenuCheckboxItem({ className, ...props }: ComponentProps<typeof Radix.CheckboxItem>) {
+  return <Radix.CheckboxItem className={`${u.menuItem} ${className ?? ""}`} {...props} />;
+}
