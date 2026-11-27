@@ -259,7 +259,7 @@ function findItem(pack: LanguagePack, itemId: string): Item | undefined {
 function whenText(d: Date | null): string {
   if (!d) return s.none;
   const n = daysSince(d);
-  return n === 0 ? s.today : n === 1 ? s.yesterday : fill(s.daysAgo, { n });
+  return n === 0 ? strings.dates.today : n === 1 ? strings.dates.yesterday : fill(strings.dates.daysAgo, { n });
 }
 
 const missesText = (n: number) => (n === 1 ? s.oneMiss : fill(s.misses, { n }));

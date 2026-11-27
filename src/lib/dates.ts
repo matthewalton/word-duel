@@ -10,6 +10,6 @@ export function daysSince(d: Date): number {
 
 /** TODAY, or the day and short month ("26 NOV"). */
 export function dateText(d: Date): string {
-  if (daysSince(d) === 0) return strings.wordbook.today;
+  if (daysSince(d) === 0) return strings.dates.today;
   return new Intl.DateTimeFormat(UI_LANG, { day: "numeric", month: "short" }).format(d).toUpperCase();
 }

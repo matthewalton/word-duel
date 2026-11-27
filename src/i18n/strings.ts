@@ -131,6 +131,12 @@ export const strings = {
     signOut: "SIGN OUT",
     gameOverNudge: "Sign in to track history.",
   },
+  /** Dates as the wordbook and the versus record show them. */
+  dates: {
+    today: "TODAY",
+    yesterday: "YESTERDAY",
+    daysAgo: "{n} DAYS AGO",
+  },
   versusRecord: {
     /** The account menu item, and the dialog's title. */
     title: "VERSUS RECORD",
@@ -246,9 +252,6 @@ export const strings = {
     lastWhen: "LAST {when}",
     percent: "{n}%",
     rightOf: "{right} OF {total} RIGHT",
-    today: "TODAY",
-    yesterday: "YESTERDAY",
-    daysAgo: "{n} DAYS AGO",
     byPrompt: "BY PROMPT",
     promptKinds: {
       toTarget: "Type it in {language}",
