@@ -19,9 +19,10 @@ function subscribe(onChange: () => void) {
   };
 }
 
+/** Pinch-zoom shrinks the visual viewport too; times its scale, only the keyboard counts. */
 const visibleHeight = () => {
   const vv = window.visualViewport;
-  return vv ? Math.round(vv.height) : null;
+  return vv ? Math.round(vv.height * vv.scale) : null;
 };
 
 /** `null` means not known: on the server, or in a browser without `visualViewport`. */
