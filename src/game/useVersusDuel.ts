@@ -61,6 +61,15 @@ export function useVersusDuel({
       const first = s.rounds[0];
       if (!first) return;
 
+      // A player left before the match was won: it ends now, mid-round or not.
+      if (s.forfeit) {
+        if (!d.over) {
+          dispatch({ type: "gameOver", forfeit: true });
+          d.over = true;
+        }
+        return;
+      }
+
       if (!d.countdown) {
         dispatch({ type: "countdown" });
         d.countdown = true;

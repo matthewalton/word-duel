@@ -578,13 +578,54 @@ dialog.panel {
   font-weight: 700;
 }
 
+/* The answer bar at game over: a note or the rival's ask on the left, REMATCH on the right. */
 .overBar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: calc(16px * var(--s));
 }
 
 .overBar a {
   text-decoration: none;
+}
+
+.overNote {
+  margin-right: auto;
+  font-family: var(--font-words);
+  font-size: calc(20px * var(--s));
+  color: var(--muted);
+}
+
+.overAsk {
+  margin-right: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(20px * var(--s));
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--rival-ink);
+}
+
+.overBar .overBack {
+  margin-right: auto;
+}
+
+.rematchButton {
+  min-width: calc(220px * var(--s));
+  min-height: calc(60px * var(--s));
+  padding: 0 calc(28px * var(--s));
+  font-size: calc(24px * var(--s));
+}
+
+/* Asked and waiting for the rival, or the rival has gone: the button stays, dimmed. */
+.rematchButton:disabled {
+  color: var(--muted);
+  background: var(--strip);
+  border-color: var(--muted);
+  box-shadow: 4px 4px 0 var(--muted);
+  opacity: 1;
 }
 
 /* ---------- Phone ---------- */
@@ -751,9 +792,36 @@ dialog.panel {
     min-height: 52px;
   }
 
+  /* Stacked: the note or ask above a full-width button, as on the phone board. */
+  .overBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .overNote {
+    display: none;
+  }
+
+  .overAsk {
+    margin: 0;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  .overBar .overBack {
+    margin: 0;
+  }
+
   .overBar a {
     flex: 1;
     text-align: center;
+  }
+
+  .rematchButton {
+    min-width: 0;
+    min-height: 54px;
+    font-size: 22px;
   }
 }
 

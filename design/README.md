@@ -33,7 +33,7 @@ The code in `src/` is the source of truth for what shipped; these boards show th
 | 16 · wordbook rows | 3 · accordion (`WordbookRowExpand`) | |
 | 17 · COMEBACK | B · band, sparks off the word, the stage chunk glints (`ComebackSparks`) | |
 | 18 · difficulty | A · three-way switch (`DifficultyRow`, `DifficultyPhone`) | |
-| 19 · versus | A · VERSUS in the title bar (`VersusTitleBar`), waiting 2 · player cards (`VersusWaitSlots`), the versus duel (`VersusDuel`), game over 1 · in the duel frame (`VersusOverPanel`), and their phone boards | REMATCH and LEAVE come with #36 |
+| 19 · versus | A · VERSUS in the title bar (`VersusTitleBar`), waiting 2 · player cards (`VersusWaitSlots`), the versus duel (`VersusDuel`), game over 1 · in the duel frame (`VersusOverPanel`), and their phone boards | REMATCH came with #36 (rival-asked state in the boards' Tweaks) |
 
 ## Keeping it current
 

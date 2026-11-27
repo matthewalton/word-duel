@@ -41,22 +41,33 @@ export interface RoomSnapshot {
   /** Every round dealt so far, oldest first; the newest may not have started yet. */
   rounds: VersusRound[];
   hearts: Record<Seat, number>;
-  /** Set once a player's last heart breaks. */
+  /** Set once a player's last heart breaks, or the other player leaves mid-match. */
   winner: Seat | null;
+  /** The seat that lost the match by leaving or dropping before it was won, if any. */
+  forfeit: Seat | null;
+  /** Counts the room's matches, from 1; a rematch adds one. */
+  match: number;
+  /** Who has pressed REMATCH since the match ended. */
+  rematch: Seat[];
+  /** Who has left the room. */
+  left: Seat[];
   /** Grows with every change, so a browser can drop a snapshot older than the one it has. */
   seq: number;
   /** The server's clock when this snapshot was made. */
   serverNow: number;
 }
 
-/** Why a room can't be opened. */
-export type RoomError = "missing" | "full";
+/** Why a room can't be opened. `left`: this seat left (or dropped out of) the room. */
+export type RoomError = "missing" | "full" | "left";
 
 /** A seat's view of a room. */
 export type RoomView = { ok: true; seat: Seat; snapshot: RoomSnapshot } | { ok: false; error: RoomError };
 
 /** The Ably channel a room's snapshots go out on. */
 export const roomChannel = (code: string) => `versus:${code}`;
+
+/** The Ably client id a seat's browser listens and is present as. */
+export const seatClientId = (code: string, seat: Seat) => `${roomChannel(code)}:${seat}`;
 
 /** Upper-cases a typed code and drops anything that can't be in one. */
 export function cleanCode(raw: string): string {

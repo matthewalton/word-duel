@@ -1,10 +1,10 @@
 import "server-only";
 
 /**
- * Ably over its REST API (ADR 0012): the server publishes room snapshots and
- * hands browsers short-lived tokens that may only subscribe to their room's
- * channel. No SDK: two HTTP calls cover it, and browsers listen over
- * server-sent events.
+ * Ably over its REST API (ADR 0012): the server publishes room snapshots,
+ * hands browsers short-lived tokens that may only subscribe to and be present
+ * on their room's channel, and asks who is present. No SDK: three HTTP calls
+ * cover it, and browsers speak Ably's protocol over a plain WebSocket.
  */
 const REST = "https://rest.ably.io";
 /** The server publishes as an identified client, which the key requires. */
@@ -19,6 +19,8 @@ function apiKey(): string {
 }
 
 const auth = (key: string) => `Basic ${Buffer.from(key).toString("base64")}`;
+/** The key needs every client identified, the server included. */
+const asServer = { "x-ably-clientid": Buffer.from(SERVER_CLIENT_ID).toString("base64") };
 
 /** Publishes one message whose data is JSON. Throws if Ably refuses it. */
 export async function publish(channel: string, name: string, data: unknown): Promise<void> {
@@ -28,7 +30,7 @@ export async function publish(channel: string, name: string, data: unknown): Pro
     headers: {
       authorization: auth(key),
       "content-type": "application/json",
-      "x-ably-clientid": Buffer.from(SERVER_CLIENT_ID).toString("base64"),
+      ...asServer,
     },
     body: JSON.stringify({ name, data: JSON.stringify(data) }),
     cache: "no-store",
@@ -36,8 +38,19 @@ export async function publish(channel: string, name: string, data: unknown): Pro
   if (!res.ok) throw new Error(`Ably publish failed: ${res.status}`);
 }
 
+/** The client ids present on a channel right now. Throws if Ably can't say. */
+export async function presentClients(channel: string): Promise<Set<string>> {
+  const res = await fetch(`${REST}/channels/${encodeURIComponent(channel)}/presence`, {
+    headers: { authorization: auth(apiKey()), ...asServer },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Ably presence failed: ${res.status}`);
+  const members = (await res.json()) as { clientId?: string }[];
+  return new Set(members.flatMap((m) => (m.clientId ? [m.clientId] : [])));
+}
+
 /**
- * A token that may subscribe to one channel and nothing else. The key needs
+ * A token that may subscribe to one channel and enter its presence, nothing else. The key needs
  * every client identified, so the token carries `clientId` (a room seat).
  */
 export async function subscribeToken(channel: string, clientId: string): Promise<{ token: string; expires: number }> {
@@ -48,7 +61,7 @@ export async function subscribeToken(channel: string, clientId: string): Promise
     headers: { authorization: auth(key), "content-type": "application/json" },
     body: JSON.stringify({
       keyName,
-      capability: JSON.stringify({ [channel]: ["subscribe"] }),
+      capability: JSON.stringify({ [channel]: ["subscribe", "presence"] }),
       clientId,
       ttl: TOKEN_TTL_MS,
       timestamp: Date.now(),
