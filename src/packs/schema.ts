@@ -160,6 +160,12 @@ export const matchingSettingsSchema = z.strictObject({
    * and the noun "sleep" stay different prompts.
    */
   ignoreWordClassMarkers: z.record(z.string(), z.array(text)).optional(),
+  /**
+   * Leading words that join the next word with an apostrophe instead of a
+   * space, keyed like `ignoreLeadingWords`, e.g. { "fr": ["l'"] } so "l'eau",
+   * "leau" and "eau" all match "l'eau".
+   */
+  ignoreElidedWords: z.record(z.string(), z.array(text.endsWith("'"))).optional(),
 });
 
 /** One pack's files, as the registry and the check script see them. */
