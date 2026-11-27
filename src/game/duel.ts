@@ -56,7 +56,8 @@ export type DuelAction =
   | { type: "start"; round: Round; at: number; fuseMs?: number }
   /** `loser` is null when no heart breaks (versus: nobody answered right). */
   | { type: "resolve"; loser: Side | null; reason: Reason; given?: string; at: number }
-  | { type: "gameOver" }
+  /** `forfeit`: versus, the other player left mid-match, so the duel ends wherever it is. */
+  | { type: "gameOver"; forfeit?: boolean }
   | { type: "next"; round: Round; at: number; fuseMs?: number };
 
 /** The rounds the player lost, for the review list at game over. */
@@ -204,6 +205,7 @@ export function duelReducer(state: DuelState, action: DuelAction): DuelState {
     }
 
     case "gameOver":
+      if (action.forfeit && state.versus && state.phase !== "gameOver") return { ...state, phase: "gameOver" };
       if (state.phase !== "resolving" || !state.outcome?.gameOver) return state;
       return { ...state, phase: "gameOver" };
 
