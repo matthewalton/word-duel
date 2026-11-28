@@ -9,12 +9,15 @@ export const PACK_STORAGE_KEY = "word-duel:pack";
 
 /**
  * Browser storage keys for the other settings (ADR 0011): whether `/` skips
- * the language step, and the difficulty and direction quick PLAY uses.
+ * the language step, the difficulty and direction quick PLAY uses, and
+ * whether sound effects play.
  */
 export const SETTING_KEYS = {
   rememberPack: "word-duel:remember-pack",
   difficulty: "word-duel:difficulty",
   direction: "word-duel:direction",
+  /** Sound effects on or off (ADR 0016). */
+  sound: "word-duel:sound",
 } as const;
 
 /**
