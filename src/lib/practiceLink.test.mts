@@ -4,10 +4,15 @@
  *   pnpm test
  */
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { beforeEach, describe, it } from "node:test";
 import { startPractice, takePracticeWay } from "./practiceLink.ts";
 
 describe("practice way", () => {
+  // The way lives in a module variable: clear what an earlier test left.
+  beforeEach(() => {
+    takePracticeWay();
+  });
+
   it("is null when no practice link was pressed", () => {
     assert.equal(takePracticeWay(), null);
   });
