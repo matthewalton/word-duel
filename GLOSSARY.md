@@ -226,5 +226,9 @@ An account's running totals for one item and prompt kind: right, wrong and too s
 _Avoid_: Word score, mastery
 
 **Wordbook**:
-The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the Study area, the account menu and game over; a guest who opens it is asked to sign in.
+The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the Study area, the account menu and game over; a guest who opens it is asked to sign in. The MISSED tab's EXPORT TO ANKI saves its items as an Anki export.
 _Avoid_: Word history page (word history is the data), mistakes, review list (that is game over's list)
+
+**Anki export**:
+A text file of the Wordbook's MISSED tab, in its current order, that Anki imports directly (File › Import) into the deck `<game name>::<target language>`. It holds one **item card** per missed item (front the target, back every accepted answer or the grammar description) and, for an item missed in Gap Guard, one **gap card** per gap sentence testing it (front the sentence with its blank and translation, back the answer and the filled sentence). Each card's id comes from the item or prompt id, so exporting again updates the same notes. Built in the browser, for accounts only.
+_Avoid_: Deck, flashcard export, download

@@ -5,6 +5,7 @@ import { useEffect, useId, useState, type ReactNode } from "react";
 import { WORDBOOK } from "@/config/game";
 import { langText, type PromptKind } from "@/game/types";
 import { fill, strings, UI_LANG } from "@/i18n/strings";
+import { ankiExport } from "@/lib/ankiExport";
 import { useChosenPack } from "@/lib/packChoice";
 import { dateText, daysSince } from "@/lib/dates";
 import { useAccount } from "@/lib/useAccount";
@@ -221,9 +222,16 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
         ) : (
           <>
             {tab === "missed" && <PracticeMissed pack={pack} userId={userId} />}
-            <p className={w.intro}>
-              {tab === "missed" ? s.missedIntro : fill(s.bestIntro, { n: WORDBOOK.bestMinAnswers })}
-            </p>
+            {tab === "missed" ? (
+              <div className={w.introRow}>
+                <p className={w.intro}>{s.missedIntro}</p>
+                <Button className={w.plain} onClick={() => download(ankiExport(pack, entries, new Date()))}>
+                  {s.ankiExport}
+                </Button>
+              </div>
+            ) : (
+              <p className={w.intro}>{fill(s.bestIntro, { n: WORDBOOK.bestMinAnswers })}</p>
+            )}
             <ol className={w.list}>
               {entries.map((e) => (
                 <Row
@@ -244,6 +252,17 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
       </TabPanel>
     </Tabs>
   );
+}
+
+/** Saves a text file through the browser's own download. */
+function download({ fileName, text }: { fileName: string; text: string }) {
+  const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  // Revoked once the click has handed the file to the download.
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 function whenText(d: Date | null): string {
