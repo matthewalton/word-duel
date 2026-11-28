@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DIFFICULTIES } from "@/config/game";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, padScore, strings } from "@/i18n/strings";
+import { wrapIndex } from "@/lib/swipe";
+import { useSwipe } from "@/lib/useSwipe";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
@@ -17,7 +19,8 @@ import { ToggleGroup } from "./ui/ToggleGroup";
  * The minigame cards, the Single player area's contents (board NavKitCards):
  * one card per minigame, one of them active. The active card grows and shows
  * details; the others keep their preview with the lights off. On a phone only
- * the active card shows, as a carousel.
+ * the active card shows, as a carousel. A swipe moves between cards like the
+ * arrow keys.
  */
 export function MinigameCards({
   pack,
@@ -69,7 +72,11 @@ export function MinigameCards({
   }, [activeIndex]);
 
   const step = (delta: number) =>
-    setActiveIndex((i) => (i + delta + minigames.length) % minigames.length);
+    setActiveIndex((i) => wrapIndex(i, delta, minigames.length));
+
+  // A touch swipe on the cards moves like the arrow keys; off while the
+  // how-to panel is open, and with one minigame there is nowhere to go.
+  const swipe = useSwipe(step, !helpFor && minigames.length > 1);
 
   // Up and down move along the switch and stop at its ends.
   const stepDifficulty = (delta: number) => {
@@ -107,6 +114,7 @@ export function MinigameCards({
       <div
         className={`${t.cards} ${minigames.length === 1 ? t.cardsOne : ""}`}
         style={{ "--cards": Math.max(2, minigames.length) } as CSSProperties}
+        {...swipe}
       >
         {minigames.map((m, i) => {
           const on = i === activeIndex;
