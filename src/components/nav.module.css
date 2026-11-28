@@ -143,6 +143,14 @@
   background: var(--accent);
 }
 
+.areaVersus {
+  background: var(--rival);
+}
+
+.areaStudy {
+  background: var(--player);
+}
+
 /* The language chip: the target language's own name, opening a menu of packs. */
 .langButton {
   flex: none;

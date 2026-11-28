@@ -27,7 +27,7 @@ Without a `.env.local` the game runs as guest-only; SIGN IN shows but can't comp
 | `src/game/duel.ts` | Pure duel reducer shared by every minigame |
 | `src/game/useDuel.ts` | Solo controller: fuse timer, CPU rival, best scores |
 | `src/game/minigames/` | One module per minigame, plus the registry |
-| `src/components/` | Language step, hub, Single player area and top bar, how-to panel, duel screen, HUD, prompt board, effects, sign-in panel and account corner |
+| `src/components/` | Language step, hub, the Single player, Versus and Study areas and their top bar, how-to panel, duel screen, HUD, prompt board, effects, sign-in panel and account corner |
 | `src/components/ui/` | Shared controls: Button, Choice button, Text input, Dialog, Menu, Toggle group, Tabs, Panel, and the pixel heart (Radix behaviour, our pixel styles; ADR 0013) |
 | `src/lib/progress.ts` | Best scores, for accounts only: a guest has none |
 | `src/lib/useAccount.ts` | Session in the browser, loading account best scores, sign in and out |

@@ -96,7 +96,7 @@ export const strings = {
     guestsWelcome: "GUESTS WELCOME",
     codePlaceholder: "CODE",
     study: "STUDY",
-    studyAria: "Study: your Wordbook",
+    studyAria: "Study: your Wordbook and practice",
     studyLine: "Your Wordbook and a practice duel of the words you missed.",
     studyLineGuest: "Your Wordbook keeps every word you miss, once you sign in.",
     studyLineShort: "Wordbook and missed words.",
@@ -104,6 +104,40 @@ export const strings = {
     signInToKeep: "SIGN IN TO KEEP WORDS",
     signInToKeepShort: "SIGN IN TO KEEP",
     wordbookShort: "WORDBOOK",
+  },
+  /** The Versus area at `/versus`; its room parts share `versus` below. */
+  versusArea: {
+    /** The page title. */
+    title: "Versus",
+    lead: "Race a friend on Word Strike or Gap Guard. The first right answer breaks the other player's heart.",
+    recordGuest: "Guests can make and join rooms. Sign in to keep your wins, losses and the rivals you've raced.",
+    recordGuestShort: "Sign in to keep your wins and losses.",
+    recordFailed: "Your versus record didn't load. Come back to this screen to try again.",
+    wins: "W {n}",
+    losses: "L {n}",
+    versusRival: "vs {name}",
+    fullRecord: "FULL RECORD",
+  },
+  /** The Study area at `/study`. */
+  studyArea: {
+    /** The page title. */
+    title: "Study",
+    guestTitle: "STUDY NEEDS AN ACCOUNT",
+    guestBody: "Sign in and every word you miss goes into your Wordbook, ready to practise. Guests can still play everything else.",
+    wordbookBody: "Your missed and best words, with how often you got each one right.",
+    latestMissed: "Latest missed words",
+    missedTimes: "MISSED {n}",
+    counts: "MISSED {missed} · BEST {best}",
+    openWordbook: "OPEN WORDBOOK",
+    practiseTitle: "PRACTISE MISSED",
+    practiseBody: "A practice duel made only of words you missed. No best score, just the words.",
+    nothingKept: "Nothing kept yet",
+    missed: "{n} missed words",
+    needs: "{n} missed, needs {min}",
+    practise: "PRACTISE",
+    practiseAria: "Practise {way}",
+    /** A Word Strike way, read out: its minigame, then its direction. */
+    minigameWay: "{minigame}, {way}",
   },
   title: {
     navHint: "← → or click to choose · Enter to play · Esc back",
@@ -199,7 +233,6 @@ export const strings = {
   },
   versus: {
     panelTitle: "VERSUS",
-    panelBody: "Race a friend. First right answer breaks a heart.",
     createTitle: "CREATE A ROOM",
     createBody: "Pick a minigame. You get a code to send your friend.",
     /** Under the minigame switch when the pack has no gap sentences at the saved difficulty. */

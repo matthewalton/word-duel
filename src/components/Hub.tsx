@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { VERSUS } from "@/config/game";
 import { cleanCode } from "@/game/versus";
@@ -14,34 +15,31 @@ import type { SoloMenuProps } from "./SoloScreen";
 import { TopBar } from "./TopBar";
 import { Button } from "./ui/Button";
 import { Panel } from "./ui/Panel";
-import { VersusPanel } from "./VersusPanel";
 
 const s = strings.nav;
 
 /**
  * The hub (board NavSplitHub): SINGLE PLAYER with a quick PLAY per minigame,
  * VERSUS with CREATE ROOM and a code box, and STUDY. Each panel's heading is
- * its door: the Single player area, the versus dialog and the Wordbook (the
- * Versus and Study area screens come later).
+ * its door to that area's screen.
  */
 export function Hub({ pack, minigames, best, account, settings, play, openSignIn }: SoloMenuProps) {
-  const [versusOpen, setVersusOpen] = useState(false);
+  const router = useRouter();
   const { direction, difficulty } = settings;
   const { base, target } = pack.meta;
   const [from, to] = direction === "toTarget" ? [base, target] : [target, base];
 
-  // V opens versus, unless typing or a panel or a menu is open.
+  // V opens the Versus area, unless typing or a dialog or a menu is open.
   useEffect(() => {
-    if (versusOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "v" || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
       if (e.target instanceof Element && e.target.closest('input, textarea, [role="dialog"], [role="menu"]')) return;
       e.preventDefault();
-      setVersusOpen(true);
+      router.push("/versus");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [versusOpen]);
+  }, [router]);
 
   return (
     <div className={n.screen}>
@@ -91,11 +89,11 @@ export function Hub({ pack, minigames, best, account, settings, play, openSignIn
           </div>
         </Panel>
 
-        <QuickVersus settings={settings} pack={pack} onOpen={() => setVersusOpen(true)} guest={!account.pending && !account.user} />
+        <QuickVersus settings={settings} pack={pack} guest={!account.pending && !account.user} />
 
         <section className={`${n.side} ${n.study}`} aria-label={s.study}>
           <h2 className={n.sideHead}>
-            <Link href="/wordbook" className={n.sideDoor} aria-label={s.studyAria}>
+            <Link href="/study" className={n.sideDoor} aria-label={s.studyAria}>
               <BookIcon className={n.sideIcon} />
               {s.study}
               <span className={n.sideArrow} aria-hidden="true">
@@ -110,7 +108,7 @@ export function Hub({ pack, minigames, best, account, settings, play, openSignIn
           {!account.pending &&
             (account.user ? (
               <>
-                <Link href="/wordbook" className={`${n.sideAction} ${n.sideActionPrimary}`}>
+                <Link href="/study" className={`${n.sideAction} ${n.sideActionPrimary}`}>
                   {s.practise}
                 </Link>
                 <span className={n.sideMeta}>{s.wordbookShort}</span>
@@ -125,24 +123,16 @@ export function Hub({ pack, minigames, best, account, settings, play, openSignIn
             ))}
         </section>
       </div>
-      {versusOpen && (
-        <VersusPanel pack={pack} direction={direction} difficulty={difficulty} onClose={() => setVersusOpen(false)} />
-      )}
     </div>
   );
 }
 
-/** The hub's VERSUS panel: its door opens the versus dialog; CREATE ROOM and JOIN work from here. */
-function QuickVersus({
-  pack,
-  settings,
-  guest,
-  onOpen,
-}: Pick<SoloMenuProps, "pack" | "settings"> & { guest: boolean; onOpen: () => void }) {
+/** The hub's VERSUS panel: its door opens the Versus area; CREATE ROOM and JOIN work from here. */
+function QuickVersus({ pack, settings, guest }: Pick<SoloMenuProps, "pack" | "settings"> & { guest: boolean }) {
   const [code, setCode] = useState("");
   const { busy, error, clearError, create, join } = useRoomActions({
     pack,
-    // The hub makes a Word Strike room; the versus dialog offers the other minigames.
+    // The hub makes a Word Strike room; the Versus area offers the other minigames.
     minigame: "word-strike",
     direction: settings.direction,
     difficulty: settings.difficulty,
@@ -151,7 +141,7 @@ function QuickVersus({
   return (
     <section className={`${n.side} ${n.versus}`} aria-label={s.versus}>
       <h2 className={n.sideHead}>
-        <Button className={n.sideDoor} aria-label={s.versusAria} onClick={onOpen}>
+        <Link href="/versus" className={n.sideDoor} aria-label={s.versusAria}>
           <svg viewBox="0 0 7 6" className={n.sideIcon} shapeRendering="crispEdges" aria-hidden="true">
             <path fill="var(--rival)" d={HEART_PATH} />
           </svg>
@@ -159,7 +149,7 @@ function QuickVersus({
           <span className={n.sideArrow} aria-hidden="true">
             &gt;
           </span>
-        </Button>
+        </Link>
       </h2>
       <p className={n.sideLine}>
         <span className={n.long}>{s.versusLine}</span>

@@ -77,7 +77,7 @@ An account's versus duels, read from the account menu's VERSUS RECORD: played, w
 _Avoid_: Stats, versus history, ladder
 
 **Room code**:
-The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the hub's VERSUS panel or the versus panel, or opened as the link `/versus/<code>`.
+The four letters that name a room, from consonants that can't be misread (no I, O, L, Y or vowels, so they never spell a word). Typed into the hub's VERSUS panel or the Versus area, or opened as the link `/versus/<code>`.
 _Avoid_: Room ID, PIN, invite code
 
 ## Content
@@ -144,7 +144,7 @@ _Avoid_: Weak word, mistake
 The feedback band shown on a comeback: COMEBACK and the pack's comeback phrase.
 
 **Practice duel**:
-A duel, for an account, that asks only its missed items for one prompt kind, any tier, started from PRACTISE MISSED WORDS in the Wordbook. Its rounds go into word history, but it never keeps a best score; the HUD and game over show PRACTICE instead. A prompt kind needs at least 5 missed items (ADR 0010).
+A duel, for an account, that asks only its missed items for one prompt kind, any tier, started from PRACTISE MISSED in the Study area or PRACTISE MISSED WORDS in the Wordbook. Its rounds go into word history, but it never keeps a best score; the HUD and game over show PRACTICE instead. A prompt kind needs at least 5 missed items (ADR 0010).
 _Avoid_: Training, review mode, missed mode
 
 **Review list**:
@@ -174,6 +174,14 @@ _Avoid_: Mode, section, tab
 **Single player area**:
 The area screen at `/play` where the player chooses a minigame, its direction and difficulty, and plays against the CPU rival.
 _Avoid_: Title screen, solo menu
+
+**Versus area**:
+The area screen at `/versus`: make a room (with its Word Strike / Gap Guard switch), join one by room code, and, for an account, the versus record in short with FULL RECORD.
+_Avoid_: Versus panel, versus dialog, lobby
+
+**Study area**:
+The area screen at `/study`: the Wordbook, with the latest missed items, and PRACTISE MISSED for each way to practise (each Word Strike direction and Gap Guard), off until it has 5 missed items. A guest sees both dimmed under a SIGN IN banner.
+_Avoid_: Study page, review area
 
 **Quick PLAY**:
 A minigame's PLAY button on the hub: it opens that minigame's duel with the difficulty and direction last picked in the Single player area.
@@ -218,5 +226,5 @@ An account's running totals for one item and prompt kind: right, wrong and too s
 _Avoid_: Word score, mastery
 
 **Wordbook**:
-The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the hub's STUDY panel, the account menu and game over; a guest who opens it is asked to sign in.
+The page where an account reads its word history one item at a time, in two tabs: MISSED (newest miss or most missed first) and BEST (most accurate, once answered enough times). Each row opens like an accordion to show the item's stats by prompt kind, run, too slow count, average answer time and wrong answers. Reached from the Study area, the account menu and game over; a guest who opens it is asked to sign in.
 _Avoid_: Word history page (word history is the data), mistakes, review list (that is game over's list)

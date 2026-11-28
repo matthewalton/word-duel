@@ -8,7 +8,8 @@ import { fill, strings, UI_LANG } from "@/i18n/strings";
 import { useChosenPack } from "@/lib/packChoice";
 import { dateText, daysSince } from "@/lib/dates";
 import { useAccount } from "@/lib/useAccount";
-import type { Item, LanguagePack } from "@/packs/types";
+import { findItem } from "@/packs";
+import type { LanguagePack } from "@/packs/types";
 import {
   loadWordbook,
   loadWordbookItem,
@@ -243,17 +244,6 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
       </TabPanel>
     </Tabs>
   );
-}
-
-const items = new WeakMap<LanguagePack, Map<string, Item>>();
-
-function findItem(pack: LanguagePack, itemId: string): Item | undefined {
-  let byId = items.get(pack);
-  if (!byId) {
-    byId = new Map<string, Item>([...pack.words, ...pack.grammar].map((i) => [i.id, i]));
-    items.set(pack, byId);
-  }
-  return byId.get(itemId);
 }
 
 function whenText(d: Date | null): string {

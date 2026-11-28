@@ -2,6 +2,7 @@ import type {
   FeedbackPhrases,
   GapPrompt,
   GrammarItem,
+  Item,
   LanguagePack,
   MatchingSettings,
   PackMeta,
@@ -85,6 +86,18 @@ function askableEntries(pack: LanguagePack) {
     askable.set(pack, cached);
   }
   return cached;
+}
+
+const itemsById = new WeakMap<LanguagePack, Map<string, Item>>();
+
+/** Any item in the pack by id, retired ones included (word history outlives content, ADR 0007). */
+export function findItem(pack: LanguagePack, itemId: string): Item | undefined {
+  let byId = itemsById.get(pack);
+  if (!byId) {
+    byId = new Map<string, Item>([...pack.words, ...pack.grammar].map((i) => [i.id, i]));
+    itemsById.set(pack, byId);
+  }
+  return byId.get(itemId);
 }
 
 export const askableWords = (pack: LanguagePack): WordItem[] => askableEntries(pack).words;
