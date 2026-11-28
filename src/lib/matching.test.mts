@@ -109,13 +109,21 @@ describe("clarifiers", () => {
     for (const given of ["an item", "(an item)", "lose (a game)", "lose an item"]) {
       assert.ok(!accepts(ko, "en", ["to lose (an item)"], given), given);
     }
+    for (const given of ["(what something is)", "what something is", "to be (a state)"]) {
+      assert.ok(!accepts(es, "en", ["to be (what something is)"], given), given);
+    }
   });
 
   it("works when the pack ignores punctuation", () => {
     const loose: MatchingSettings = { ignorePunctuation: true, ignoreWordClassMarkers: { en: ["to be", "to", "be"] } };
-    for (const given of ["be", "to be", "to be (permanent)", "be permanent"]) {
+    for (const given of ["be", "to be", "to be (permanent)", "be (permanent)"]) {
       assert.ok(accepts(loose, "en", ["to be (permanent)"], given), given);
     }
+    for (const given of ["permanent", "(permanent)"]) assert.ok(!accepts(loose, "en", ["to be (permanent)"], given), given);
+  });
+
+  it("keeps the elided forms of the plain answer", () => {
+    for (const given of ["l'eau", "leau", "eau", "l'eau (to drink)"]) assert.ok(accepts(fr, "fr", ["l'eau (to drink)"], given), given);
   });
 
   it("keeps the clarifier when grouping words by prompt", () => {
