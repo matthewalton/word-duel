@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import { getMinigame, MINIGAMES, minigamesFor } from "@/game/minigames";
 import { gapGuard } from "@/game/minigames/GapGuard";
@@ -50,9 +51,16 @@ type View = { name: "menu" } | { name: "duel"; run: number; practice?: { directi
 /**
  * A screen that starts solo duels: loads the chosen pack and the session,
  * shows its menu (the hub or the Single player area), and swaps it for the
- * duel until MENU brings the menu back.
+ * duel until MENU brings the menu back. `practice` is set on the Single
+ * player area, the only screen the Wordbook's practice links go to.
  */
-export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode }) {
+export function SoloScreen({
+  menu,
+  practice = false,
+}: {
+  menu: (props: SoloMenuProps) => ReactNode;
+  practice?: boolean;
+}) {
   const pack = useChosenPack();
   const minigames = minigamesFor(pack);
   const [view, setView] = useState<View>({ name: "menu" });
@@ -68,13 +76,23 @@ export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode
     minigames.map((m) => m.id),
   );
 
+  // The page is kept (hidden) between visits. Coming back by a link (not
+  // back or forward) never shows a practice duel from an earlier visit.
+  const { bfcacheId } = useRouter();
+  const [visit, setVisit] = useState(bfcacheId);
+  if (visit !== bfcacheId) {
+    setVisit(bfcacheId);
+    if (view.name === "duel" && view.practice) setView({ name: "menu" });
+  }
+
   // Arriving from a Wordbook practice link: that way's duel, set to practise,
   // before the first paint. A layout effect rather than state set up on mount,
-  // because the page is kept (hidden) between visits and this runs each time
-  // it is shown; the state it sets renders before the browser paints, so the
-  // menu never shows. Only accounts see practice links.
+  // because it must run each time the kept page is shown; the state it sets
+  // renders before the browser paints, so the menu never shows. Only accounts
+  // see practice links.
   const { direction } = settings;
   useLayoutEffect(() => {
+    if (!practice) return;
     const way = takePracticeWay();
     const minigame = way === "gap" ? gapGuard : wordStrike;
     if (!way || !minigame.hasContent(pack)) return;
@@ -85,7 +103,7 @@ export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode
       run: (v.name === "duel" ? v.run : 0) + 1,
       practice: { direction: way === "gap" ? direction : way },
     }));
-  }, [pack, direction]);
+  }, [practice, pack, direction]);
 
   const play = (id: string) => {
     setMinigameId(id);
