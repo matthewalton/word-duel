@@ -93,7 +93,7 @@ function StudyArea({ pack, account, openSignIn }: AreaProps) {
           <p className={ar.darkBody}>{s.practiseBody}</p>
           <ul className={ar.ways}>
             {ways.map((way) => (
-              <Way key={way.kind} way={way} guest={guest} />
+              <Way key={way.kind} way={way} />
             ))}
           </ul>
         </section>
@@ -103,15 +103,16 @@ function StudyArea({ pack, account, openSignIn }: AreaProps) {
 }
 
 /** One way to practise: its name, how many missed items it has, and PRACTISE once it has enough. */
-function Way({ way, guest }: { way: PracticeWay; guest: boolean }) {
-  const ready = way.count != null && way.count >= PRACTICE_MIN_MISSED;
-  const note = guest
-    ? s.nothingKept
-    : way.count == null
-      ? strings.wordbook.loading
-      : ready
-        ? fill(s.missed, { n: way.count })
-        : fill(s.needs, { n: way.count, min: PRACTICE_MIN_MISSED });
+function Way({ way }: { way: PracticeWay }) {
+  const ready = typeof way.count === "number" && way.count >= PRACTICE_MIN_MISSED;
+  const note =
+    way.count == null
+      ? s.nothingKept
+      : way.count === "loading"
+        ? strings.wordbook.loading
+        : ready
+          ? fill(s.missed, { n: way.count })
+          : fill(s.needs, { n: way.count, min: PRACTICE_MIN_MISSED });
   const name = minigameName(way.minigame);
   const aria = fill(s.practiseAria, { way: way.languages ? fill(s.minigameWay, { minigame: name, way: wayName(way) }) : name });
   return (

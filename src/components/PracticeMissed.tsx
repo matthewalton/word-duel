@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { minigamesFor, practiceCount, promptKindOf } from "@/game/minigames";
-import type { Minigame, PromptKind } from "@/game/types";
+import type { Direction, Minigame, PromptKind } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import { practiceHref } from "@/lib/practiceLink";
 import { useLastMissed, type MissedLists } from "@/lib/useLastMissed";
@@ -19,8 +19,8 @@ export type PracticeWay = {
   minigame: Minigame;
   /** Word Strike's direction, as from and to languages; absent for a minigame without one. */
   languages?: readonly [LanguageInfo, LanguageInfo];
-  /** Null for a guest, and while the account's missed list for this kind loads. */
-  count: number | null;
+  /** "loading" until the account's missed list for this kind loads; null for a guest, who keeps none. */
+  count: number | "loading" | null;
 };
 
 /**
@@ -30,9 +30,11 @@ export type PracticeWay = {
  */
 export function practiceWays(pack: LanguagePack, missed: MissedLists | null): PracticeWay[] {
   const { base, target } = pack.meta;
+  const countOf = (minigame: Minigame, direction: Direction) =>
+    missed == null ? null : (practiceCount(minigame, pack, missed, direction) ?? "loading");
   return minigamesFor(pack).flatMap((minigame): PracticeWay[] => {
     if (!minigame.usesDirection)
-      return [{ kind: promptKindOf(minigame, "toTarget"), minigame, count: practiceCount(minigame, pack, missed, "toTarget") }];
+      return [{ kind: promptKindOf(minigame, "toTarget"), minigame, count: countOf(minigame, "toTarget") }];
     return (
       [
         ["toTarget", base, target],
@@ -42,7 +44,7 @@ export function practiceWays(pack: LanguagePack, missed: MissedLists | null): Pr
       kind: promptKindOf(minigame, direction),
       minigame,
       languages: [from, to] as const,
-      count: practiceCount(minigame, pack, missed, direction),
+      count: countOf(minigame, direction),
     }));
   });
 }
@@ -58,7 +60,7 @@ export const wayName = (way: PracticeWay) =>
 /** Ways with their counts, or null until every count has loaded. */
 function useWays(pack: LanguagePack, userId: string): (PracticeWay & { count: number })[] | null {
   const ways = practiceWays(pack, useLastMissed(pack.meta.id, userId));
-  return ways.every((w): w is PracticeWay & { count: number } => w.count != null) ? ways : null;
+  return ways.every((w): w is PracticeWay & { count: number } => typeof w.count === "number") ? ways : null;
 }
 
 /**
