@@ -54,6 +54,7 @@ const triangle = (freq: number, start: number, length: number, level: number): V
 
 // Note frequencies in Hz.
 const C3 = 130.81;
+const F3 = 174.61;
 const F3s = 185;
 const G3 = 196;
 const C4 = 261.63;
@@ -113,7 +114,7 @@ export const SOUNDS: Record<SoundName, Voice[]> = {
     square(G4, 0, 150, 0.45),
     square(E4b, 160, 150, 0.45),
     square(C4, 320, 150, 0.45),
-    { wave: "square", freq: G3, slideTo: 174.61, start: 480, length: 400, level: 0.45 },
+    { wave: "square", freq: G3, slideTo: F3, start: 480, length: 400, level: 0.45 },
     triangle(C3, 480, 400, 0.4),
   ],
   /** Versus: the rival joins your room, a two-note doorbell. */
