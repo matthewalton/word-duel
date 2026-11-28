@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import { getMinigame, MINIGAMES, minigamesFor } from "@/game/minigames";
 import { gapGuard } from "@/game/minigames/GapGuard";
 import { wordStrike } from "@/game/minigames/WordStrike";
@@ -10,7 +10,7 @@ import { useDuel } from "@/game/useDuel";
 import { strings } from "@/i18n/strings";
 import { useAccount, type Account } from "@/lib/useAccount";
 import { useChosenPack } from "@/lib/packChoice";
-import { readPracticeWay, stripPracticeWay } from "@/lib/practiceLink";
+import { takePracticeWay } from "@/lib/practiceLink";
 import { useSoloSettings, type SoloSettings } from "@/lib/soloSettings";
 import { useBestScores } from "@/lib/useBestScores";
 import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
@@ -68,23 +68,24 @@ export function SoloScreen({ menu }: { menu: (props: SoloMenuProps) => ReactNode
     minigames.map((m) => m.id),
   );
 
-  // Arriving from the Wordbook's PRACTISE MISSED WORDS (it links to the
-  // Single player area): that way's ready screen, set to practise. Read once
-  // the session is known (accounts only; a guest just sees the menu), then
-  // taken out of the address bar.
-  const [arrived, setArrived] = useState(false);
-  if (!account.pending && !arrived) {
-    setArrived(true);
-    const way = readPracticeWay();
+  // Arriving from a Wordbook practice link: that way's duel, set to practise,
+  // before the first paint. A layout effect rather than state set up on mount,
+  // because the page is kept (hidden) between visits and this runs each time
+  // it is shown; the state it sets renders before the browser paints, so the
+  // menu never shows. Only accounts see practice links.
+  const { direction } = settings;
+  useLayoutEffect(() => {
+    const way = takePracticeWay();
     const minigame = way === "gap" ? gapGuard : wordStrike;
-    if (way && account.user && minigame.hasContent(pack)) {
-      setMinigameId(minigame.id);
-      setView({ name: "duel", run: 1, practice: { direction: way === "gap" ? settings.direction : way } });
-    }
-  }
-  useEffect(() => {
-    if (arrived) stripPracticeWay();
-  }, [arrived]);
+    if (!way || !minigame.hasContent(pack)) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- taken once on show, see above.
+    setMinigameId(minigame.id);
+    setView((v) => ({
+      name: "duel",
+      run: (v.name === "duel" ? v.run : 0) + 1,
+      practice: { direction: way === "gap" ? direction : way },
+    }));
+  }, [pack, direction]);
 
   const play = (id: string) => {
     setMinigameId(id);

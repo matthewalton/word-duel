@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { langText } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
-import { practiceHref } from "@/lib/practiceLink";
+import { startPractice } from "@/lib/practiceLink";
 import { useLastMissed } from "@/lib/useLastMissed";
 import { findItem } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
@@ -129,10 +129,9 @@ function Way({ way }: { way: PracticeWay }) {
         <span className={ar.wayNote}>{note}</span>
       </span>
       {ready ? (
-        // A full page load, so the Single player area reads the way on arrival.
-        <a href={practiceHref(way.kind)} className={ar.practise} aria-label={aria}>
+        <Link href="/play" onNavigate={() => startPractice(way.kind)} className={ar.practise} aria-label={aria}>
           {s.practise}
-        </a>
+        </Link>
       ) : (
         <Button className={ar.practise} aria-label={aria} disabled>
           {s.practise}
