@@ -285,7 +285,8 @@ function AnkiExportButton({
       const { exportAnkiDeck } = await import("@/lib/ankiDownload");
       await exportAnkiDeck(pack, entries, new Date());
     } catch (error) {
-      console.error(error);
+      // warn, not error: the player already sees the error line, and Next's dev overlay counts console.error as an Issue.
+      console.warn(error);
       onFail(true);
     } finally {
       setBusy(false);
