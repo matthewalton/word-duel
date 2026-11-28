@@ -62,7 +62,7 @@
   { "id": "passer.to-pass", "kind": "word", "target": "passer", "base": ["to pass", "to spend", "to go past", "to drop by"], "tier": 1 },
   { "id": "prendre.to-take", "kind": "word", "target": "prendre", "base": ["to take"], "tier": 1 },
   { "id": "le-jour.day", "kind": "word", "target": "le jour", "base": ["day"], "tier": 1 },
-  { "id": "le-monsieur.gentleman", "kind": "word", "target": "le monsieur", "base": ["gentleman", "sir", "man", "mister"], "tier": 1 },
+  { "id": "le-monsieur.gentleman", "kind": "word", "target": "le monsieur", "base": ["gentleman", "sir", "man", "mister", "Mr", "Mr."], "tier": 1 },
   { "id": "le-nom.name", "kind": "word", "target": "le nom", "base": ["name"], "tier": 1 },
   { "id": "le-nom.noun", "kind": "word", "target": "le nom", "base": ["noun"], "tier": 1 },
   { "id": "l'argent.money", "kind": "word", "target": "l'argent", "base": ["money", "silver"], "tier": 1 },
