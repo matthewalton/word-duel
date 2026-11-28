@@ -32,6 +32,9 @@
   display: flex;
   gap: var(--gap);
   max-height: calc(680px * var(--s));
+  /* Vertical scroll and pinch-zoom stay with the browser; horizontal
+     movement comes to the page as a swipe (useSwipe). */
+  touch-action: pan-y pinch-zoom;
 }
 
 .card {
