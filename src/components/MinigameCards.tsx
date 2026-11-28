@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DIFFICULTIES } from "@/config/game";
 import type { Difficulty, Direction, Minigame, MinigameOptions } from "@/game/types";
 import { fill, padScore, strings } from "@/i18n/strings";
+import { wrapIndex } from "@/lib/swipe";
 import type { LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { HowToDialog } from "./HowToDialog";
@@ -69,7 +70,7 @@ export function MinigameCards({
   }, [activeIndex]);
 
   const step = (delta: number) =>
-    setActiveIndex((i) => (i + delta + minigames.length) % minigames.length);
+    setActiveIndex((i) => wrapIndex(i, delta, minigames.length));
 
   // Up and down move along the switch and stop at its ends.
   const stepDifficulty = (delta: number) => {
