@@ -17,6 +17,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Android Chrome shrinks the page for the keyboard; iOS ignores this (see useViewportHeight).
+  interactiveWidget: "resizes-content",
   themeColor: "#2A2440",
 };
 

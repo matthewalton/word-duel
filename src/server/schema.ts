@@ -2,7 +2,8 @@
  * Database schema. The first four tables are Better Auth's (user, session,
  * account, verification) and must keep these field names; then game data
  * owned by an account (ADR 0006, and ADR 0008 for word history), and last
- * the versus rooms, which belong to no account (ADR 0012).
+ * the versus rooms, which belong to no account (ADR 0012), and the versus
+ * record finished matches leave for the accounts that played them.
  */
 import {
   bigserial,
@@ -25,6 +26,8 @@ export const PROMPT_KINDS = [...DIRECTIONS, "gap"] as const satisfies readonly P
 export const OUTCOMES = ["correct", "wrong", "timeout"] as const satisfies readonly Reason[];
 /** A versus room's two seats: PLAYER 1 made the room, PLAYER 2 joined it. */
 export const SEATS = ["p1", "p2"] as const;
+/** How a versus match was won: the loser ran out of hearts, or left before it was won. */
+export const MATCH_ENDS = ["hearts", "left"] as const;
 
 const createdAt = () => timestamp("created_at").notNull().defaultNow();
 const updatedAt = () =>
@@ -182,6 +185,9 @@ export const itemStat = pgTable(
   (t) => [primaryKey({ columns: [t.userId, t.packId, t.itemId, t.promptKind] })],
 );
 
+/** A seat's account. Deleting the account clears it, so the other player's record keeps the match. */
+const seatUserId = (name: string) => text(name).references(() => user.id, { onDelete: "set null" });
+
 /**
  * A versus room: two players racing one minigame with the room maker's pack
  * and difficulty (and direction, for Word Strike). A code is taken while its room hasn't expired;
@@ -203,9 +209,12 @@ export const versusRoom = pgTable(
     draw: text("draw").array().notNull(),
     /** An account's name; null for a guest. */
     p1Name: text("p1_name"),
+    /** The account in the seat, from the session on the server; null for a guest, never linked later. */
+    p1UserId: seatUserId("p1_user_id"),
     /** SHA-256 of the secret the player's browser holds for its seat. */
     p1Token: text("p1_token").notNull(),
     p2Name: text("p2_name"),
+    p2UserId: seatUserId("p2_user_id"),
     /** Null until someone joins. */
     p2Token: text("p2_token"),
     /** Counts the room's matches: a rematch adds one and starts the rounds again. */
@@ -254,4 +263,35 @@ export const versusRound = pgTable(
     resolvedAt: timestamp("resolved_at"),
   },
   (t) => [primaryKey({ columns: [t.roomId, t.n] })],
+);
+
+/**
+ * One finished versus match, written once when it is won (hearts or left),
+ * for the versus record. Kept after its room is deleted, so it names the
+ * room only by id. A match nobody won (both left together) isn't recorded.
+ */
+export const versusMatch = pgTable(
+  "versus_match",
+  {
+    roomId: uuid("room_id").notNull(),
+    /** The room's match number: 1, then one more per rematch. */
+    match: integer("match").notNull(),
+    minigame: text("minigame", { enum: MINIGAME_IDS }).notNull(),
+    /** Null for a guest, or once the account is deleted. */
+    p1UserId: seatUserId("p1_user_id"),
+    /** The name the room showed; null for a guest. */
+    p1Name: text("p1_name"),
+    p2UserId: seatUserId("p2_user_id"),
+    p2Name: text("p2_name"),
+    winner: text("winner", { enum: SEATS }).notNull(),
+    reason: text("reason", { enum: MATCH_ENDS }).notNull(),
+    p1Hearts: integer("p1_hearts").notNull(),
+    p2Hearts: integer("p2_hearts").notNull(),
+    endedAt: timestamp("ended_at").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.roomId, t.match] }),
+    index("versus_match_p1_user_idx").on(t.p1UserId, t.endedAt),
+    index("versus_match_p2_user_idx").on(t.p2UserId, t.endedAt),
+  ],
 );

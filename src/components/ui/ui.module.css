@@ -124,7 +124,8 @@
     border-color: var(--player);
   }
 
-  .textInput:disabled {
+  .textInput:disabled,
+  .textInput[aria-disabled="true"] {
     opacity: 0.6;
   }
 
