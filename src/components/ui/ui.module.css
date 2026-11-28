@@ -1,7 +1,8 @@
 /*
- * The shared controls: button, dialog, menu, toggle group, tabs and panel.
+ * The shared controls: button, choice button, text input, dialog, menu,
+ * toggle group, tabs and panel, and the pixel heart.
  * Pixel rules: hard square edges, 4px borders, unblurred offset shadows and
- * no eased motion (Radix adds none; nothing here animates).
+ * no eased motion (Radix adds none; only a breaking heart animates, in steps).
  *
  * Everything sits in the `ui` layer, so a screen's own class (sizes, place,
  * a one-off colour) always wins over these defaults, whatever order the
@@ -95,7 +96,8 @@
     color: var(--ink);
     background: var(--accent);
     border: 4px solid var(--ink);
-    box-shadow: 4px 4px 0 #000;
+    /* A screen sets its own shadow here; :active still presses it flat. */
+    box-shadow: var(--btn-shadow, 4px 4px 0 #000);
   }
 
   .primary:active:not(:disabled) {
@@ -105,6 +107,68 @@
 
   .primary:disabled {
     opacity: 0.6;
+  }
+
+  /* ---------- Text input ---------- */
+
+  /* Focus shows as a player-green border rather than the ring. */
+  .textInput {
+    font-family: var(--font-words);
+    color: var(--ink);
+    background: #fff;
+    border: 4px solid var(--ink);
+    outline: none;
+  }
+
+  .textInput:focus {
+    border-color: var(--player);
+  }
+
+  .textInput:disabled,
+  .textInput[aria-disabled="true"] {
+    opacity: 0.6;
+  }
+
+  .textInput::placeholder {
+    color: #8a7fa6;
+  }
+
+  /* ---------- Choice button ---------- */
+
+  .choice {
+    position: relative;
+    font-family: var(--font-words);
+    color: var(--ink);
+    background: #fff;
+    border: 4px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .choice:hover:not(:disabled) {
+    background: var(--board);
+  }
+
+  .choiceKey {
+    position: absolute;
+    inset-block-start: calc(2px * var(--s));
+    inset-inline-start: calc(5px * var(--s));
+    font-family: var(--font-ui);
+    font-size: calc(11px * var(--s));
+    color: var(--muted);
+  }
+
+  /* Marks after the round: the pick right or wrong, and the answer shown. */
+  .choiceRight {
+    background: var(--player);
+  }
+
+  .choiceWrong {
+    background: var(--rival);
+  }
+
+  .choiceReveal {
+    background: var(--accent);
   }
 
   /* ---------- Dialog ---------- */
@@ -248,9 +312,102 @@
     box-shadow: 4px 4px 0 var(--ink);
   }
 
+  /* ---------- Pixel heart ---------- */
+
+  /* An empty heart takes --heart-empty from the surface it sits on. */
+  .heartRow {
+    display: inline-flex;
+    gap: calc(4px * var(--s));
+  }
+
+  .heart {
+    position: relative;
+    display: inline-block;
+    width: 35px;
+    height: calc(30px * var(--s));
+  }
+
+  .heartSvg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+
+  .heartFlash {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: heartFlash 420ms steps(1, end);
+  }
+
+  .heartBreaking {
+    animation: heartJolt 420ms steps(1, end);
+  }
+
+  @keyframes heartFlash {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    25%,
+    75%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes heartJolt {
+    0% {
+      transform: translate(0, 0);
+    }
+    15% {
+      transform: translate(-4px, -3px);
+    }
+    30% {
+      transform: translate(4px, 2px);
+    }
+    45% {
+      transform: translate(-3px, 1px);
+    }
+    60% {
+      transform: translate(2px, -2px);
+    }
+    80%,
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  /* Keyframes are scoped to their CSS module, so game.module.css keeps a twin
+     for its hurt flash; change both together. */
+  @keyframes steadyFlash {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .heartRow {
+      gap: 2px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .primary:active:not(:disabled) {
       transform: none;
+    }
+
+    .heartBreaking {
+      animation: none;
+    }
+
+    /* One steady flash for the same length instead of blinking twice. */
+    .heartFlash {
+      animation: steadyFlash 420ms steps(1, end);
     }
   }
 }

@@ -16,8 +16,15 @@ export type ButtonProps = Omit<ComponentProps<"button">, "type"> & {
   type?: "button" | "submit";
 } & Variant;
 
+/**
+ * A button's classes, for a link that looks like one (a way back to the
+ * title screen next to real buttons) and for Button itself.
+ */
+export function buttonClass(className?: string, variant?: ButtonProps["variant"]) {
+  return `${u.button} ${variant ? u[variant] : ""} ${className ?? ""}`;
+}
+
 /** The one button every screen uses. Size and place come from the caller's class. */
 export function Button({ variant, type = "button", className, ...props }: ButtonProps) {
-  const look = variant ? u[variant] : "";
-  return <button type={type} className={`${u.button} ${look} ${className ?? ""}`} {...props} />;
+  return <button type={type} className={buttonClass(className, variant)} {...props} />;
 }

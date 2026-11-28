@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef } from "react";
 import styles from "@/components/game.module.css";
 import { HowToStep, PreviewFuse, StageProgressVisual } from "@/components/HowToParts";
 import { wordBreakStyle } from "@/components/LangSpan";
 import t from "@/components/title.module.css";
+import { Button } from "@/components/ui/Button";
+import { TextInput } from "@/components/ui/TextInput";
 import { fill, strings } from "@/i18n/strings";
 import { askableWords } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
@@ -21,28 +23,14 @@ import { buildRound, practiceWords, startDraw, startPracticeDraw } from "./wordS
 function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }: ControlsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const composing = useRef(false);
 
   const inGame = phase === "countdown" || phase === "playing" || phase === "resolving";
   // Typing is allowed during the countdown so the input can hold focus, but
   // nothing submits until the round is live (and the input is cleared then).
   const editable = (phase === "countdown" || phase === "playing") && !locked;
 
-  // Focus while the START press is still being handled, so phones open the
-  // keyboard: a focus from the later timer would not count as a user gesture.
-  useLayoutEffect(() => {
-    if (phase !== "countdown" || !inputRef.current) return;
-    inputRef.current.value = "";
-    inputRef.current.focus();
-  }, [phase]);
-
-  // Fresh, focused input for every new prompt. The input is uncontrolled so
-  // IME composition is never interrupted by React re-renders.
-  useEffect(() => {
-    if (phase !== "playing" || !inputRef.current) return;
-    inputRef.current.value = "";
-    inputRef.current.focus();
-  }, [round.promptId, phase]);
+  // An empty, focused input on START (the countdown) and for every new prompt.
+  const freshKey = phase === "countdown" ? "countdown" : phase === "playing" ? `prompt-${round.promptId}` : null;
 
   useEffect(() => {
     if (phase === "gameOver") buttonRef.current?.focus();
@@ -54,47 +42,32 @@ function WordStrikeControls({ round, phase, onSubmit, onStart, locked = false }:
     onSubmit(value);
   };
 
-  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return;
-    // Never submit while an IME composition is in progress. keyCode 229 covers
-    // Safari, which fires the committing Enter after compositionend.
-    if (e.nativeEvent.isComposing || composing.current || e.keyCode === 229) return;
-    e.preventDefault();
-    submitNow();
-  };
-
   return (
     <div className={styles.typeRow}>
-      <input
+      <TextInput
         ref={inputRef}
+        label={strings.inputLabel}
+        freshKey={freshKey}
+        onEnter={submitNow}
         className={styles.answerInput}
         lang={round.answerLang.code}
         dir={round.answerLang.dir}
-        aria-label={strings.inputLabel}
         placeholder={round.hint}
         // Locked out of a versus round, the input stays enabled (read-only) so
         // it keeps focus and a phone keyboard stays open for the next round.
         disabled={!inGame}
         readOnly={!editable}
         aria-disabled={locked || undefined}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
-        enterKeyHint="go"
-        onKeyDown={onKeyDown}
-        onCompositionStart={() => (composing.current = true)}
-        onCompositionEnd={() => (composing.current = false)}
       />
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
+        variant="primary"
         className={styles.goldButton}
         onClick={phase === "gameOver" ? onStart : submitNow}
         disabled={phase !== "gameOver" && (phase !== "playing" || locked)}
       >
         {phase === "gameOver" ? strings.start : strings.go}
-      </button>
+      </Button>
     </div>
   );
 }

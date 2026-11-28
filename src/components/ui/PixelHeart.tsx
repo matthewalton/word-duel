@@ -1,4 +1,4 @@
-import styles from "./game.module.css";
+import u from "./ui.module.css";
 
 const GRID = ["0110110", "1111111", "1111111", "0111110", "0011100", "0001000"];
 const CELLS: Array<[number, number]> = GRID.flatMap((row, y) =>
@@ -7,7 +7,7 @@ const CELLS: Array<[number, number]> = GRID.flatMap((row, y) =>
 
 function HeartSvg({ fill, highlight }: { fill: string; highlight?: boolean }) {
   return (
-    <svg viewBox="0 0 7 6" className={styles.heartSvg} shapeRendering="crispEdges" aria-hidden="true">
+    <svg viewBox="0 0 7 6" className={u.heartSvg} shapeRendering="crispEdges" aria-hidden="true">
       {CELLS.map(([x, y]) => (
         <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />
       ))}
@@ -19,10 +19,10 @@ function HeartSvg({ fill, highlight }: { fill: string; highlight?: boolean }) {
 /** One 7×6 pixel heart. `breaking` plays the flash-and-jolt break effect. */
 export function PixelHeart({ full, color, breaking }: { full: boolean; color: string; breaking?: boolean }) {
   return (
-    <span className={`${styles.heart} ${breaking ? styles.heartBreaking : ""}`}>
+    <span className={`${u.heart} ${breaking ? u.heartBreaking : ""}`}>
       <HeartSvg fill={full ? color : "var(--heart-empty)"} highlight={full} />
       {breaking && (
-        <span className={styles.heartFlash}>
+        <span className={u.heartFlash}>
           <HeartSvg fill="#FFFFFF" />
         </span>
       )}
@@ -46,7 +46,7 @@ export function HeartRow({
   label: string;
 }) {
   return (
-    <span className={styles.heartRow} role="img" aria-label={label}>
+    <span className={u.heartRow} role="img" aria-label={label}>
       {Array.from({ length: max }, (_, i) => (
         <PixelHeart
           key={i === breakingIndex ? `b-${fxKey}` : `h-${i}`}
