@@ -1,89 +1,87 @@
 import { GAME_NAME } from "../config/game.ts";
 import { findItem } from "../packs/index.ts";
-import { GAP_MARKER, type LanguagePack } from "../packs/types.ts";
+import type { LanguagePack } from "../packs/types.ts";
 import type { WordbookEntry } from "../server/wordbook.ts";
 
 /** What the export needs from a Wordbook entry: the item, and how it was missed per prompt kind. */
 export type ExportEntry = Pick<WordbookEntry, "itemId" | "kinds">;
 
-type Card = { id: string; front: string; back: string; tags: string[] };
+/** An item card: the item's target on the front, its accepted answers or grammar description on the back. */
+export type ItemCard = { guid: string; front: string; back: string; tags: string[] };
 
-/** The game's name as it appears in a file name: "Word Duel" → "word-duel". */
-const gameSlug = GAME_NAME.toLowerCase()
+/**
+ * A gap card: a gap sentence (still holding its blank) and the answer that
+ * fills it, its translation, and the tested item ("이/가 — subject particle").
+ */
+export type GapCard = {
+  guid: string;
+  sentence: string;
+  answer: string;
+  translation: string;
+  backExtra: string;
+  tags: string[];
+};
+
+/** The game's name as it appears in a file name or tag: "Word Duel" → "word-duel". */
+export const gameSlug = GAME_NAME.toLowerCase()
   .replace(/[^a-z0-9]+/g, "-")
   .replace(/^-|-$/g, "");
 
 /** YYYY-MM-DD in the player's local time. */
-function localDate(d: Date): string {
+export function localDate(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-/**
- * One field of a row: tabs and line breaks become a space so the row keeps
- * its four columns; a `"` or a leading `#` would make Anki read a quoted
- * field or a comment, so such a field is quoted with inner quotes doubled.
- */
-function field(text: string): string {
-  const flat = text.replace(/[\t\r\n]+/g, " ").trim();
-  return flat.includes('"') || flat.startsWith("#") ? `"${flat.replace(/"/g, '""')}"` : flat;
 }
 
 const missedInGap = (e: ExportEntry) => e.kinds.some((k) => k.kind === "gap" && k.wrong + k.timeouts > 0);
 
 /**
- * The Anki export: the MISSED tab's items as a tab-separated text file Anki
- * imports directly (File › Import), its header lines setting up the import.
- * One item card per missed item the pack knows, in the given order, then a
- * gap card for each non-retired gap sentence testing an item missed in the
- * gap prompt kind. Each card's guid is built from the item or prompt id, which
- * never changes (ADR 0007), so a later export updates the same notes.
+ * An answer Anki can't cloze: `::` or `{{` would end the cloze marker early,
+ * and `}}` (or a closing `}`) would close it early.
  */
-export function ankiExport(
+const unclozable = (answer: string) => /::|\{\{|\}\}|\}$/.test(answer);
+
+/**
+ * The Anki export's cards, as plain text: one item card per missed item the
+ * pack knows, in the given order, then a gap card for each non-retired gap
+ * sentence testing an item missed in the gap prompt kind. Each guid is built
+ * from the item or prompt id, which never changes (ADR 0007), so importing a
+ * later export updates the same notes.
+ */
+export function ankiCards(
   pack: LanguagePack,
   entries: readonly ExportEntry[],
-  now: Date,
-): { fileName: string; text: string } {
+): { items: ItemCard[]; gaps: GapCard[] } {
   const packId = pack.meta.id;
+  const guid = (id: string) => `wd:${packId}:${id}`;
   const tagsFor = (tier: number) => [`${gameSlug}::${packId}`, `${gameSlug}::tier-${tier}`];
 
-  const itemCards: Card[] = [];
-  const gapCards: Card[] = [];
+  const items: ItemCard[] = [];
+  const gaps: GapCard[] = [];
   for (const entry of entries) {
     const item = findItem(pack, entry.itemId);
     if (!item) continue;
-    itemCards.push({
-      id: item.id,
-      front: item.target,
-      back: item.kind === "word" ? item.base.join("; ") : item.base,
-      tags: tagsFor(item.tier),
-    });
+    const back = item.kind === "word" ? item.base.join("; ") : item.base;
+    items.push({ guid: guid(item.id), front: item.target, back, tags: tagsFor(item.tier) });
     if (!missedInGap(entry)) continue;
     for (const gap of pack.gaps) {
-      if (gap.retired || gap.tests !== item.id) continue;
-      gapCards.push({
-        id: gap.id,
-        front: `${gap.sentence} (${gap.translation})`,
-        back: `${gap.answer} — ${gap.sentence.replace(GAP_MARKER, gap.answer)}`,
+      if (gap.retired || gap.tests !== item.id || unclozable(gap.answer)) continue;
+      gaps.push({
+        guid: guid(gap.id),
+        sentence: gap.sentence,
+        answer: gap.answer,
+        translation: gap.translation,
+        backExtra: `${item.target} — ${back}`,
         tags: [...tagsFor(item.tier), `${gameSlug}::gap`],
       });
     }
   }
-
-  const header = [
-    "#separator:tab",
-    "#html:false",
-    "#notetype:Basic",
-    `#deck:${GAME_NAME}::${pack.meta.target.name}`,
-    "#columns:Guid\tFront\tBack\tTags",
-    "#guid column:1",
-    "#tags column:4",
-  ];
-  const rows = [...itemCards, ...gapCards].map((c) =>
-    [`wd:${packId}:${c.id}`, c.front, c.back, c.tags.join(" ")].map(field).join("\t"),
-  );
-  return {
-    fileName: `${gameSlug}-${packId}-missed-${localDate(now)}.txt`,
-    text: [...header, ...rows].join("\n") + "\n",
-  };
+  return { items, gaps };
 }
+
+/** The deck the export lands in: one subdeck per pack under the game's name. */
+export const ankiDeckName = (pack: LanguagePack) => `${GAME_NAME}::${pack.meta.target.name}`;
+
+/** `word-duel-<pack id>-missed-<YYYY-MM-DD>.apkg`, dated in the player's local time. */
+export const ankiFileName = (pack: LanguagePack, now: Date) =>
+  `${gameSlug}-${pack.meta.id}-missed-${localDate(now)}.apkg`;
