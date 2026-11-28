@@ -1,4 +1,4 @@
-import { FUSE_SEGMENTS } from "@/game/useDuel";
+import { FUSE_SEGMENTS } from "@/config/game";
 import { strings } from "@/i18n/strings";
 import styles from "./game.module.css";
 

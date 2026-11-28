@@ -252,6 +252,11 @@
   color: var(--line);
 }
 
+/* In the race the room tag takes the bar's free space, so the sound button sits right after it. */
+.roomTag + .roomSound {
+  margin-inline-start: 0;
+}
+
 .hud {
   border-block-end: 4px solid var(--track);
 }
@@ -503,6 +508,10 @@
 
   .roomTag {
     display: none;
+  }
+
+  .roomTag + .roomSound {
+    margin-inline-start: auto;
   }
 
   .over {

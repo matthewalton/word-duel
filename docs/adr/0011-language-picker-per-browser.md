@@ -12,7 +12,7 @@ When typing Spanish, accents are optional (`ignoreDiacritics`): "arbol" counts f
 
 Navigation now starts with a **language step** at `/` (design canvas round 20): a tile per pack, REMEMBER MY LANGUAGE and CONTINUE, which opens the hub. REMEMBER is on by default and kept in this browser like the pack: when it is on and a pack is stored, `/` goes straight to the hub; turning it off, on the step or with REMEMBER ON THIS DEVICE in the language picker's menu, brings the step back on the next visit, never in the middle of one. The pack itself stays stored either way, so `/play` and the Wordbook keep it. Because only the browser knows which screen `/` opens, the static page renders the bare grid and the browser fills in the step or the hub.
 
-The difficulty and direction last picked on the minigame cards are kept in this browser too, so the hub's quick PLAY and a new versus room use them; a first visit gets Normal, base → target. They are settings, like the pack, so ADR 0008 still holds.
+The difficulty and direction last picked on the minigame cards are kept in this browser too, so the hub's quick PLAY and a new versus room use them; a first visit gets Normal, base → target. They are settings, like the pack, so ADR 0008 still holds. Sound effects on or off is kept the same way (#86, ADR 0016).
 
 This reverses the rejected option below: with three packs, and Versus and Study beside the solo game, the first choice is the language, and remembering it keeps returning players one screen from playing.
 

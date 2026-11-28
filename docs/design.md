@@ -36,5 +36,6 @@ The code in `src/` is the source of truth for what shipped; the boards show the 
 | 18 · difficulty | A · three-way switch (`DifficultyRow`, `DifficultyPhone`) | |
 | 19 · versus | A · VERSUS in the title bar (`VersusTitleBar`), waiting 2 · player cards (`VersusWaitSlots`), the versus duel (`VersusDuel`), game over 1 · in the duel frame (`VersusOverPanel`), and their phone boards | REMATCH came with #36 (rival-asked state in the boards' Tweaks) |
 | 20 · navigation | Mixed: A's language step (`NavDoorsLanguage`), C's hub (`NavSplitHub`), A's area screens with the title strip and back button, no side tabs (`NavDoorsSingle`), and their phone boards | The language step, hub and Single player area today (#71); the Versus and Study areas (`NavDoorsVersus`, `NavDoorsStudy`, contents from `NavKitVersus` and `NavKitStudy`, without QUICK MATCH) came with #81 |
+| — · sound button (#86) | No board: one icon button (a pixel speaker) first in the top bar's corner and at the end of the duel's and versus room's bar, in the existing icon button style | The phone top bar's corner was tightened so SIGN IN stays on one line |
 
 When a design round is agreed and built, add its row here.

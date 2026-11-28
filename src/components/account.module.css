@@ -350,6 +350,12 @@
 }
 
 @media (max-width: 640px) {
+  /* Narrower, so SIGN IN stays on one line beside the sound button and the language chip. */
+  .signIn {
+    padding-inline: 6px;
+    letter-spacing: 0;
+  }
+
   /* The initial alone (board NavSplitHubPhone); the name is the chip's aria-label. */
   .chipName {
     display: none;

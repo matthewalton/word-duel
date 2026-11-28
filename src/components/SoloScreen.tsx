@@ -14,6 +14,7 @@ import { useChosenPack } from "@/lib/packChoice";
 import { takePracticeWay } from "@/lib/practiceLink";
 import { useSoloSettings, type SoloSettings } from "@/lib/soloSettings";
 import { useBestScores } from "@/lib/useBestScores";
+import { useDuelSounds } from "@/lib/useDuelSounds";
 import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
 import type { LanguagePack } from "@/packs/types";
 import a from "./account.module.css";
@@ -23,6 +24,7 @@ import { Hud } from "./Hud";
 import { PackFonts, packVars } from "./PackFonts";
 import { PromptBoard } from "./PromptBoard";
 import { SignInDialog } from "./SignInDialog";
+import { SoundButton } from "./SoundButton";
 import { Button } from "./ui/Button";
 import { PortalRoot } from "./ui/PortalRoot";
 
@@ -171,6 +173,17 @@ function Duel({
 }) {
   const opts: MinigameOptions = useMemo(() => ({ direction, difficulty }), [direction, difficulty]);
   const { state, fuseLit, start, submit } = useDuel(pack, minigame, opts, practice);
+  useDuelSounds({
+    versus: false,
+    phase: state.phase,
+    count: state.count,
+    fxKey: state.fxKey,
+    outcome: state.outcome,
+    fuseLit,
+    lockedOut: false,
+    // A guest or practice duel never has a new best, so it always ends on lose.
+    result: state.phase === "gameOver" ? (state.newBest ? "win" : "lose") : null,
+  });
   const lost = state.outcome != null && state.outcome.reason !== "correct";
   const Controls = minigame.Controls;
 
@@ -182,6 +195,7 @@ function Duel({
           &lt; {strings.menu}
         </Button>
         <span className={styles.duelName}>{(strings.modes[minigame.id] ?? minigame.id).toUpperCase()}</span>
+        <SoundButton className={styles.modeSound} />
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
         <Hud state={state} />

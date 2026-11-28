@@ -83,6 +83,16 @@
   border-color: var(--accent);
 }
 
+/* The sound button at the bar's end, stretched to MENU's height. */
+.modeSound {
+  align-self: stretch;
+  width: auto;
+  height: auto;
+  padding: 0 calc(6px * var(--s));
+  font-size: calc(16px * var(--s));
+  margin-inline-start: auto;
+}
+
 .duelName {
   font-size: calc(18px * var(--s));
   font-weight: 700;

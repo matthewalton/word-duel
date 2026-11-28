@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { RULES } from "@/config/game";
+import { FUSE_SEGMENTS, RULES } from "@/config/game";
 import { isAcceptedAnswer } from "@/lib/matching";
 import { promptKindOf } from "@/game/minigames";
 import { loadMissed, newDuelId, sendDuel } from "@/lib/history";
@@ -9,9 +9,6 @@ import { getBest, recordBest } from "@/lib/progress";
 import type { LanguagePack } from "@/packs/types";
 import { duelReducer, initialDuel } from "./duel";
 import type { Minigame, MinigameOptions, RoundDraw } from "./types";
-
-/** Number of segments in the fuse bar (5% steps). */
-export const FUSE_SEGMENTS = 20;
 
 /**
  * Solo duel controller: wires the pure reducer to timers, the CPU rival, best

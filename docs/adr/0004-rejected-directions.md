@@ -7,3 +7,4 @@ These were tried or considered and deliberately rejected; do not reintroduce the
 - A timed 60-second mode.
 - Near-miss or partial-credit scoring: answers are strictly right or wrong.
 - Pixelated prompt text: tried and found hard to read. Prompts use a smooth, rounded face from the pack; everything else is pixel style.
+- Background music: sound is short effects only (Matt, #86; ADR 0016).

@@ -47,7 +47,7 @@ export function AccountCorner({
 
   if (!user)
     return (
-      <Button variant="outlined" onClick={onOpenSignIn}>
+      <Button variant="outlined" className={a.signIn} onClick={onOpenSignIn}>
         {strings.account.signIn}
       </Button>
     );

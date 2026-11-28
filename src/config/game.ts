@@ -9,12 +9,15 @@ export const PACK_STORAGE_KEY = "word-duel:pack";
 
 /**
  * Browser storage keys for the other settings (ADR 0011): whether `/` skips
- * the language step, and the difficulty and direction quick PLAY uses.
+ * the language step, the difficulty and direction quick PLAY uses, and
+ * whether sound effects play.
  */
 export const SETTING_KEYS = {
   rememberPack: "word-duel:remember-pack",
   difficulty: "word-duel:difficulty",
   direction: "word-duel:direction",
+  /** Sound effects on or off (ADR 0016). */
+  sound: "word-duel:sound",
 } as const;
 
 /**
@@ -44,6 +47,12 @@ export const RULES = {
   countdownBeatMs: 700,
   countdownGoMs: 500,
 } as const;
+
+/** Number of segments in the fuse bar (5% steps). */
+export const FUSE_SEGMENTS = 20;
+
+/** The fuse ticks once for each segment lost from this many left down to the last (a quarter of the fuse). */
+export const FUSE_TICK_FROM = 5;
 
 /** Versus rules (ADR 0012). Hearts and the fuse's start, step and floor are the solo ones. */
 export const VERSUS = {
