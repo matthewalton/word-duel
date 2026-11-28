@@ -50,6 +50,14 @@ Easy, Normal or Hard, picked on the minigame cards in the Single player area; on
 _Avoid_: Level (a stage is a level of the duel), mode
 _Avoid_: Streak
 
+**Sound effects**:
+The duel's short chiptune sounds (the countdown beeps, a right answer, a heart breaking, the last ticks of the fuse, a stage clear, a comeback, winning or losing, and in versus the rival joining and the rival striking first), synthesised in code when they play. On by default, switched by the sound button and remembered in this browser. No music.
+_Avoid_: SFX, audio, music
+
+**Sound button**:
+The speaker button that turns sound effects on or off: first in the top bar's corner, and at the end of the duel's and the versus room's bar beside MENU.
+_Avoid_: Mute button, volume
+
 **Best score**:
 The highest score reached, kept per language pack and per minigame. Only an account has one; a guest has no best score, even for the page.
 _Avoid_: High score
@@ -187,7 +195,7 @@ _Avoid_: Study page, review area
 A minigame's PLAY button on the hub: it opens that minigame's duel with the difficulty and direction last picked in the Single player area.
 
 **Top bar**:
-The row on top of the hub and the area screens: the brand or a back button, an area's title strip, the language picker and the account corner (SIGN IN or the account chip).
+The row on top of the hub and the area screens: the brand or a back button, an area's title strip, the sound button, the language picker and the account corner (SIGN IN or the account chip).
 
 **Active card**:
 The minigame card in the Single player area that Enter or PLAY will start. Other minigames' cards are inactive and show their preview dimmed.
