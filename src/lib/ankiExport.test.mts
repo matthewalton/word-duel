@@ -49,7 +49,7 @@ const pack: LanguagePack = {
   ],
 };
 
-const missed = (itemId: string, kinds: ExportEntry["kinds"] = [{ kind: "toTarget", wrong: 1, timeouts: 0 }]) => ({
+const missed = (itemId: string, kinds: ExportEntry["kinds"] = [{ kind: "toTarget", right: 0, wrong: 1, timeouts: 0 }]) => ({
   itemId,
   kinds,
 });
@@ -103,8 +103,8 @@ describe("ankiExport", () => {
 
   it("adds gap cards after the item cards, only for items missed in the gap prompt kind, skipping retired sentences", () => {
     const gapMiss = missed("grammar.subject", [
-      { kind: "toTarget", wrong: 2, timeouts: 0 },
-      { kind: "gap", wrong: 0, timeouts: 1 },
+      { kind: "toTarget", right: 0, wrong: 2, timeouts: 0 },
+      { kind: "gap", right: 0, wrong: 0, timeouts: 1 },
     ]);
     assert.deepEqual(rows([gapMiss, missed("불.fire")]), [
       "wd:ko-en:grammar.subject\t이/가\tsubject particle\tword-duel::ko-en word-duel::tier-2",
@@ -116,14 +116,14 @@ describe("ankiExport", () => {
 
   it("adds no gap cards when the gap prompt kind has only right answers", () => {
     const rightInGap = missed("grammar.subject", [
-      { kind: "toTarget", wrong: 1, timeouts: 0 },
-      { kind: "gap", wrong: 0, timeouts: 0 },
+      { kind: "toTarget", right: 0, wrong: 1, timeouts: 0 },
+      { kind: "gap", right: 0, wrong: 0, timeouts: 0 },
     ]);
     assert.equal(rows([rightInGap]).length, 1);
   });
 
   it("keeps tags free of spaces", () => {
-    for (const row of rows([missed("grammar.subject", [{ kind: "gap", wrong: 1, timeouts: 0 }])])) {
+    for (const row of rows([missed("grammar.subject", [{ kind: "gap", right: 0, wrong: 1, timeouts: 0 }])])) {
       for (const tag of row.split("\t")[3].split(" ")) assert.match(tag, /^word-duel::\S+$/);
     }
   });

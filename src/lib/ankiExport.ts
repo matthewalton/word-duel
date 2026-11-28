@@ -1,13 +1,10 @@
 import { GAME_NAME } from "../config/game.ts";
-import type { PromptKind } from "../game/types.ts";
 import { findItem } from "../packs/index.ts";
 import { GAP_MARKER, type LanguagePack } from "../packs/types.ts";
+import type { WordbookEntry } from "../server/wordbook.ts";
 
 /** What the export needs from a Wordbook entry: the item, and how it was missed per prompt kind. */
-export type ExportEntry = {
-  itemId: string;
-  kinds: readonly { kind: PromptKind; wrong: number; timeouts: number }[];
-};
+export type ExportEntry = Pick<WordbookEntry, "itemId" | "kinds">;
 
 type Card = { id: string; front: string; back: string; tags: string[] };
 
