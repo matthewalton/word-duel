@@ -27,6 +27,9 @@ export function useSwipe(onStep: (delta: 1 | -1) => void, enabled: boolean) {
 
   return {
     onPointerDown(e: PointerEvent) {
+      // A click from the last swipe comes right after its release, so a new
+      // press means it has come or never will: a quick tap is never eaten.
+      swipedAt.current = -Infinity;
       if (e.pointerType !== "touch") return;
       if (!e.isPrimary) {
         start.current = null;
