@@ -193,6 +193,9 @@ The row on top of the hub and the area screens: the brand or a back button, an a
 The minigame card in the Single player area that Enter or PLAY will start. Other minigames' cards are inactive and show their preview dimmed.
 _Avoid_: Selected mode
 
+**Swipe**:
+A horizontal touch drag on the minigame cards in the Single player area; swipe left for the next card, right for the previous, like ← →. Touch only.
+
 **Preview**:
 A static picture of one round of a minigame, built from the language pack, shown on its card.
 
