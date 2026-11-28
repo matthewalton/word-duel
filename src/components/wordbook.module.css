@@ -195,18 +195,15 @@
   visibility: hidden;
 }
 
-.export:disabled {
+.export[aria-disabled="true"] {
   color: #4a4060;
+  cursor: progress;
 }
 
 /* The export's failure line, under the intro row. */
-.exportError {
-  margin: 0;
-  padding: calc(8px * var(--s)) calc(24px * var(--s)) 0;
-  font-family: var(--font-words);
+.intro.exportError {
+  padding-top: calc(8px * var(--s));
   font-size: calc(15px * var(--s));
-  line-height: 1.4;
-  color: #4a4060;
 }
 
 /* ---------- Practise missed words ---------- */
@@ -704,8 +701,7 @@ a.plain:focus-visible {
   }
 
   .intro,
-  .introRow,
-  .exportError {
+  .introRow {
     padding-inline: 12px;
   }
 

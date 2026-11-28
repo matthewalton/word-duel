@@ -32,6 +32,7 @@
 import JSZip from "jszip";
 import type { SqlJsStatic } from "sql.js";
 import { GAME_NAME } from "../config/game.ts";
+import { fill, strings } from "../i18n/strings.ts";
 import { GAP_MARKER, type LanguagePack } from "../packs/types.ts";
 import { ankiCards, ankiDeckName, gameSlug, localDate, type ExportEntry } from "./ankiExport.ts";
 
@@ -243,7 +244,7 @@ export async function buildApkg(
     ),
     [GAP_NOTE_TYPE_ID]: noteType(
       GAP_NOTE_TYPE_ID,
-      `${GAME_NAME} Cloze`,
+      fill(strings.wordbook.ankiClozeType, { game: GAME_NAME }),
       1,
       ["Text", "Translation", "Back Extra"],
       { name: "Cloze", qfmt: CLOZE_FRONT, afmt: `${CLOZE_FRONT}<hr id=answer><div class=extra>{{Back Extra}}</div>` },
@@ -256,7 +257,7 @@ export async function buildApkg(
     [deckId]: {
       id: deckId,
       name: ankiDeckName(pack),
-      desc: `Missed words from ${GAME_NAME}, exported ${localDate(now)}.`,
+      desc: fill(strings.wordbook.ankiDeckDesc, { game: GAME_NAME, date: localDate(now) }),
       mod: secs,
       usn: -1,
       dyn: 0,

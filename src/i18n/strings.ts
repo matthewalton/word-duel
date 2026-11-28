@@ -320,6 +320,9 @@ export const strings = {
     /** The export button while the deck is being made. */
     ankiExporting: "EXPORTING…",
     ankiExportError: "Couldn't make the Anki deck. Check your connection and try again.",
+    /** Inside the exported deck: the cloze note type's name, and the deck's description in Anki. */
+    ankiClozeType: "{game} Cloze",
+    ankiDeckDesc: "Missed words from {game}, exported {date}.",
     bestIntro: "Your most accurate words, once you have answered them {n} times or more.",
     misses: "{n} MISSES",
     oneMiss: "1 MISS",

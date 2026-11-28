@@ -230,7 +230,7 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
                   <AnkiExportButton pack={pack} entries={entries} onFail={setExportFailed} />
                 </div>
                 {exportFailed && (
-                  <p className={w.exportError} role="alert">
+                  <p className={`${w.intro} ${w.exportError}`} role="alert">
                     {s.ankiExportError}
                   </p>
                 )}
@@ -263,7 +263,8 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
 /**
  * EXPORT TO ANKI: builds the MISSED tab's `.apkg` in the browser. The deck
  * writer loads only on tap; while it works the button reads EXPORTING… and
- * ignores taps, holding the idle label's width so the row doesn't jump.
+ * ignores taps, holding the idle label's width so the row doesn't jump. It is
+ * aria-disabled rather than disabled so keyboard focus stays on it.
  */
 function AnkiExportButton({
   pack,
@@ -277,6 +278,7 @@ function AnkiExportButton({
   const [busy, setBusy] = useState(false);
 
   const exportDeck = async () => {
+    if (busy) return;
     setBusy(true);
     onFail(false);
     try {
@@ -291,7 +293,7 @@ function AnkiExportButton({
   };
 
   return (
-    <Button className={`${w.plain} ${w.export}`} onClick={exportDeck} disabled={busy} aria-busy={busy}>
+    <Button className={`${w.plain} ${w.export}`} onClick={exportDeck} aria-disabled={busy} aria-busy={busy}>
       {/* Both labels share one grid cell, so the button keeps the wider one's width. */}
       <span className={busy ? w.exportHidden : undefined}>{s.ankiExport}</span>
       <span className={busy ? undefined : w.exportHidden}>{s.ankiExporting}</span>
