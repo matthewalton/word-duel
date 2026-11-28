@@ -94,7 +94,7 @@
   { "id": "tuer.to-kill", "kind": "word", "target": "tuer", "base": ["to kill"], "tier": 1 },
   { "id": "l'idée.idea", "kind": "word", "target": "l'idée", "base": ["idea"], "tier": 1 },
   { "id": "la-chance.luck", "kind": "word", "target": "la chance", "base": ["luck", "chance"], "tier": 1 },
-  { "id": "grand.big", "kind": "word", "target": "grand", "targetAlt": ["grande"], "base": ["big (tall, great)", "tall", "great", "large"], "tier": 1 },
+  { "id": "grand.big", "kind": "word", "target": "grand", "targetAlt": ["grande"], "base": ["big (in height)", "tall", "great", "large"], "tier": 1 },
   { "id": "aujourd'hui.today", "kind": "word", "target": "aujourd'hui", "base": ["today"], "tier": 1 },
   { "id": "l'ami.friend", "kind": "word", "target": "l'ami", "targetAlt": ["l'amie"], "base": ["friend"], "tier": 1 },
   { "id": "demain.tomorrow", "kind": "word", "target": "demain", "base": ["tomorrow"], "tier": 1 },

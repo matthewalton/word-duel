@@ -17,7 +17,7 @@
   { "id": "달.moon", "kind": "word", "target": "달", "base": ["moon", "month"], "tier": 1 },
   { "id": "별.star", "kind": "word", "target": "별", "base": ["star"], "tier": 1 },
   { "id": "나무.tree", "kind": "word", "target": "나무", "base": ["tree", "wood"], "tier": 1 },
-  { "id": "시간.time", "kind": "word", "target": "시간", "base": ["time (hours)", "hour"], "tier": 1 },
+  { "id": "시간.time", "kind": "word", "target": "시간", "base": ["time (on the clock)", "hour"], "tier": 1 },
   { "id": "사람.person", "kind": "word", "target": "사람", "base": ["person", "people", "human", "human being"], "tier": 1 },
   { "id": "문제.problem", "kind": "word", "target": "문제", "base": ["problem", "question", "issue", "trouble"], "tier": 1 },
   { "id": "생각.thought", "kind": "word", "target": "생각", "base": ["thought", "idea", "thinking"], "tier": 1 },

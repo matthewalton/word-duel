@@ -495,7 +495,7 @@
   { "id": "tocar.to-touch", "kind": "word", "target": "tocar", "base": ["to touch", "to play"], "tier": 2 },
   { "id": "contar.to-count", "kind": "word", "target": "contar", "base": ["to count", "to tell"], "tier": 2 },
   { "id": "quedar.to-stay", "kind": "word", "target": "quedar", "targetAlt": ["quedarse"], "base": ["to stay", "to remain"], "tier": 2 },
-  { "id": "probar.to-try", "kind": "word", "target": "probar", "base": ["to try (taste, test)", "to taste", "to test"], "tier": 2 },
+  { "id": "probar.to-try", "kind": "word", "target": "probar", "base": ["to try (out)", "to taste", "to test"], "tier": 2 },
   { "id": "amar.to-love", "kind": "word", "target": "amar", "base": ["to love (a person)"], "tier": 2 },
   { "id": "correr.to-run", "kind": "word", "target": "correr", "base": ["to run"], "tier": 2 },
   { "id": "cerrar.to-close", "kind": "word", "target": "cerrar", "base": ["to close", "to shut"], "tier": 2 },
