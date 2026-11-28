@@ -502,6 +502,7 @@
     display: inline;
   }
 
+  /* The third of RECENT_SHOWN latest matches (VersusArea.tsx). */
   .lead,
   .missedList,
   .match:nth-child(3) {

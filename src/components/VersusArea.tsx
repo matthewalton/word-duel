@@ -21,6 +21,9 @@ import { VersusRecordDialog } from "./VersusRecordDialog";
 
 const s = strings.versusArea;
 
+/** Latest matches the VERSUS RECORD slot lists on a desktop; a phone hides the third (area.module.css). */
+const RECENT_SHOWN = 3;
+
 /** `/versus`: the Versus area. */
 export function VersusAreaScreen() {
   return <AreaScreen area="versus">{(props) => <VersusArea {...props} />}</AreaScreen>;
@@ -176,7 +179,7 @@ type Load = { status: "loading" } | { status: "failed" } | { status: "ready"; re
 
 /**
  * The account's versus record in short: won and lost, and the latest
- * matches (three, or two on a phone). FULL RECORD opens the account menu's
+ * matches (RECENT_SHOWN, one fewer on a phone). FULL RECORD opens the account menu's
  * record dialog.
  */
 function RecordSlot() {
@@ -221,7 +224,7 @@ function RecordSlot() {
       {load.status === "ready" && !record && <p className={ar.darkBody}>{strings.versusRecord.empty}</p>}
       {record && (
         <ol className={ar.recent} aria-label={strings.versusRecord.recent}>
-          {record.recent.slice(0, 3).map((m, i) => (
+          {record.recent.slice(0, RECENT_SHOWN).map((m, i) => (
             // Fixed while shown, so the index is a stable key.
             <li key={i} className={ar.match}>
               <span className={m.won ? ar.won : ar.lost}>{m.won ? strings.versusRecord.won : strings.versusRecord.lost}</span>
