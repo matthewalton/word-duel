@@ -33,13 +33,8 @@ function splitElided(s: string, words: readonly string[], form: string, lang: st
   return null;
 }
 
-/** An answer normalised, and the elided word split off its start if it had one. */
-function normalizeParts(
-  raw: string,
-  settings: MatchingSettings,
-  lang: string,
-  keepWordClassMarkers: boolean,
-): { elided: string | null; rest: string } {
+/** Unicode form, diacritics, punctuation, case and spacing, as the pack sets them. */
+function clean(raw: string, settings: MatchingSettings, lang: string): string {
   const form = settings.normalization ?? "NFC";
   let s = raw.normalize(form).replace(APOSTROPHES, "'").trim();
 
@@ -51,12 +46,37 @@ function normalizeParts(
   if (settings.ignorePunctuation) s = s.replace(PUNCTUATION, "");
   if (settings.caseInsensitive ?? true) s = s.toLocaleLowerCase(lang);
 
-  s = s.replace(/\s+/g, " ").trim();
+  return s.replace(/\s+/g, " ").trim();
+}
 
+/** An answer normalised, and the elided word split off its start if it had one. */
+function normalizeParts(
+  raw: string,
+  settings: MatchingSettings,
+  lang: string,
+  keepWordClassMarkers: boolean,
+): { elided: string | null; rest: string } {
+  const form = settings.normalization ?? "NFC";
+  let s = clean(raw, settings, lang);
   if (!keepWordClassMarkers) s = stripLeading(s, listFor(settings.ignoreWordClassMarkers, lang), form, lang);
   s = stripLeading(s, listFor(settings.ignoreLeadingWords, lang), form, lang);
   const split = splitElided(s, listFor(settings.ignoreElidedWords, lang), form, lang);
   return split ? { elided: split[0], rest: split[1] } : { elided: null, rest: s };
+}
+
+/** A meaning without its clarifier: "to lose (an item)" is "to lose". */
+export function withoutClarifier(text: string): string {
+  return text.replace(CLARIFIER, "").trim();
+}
+
+/**
+ * The meaning normalised apart from its clarifier, which is only cleaned and
+ * joined back on, so a word-class marker or article never swallows it:
+ * "to be (a state)" is "be (a state)", never "(a state)".
+ */
+function splitClarifier(raw: string, settings: MatchingSettings, lang: string) {
+  const clarifier = clean((raw.match(CLARIFIER) ?? []).join(" "), settings, lang);
+  return { plain: withoutClarifier(raw), suffix: clarifier ? ` ${clarifier}` : "" };
 }
 
 /**
@@ -80,11 +100,10 @@ export function normalizeAnswer(
  * "to lose (an item)" also matches "lose".
  */
 function acceptedForms(answer: string, settings: MatchingSettings, lang: string): string[] {
-  const plain = answer.replace(CLARIFIER, "").trim();
-  return [answer, ...(plain && plain !== answer ? [plain] : [])].flatMap((a) => {
-    const { elided, rest } = normalizeParts(a, settings, lang, false);
-    return elided ? [rest, elided.replace("'", "") + rest] : [rest];
-  });
+  const { plain, suffix } = splitClarifier(answer, settings, lang);
+  const { elided, rest } = normalizeParts(plain, settings, lang, false);
+  const forms = elided ? [rest, elided.replace("'", "") + rest] : [rest];
+  return suffix ? [...forms, ...forms.map((f) => f + suffix)] : forms;
 }
 
 /** Strict right/wrong check: no partial credit. */
@@ -94,7 +113,8 @@ export function isAcceptedAnswer(
   settings: MatchingSettings,
   lang: string,
 ): boolean {
-  const given = normalizeAnswer(input, settings, lang);
+  const { plain, suffix } = splitClarifier(input, settings, lang);
+  const given = normalizeAnswer(plain, settings, lang);
   if (!given) return false;
-  return accepted.some((a) => acceptedForms(a, settings, lang).includes(given));
+  return accepted.some((a) => acceptedForms(a, settings, lang).includes(given + suffix));
 }
