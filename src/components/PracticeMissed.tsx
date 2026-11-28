@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { minigamesFor, practiceCount, promptKindOf } from "@/game/minigames";
 import type { Direction, Minigame, PromptKind } from "@/game/types";
@@ -73,6 +73,9 @@ function useWays(pack: LanguagePack, userId: string): (PracticeWay & { count: nu
 export function PracticeMissed({ pack, userId }: { pack: LanguagePack; userId: string }) {
   const ways = useWays(pack, userId);
   const [open, setOpen] = useState(false);
+  // The Wordbook is kept (hidden) while its practice duel plays: come back to
+  // it with the chooser closed.
+  useLayoutEffect(() => () => setOpen(false), []);
   if (!ways?.some((way) => way.count >= PRACTICE_MIN_MISSED)) return null;
   return (
     <div className={w.practice}>
