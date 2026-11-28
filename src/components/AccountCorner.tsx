@@ -157,6 +157,13 @@ function AccountMenu({
     if (!(await onLink(provider))) setLinking(null);
   };
 
+  // The row shows the missed count as a bare number; its label says what it counts.
+  const wordbookAria = !missed
+    ? undefined
+    : missed === 1
+      ? strings.wordbook.missedRowAriaOne
+      : fill(strings.wordbook.missedRowAria, { n: missed });
+
   return (
     <>
       <div className={a.menuHead}>
@@ -164,10 +171,14 @@ function AccountMenu({
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
       <MenuItem asChild>
-        <Link href="/wordbook" className={a.menuRow}>
+        <Link
+          href="/wordbook"
+          className={a.menuRow}
+          aria-label={wordbookAria}
+        >
           <BookIcon className={a.wordbookIcon} />
           <span className={a.menuRowName}>{strings.wordbook.title}</span>
-          {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
+          {missed ? <span className={a.menuWordbookCount}>{missed}</span> : null}
           <span aria-hidden="true">&gt;</span>
         </Link>
       </MenuItem>
