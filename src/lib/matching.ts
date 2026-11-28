@@ -4,6 +4,8 @@ const PUNCTUATION = /[\p{P}\p{S}]/gu;
 const COMBINING = /\p{M}/gu;
 /** Curly and modifier-letter apostrophes, which phone keyboards type, count as straight ones. */
 const APOSTROPHES = /[\u2019\u02BC]/g;
+/** A clarifier in an accepted answer, " (an item)" in "to lose (an item)". */
+const CLARIFIER = /\s*\([^)]*\)/g;
 
 type WordLists = MatchingSettings["ignoreLeadingWords"];
 
@@ -74,11 +76,15 @@ export function normalizeAnswer(
 /**
  * The normalised forms that match one accepted answer: the answer itself and,
  * if it starts with an elided word, that word joined on without its
- * apostrophe ("l'eau" also matches "leau").
+ * apostrophe ("l'eau" also matches "leau"). A clarifier is optional, so
+ * "to lose (an item)" also matches "lose".
  */
 function acceptedForms(answer: string, settings: MatchingSettings, lang: string): string[] {
-  const { elided, rest } = normalizeParts(answer, settings, lang, false);
-  return elided ? [rest, elided.replace("'", "") + rest] : [rest];
+  const plain = answer.replace(CLARIFIER, "").trim();
+  return [answer, ...(plain && plain !== answer ? [plain] : [])].flatMap((a) => {
+    const { elided, rest } = normalizeParts(a, settings, lang, false);
+    return elided ? [rest, elided.replace("'", "") + rest] : [rest];
+  });
 }
 
 /** Strict right/wrong check: no partial credit. */

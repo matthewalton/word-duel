@@ -9,10 +9,12 @@ import { matchingSettingsSchema } from "../packs/schema.ts";
 import type { MatchingSettings } from "../packs/types.ts";
 import esEn from "../packs/es-en/matching.json" with { type: "json" };
 import frEn from "../packs/fr-en/matching.json" with { type: "json" };
+import koEn from "../packs/ko-en/matching.json" with { type: "json" };
 import { isAcceptedAnswer, normalizeAnswer } from "./matching.ts";
 
 const fr = matchingSettingsSchema.parse(frEn);
 const es = matchingSettingsSchema.parse(esEn);
+const ko = matchingSettingsSchema.parse(koEn);
 
 const accepts = (settings: MatchingSettings, lang: string, accepted: string[], given: string) =>
   isAcceptedAnswer(given, accepted, settings, lang);
@@ -92,5 +94,31 @@ describe("Spanish answers", () => {
   it("keep their articles and accents optional", () => {
     for (const given of ["el agua", "agua", "un agua"]) assert.ok(accepts(es, "es", ["el agua"], given), given);
     assert.ok(accepts(es, "es", ["el día"], "dia"));
+  });
+});
+
+describe("clarifiers", () => {
+  it("accepts the answer with or without its clarifier", () => {
+    for (const given of ["lose", "to lose", "To Lose", "lose (an item)", "to lose (an item)"]) {
+      assert.ok(accepts(ko, "en", ["to lose (an item)"], given), given);
+    }
+    for (const given of ["heart", "the heart", "heart (organ)"]) assert.ok(accepts(ko, "en", ["heart (organ)"], given), given);
+  });
+
+  it("doesn't accept the clarifier alone, or a different one", () => {
+    for (const given of ["an item", "(an item)", "lose (a game)", "lose an item"]) {
+      assert.ok(!accepts(ko, "en", ["to lose (an item)"], given), given);
+    }
+  });
+
+  it("works when the pack ignores punctuation", () => {
+    const loose: MatchingSettings = { ignorePunctuation: true, ignoreWordClassMarkers: { en: ["to be", "to", "be"] } };
+    for (const given of ["be", "to be", "to be (permanent)", "be permanent"]) {
+      assert.ok(accepts(loose, "en", ["to be (permanent)"], given), given);
+    }
+  });
+
+  it("keeps the clarifier when grouping words by prompt", () => {
+    assert.notEqual(normalizeAnswer("heart (organ)", ko, "en"), normalizeAnswer("heart (feelings)", ko, "en"));
   });
 });

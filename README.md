@@ -40,7 +40,7 @@ A pack's content is **items** (what the player learns) and **prompts** (one way 
 
 | File | Kind | Payload |
 | --- | --- | --- |
-| `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first), `tier` (1 easiest to 3; ADR 0009) |
+| `words.json` | item, `word` | `target`, optional `targetAlt`, `base` (accepted answers, main one first; a vague meaning gets a clarifier, `to lose (an item)`, which players needn't type), `tier` (1 easiest to 3; ADR 0009) |
 | `grammar.json` | item, `grammar` | `target` (e.g. `을/를`), `base` (short description), `tier` (1 easiest to 3, set by hand; ADR 0009) |
 | `gaps.json` | prompt, `gap` | `tests` (an item id), `sentence` with one `___`, `translation`, `answer`, `options` |
 
