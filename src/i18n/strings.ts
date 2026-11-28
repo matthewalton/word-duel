@@ -315,6 +315,8 @@ export const strings = {
     newest: "NEWEST",
     mostMissed: "MOST MISSED",
     missedIntro: "Words you got wrong or ran out of time on.",
+    /** Downloads the MISSED tab as a file Anki imports. */
+    ankiExport: "EXPORT TO ANKI",
     bestIntro: "Your most accurate words, once you have answered them {n} times or more.",
     misses: "{n} MISSES",
     oneMiss: "1 MISS",
