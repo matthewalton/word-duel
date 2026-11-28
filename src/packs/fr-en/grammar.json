@@ -8,5 +8,11 @@
   { "id": "grammar.adjective-agreement", "kind": "grammar", "target": "petit/petite/petits/petites", "base": "adjective agreement (gender and number)", "tier": 2 },
   { "id": "grammar.contraction", "kind": "grammar", "target": "au/aux/du/des", "base": "to the, of the (à or de + le/les)", "tier": 2 },
   { "id": "grammar.partitive", "kind": "grammar", "target": "du/de la/de l'", "base": "some (partitive article)", "tier": 3 },
-  { "id": "grammar.preposition", "kind": "grammar", "target": "à/de/en/dans/sur/sous/avec/pour/chez/sans", "base": "common prepositions", "tier": 3 }
+  { "id": "grammar.preposition", "kind": "grammar", "target": "à/de/en/dans/sur/sous/avec/pour/chez/sans", "base": "common prepositions", "tier": 3 },
+  { "id": "grammar.possessive", "kind": "grammar", "target": "mon/ma/mes/ton/ta/tes/son/sa/ses", "base": "my, your, his/her (possessive)", "tier": 2 },
+  { "id": "grammar.demonstrative", "kind": "grammar", "target": "ce/cet/cette/ces", "base": "this, that, these (demonstrative)", "tier": 2 },
+  { "id": "grammar.present-ir-re", "kind": "grammar", "target": "-is/-it/-issons/-s/-d/-ons/-ent", "base": "present tense, -ir and -re verbs", "tier": 2 },
+  { "id": "grammar.going-to", "kind": "grammar", "target": "aller + infinitive", "base": "going to (near future)", "tier": 3 },
+  { "id": "grammar.reflexive", "kind": "grammar", "target": "me/te/se/nous/vous", "base": "reflexive verbs", "tier": 3 },
+  { "id": "grammar.passe-compose", "kind": "grammar", "target": "ai/est + past participle", "base": "past tense: passé composé", "tier": 3 }
 ]
