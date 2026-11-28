@@ -179,6 +179,11 @@ export const strings = {
     "Get {hearts} right to fill the stage bar and reach the next stage. Each stage gives you {step} second less to answer.",
   ],
   creditsLabel: "Word data:",
+  sound: {
+    buttonAria: "Sound effects",
+    on: "Sound on",
+    off: "Sound off",
+  },
   languagePicker: {
     buttonAria: "Language: {language}. Choose another language",
     menuLabel: "Language",
