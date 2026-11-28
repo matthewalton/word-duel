@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useLayoutEffect, useState } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { minigamesFor, practiceCount, promptKindOf } from "@/game/minigames";
 import type { Direction, Minigame, PromptKind } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
-import { practiceHref } from "@/lib/practiceLink";
+import { startPractice } from "@/lib/practiceLink";
 import { useLastMissed, type MissedLists } from "@/lib/useLastMissed";
 import type { LanguageInfo, LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
@@ -72,6 +73,9 @@ function useWays(pack: LanguagePack, userId: string): (PracticeWay & { count: nu
 export function PracticeMissed({ pack, userId }: { pack: LanguagePack; userId: string }) {
   const ways = useWays(pack, userId);
   const [open, setOpen] = useState(false);
+  // The Wordbook is kept (hidden) while its practice duel plays: come back to
+  // it with the chooser closed.
+  useLayoutEffect(() => () => setOpen(false), []);
   if (!ways?.some((way) => way.count >= PRACTICE_MIN_MISSED)) return null;
   return (
     <div className={w.practice}>
@@ -113,10 +117,9 @@ function Chooser({ ways, onClose }: { ways: (PracticeWay & { count: number })[];
           return (
             <li key={way.kind}>
               {way.count >= PRACTICE_MIN_MISSED ? (
-                // A full page load, so the Single player area reads the way on arrival.
-                <a href={practiceHref(way.kind)} className={w.way} aria-label={aria}>
+                <Link href="/play" onNavigate={() => startPractice(way.kind)} className={w.way} aria-label={aria}>
                   {inner}
-                </a>
+                </Link>
               ) : (
                 <Button className={`${w.way} ${w.wayOff}`} aria-label={aria} disabled>
                   {inner}

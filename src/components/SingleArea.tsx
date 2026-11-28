@@ -50,5 +50,5 @@ export function SingleArea({ pack, minigames, best, account, settings, lastId, p
 
 /** `/play`: the Single player area, swapped for a duel while one is played. */
 export function SinglePlayerScreen() {
-  return <SoloScreen menu={(props) => <SingleArea {...props} />} />;
+  return <SoloScreen menu={(props) => <SingleArea {...props} />} practice />;
 }
