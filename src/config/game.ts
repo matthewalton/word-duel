@@ -48,6 +48,9 @@ export const RULES = {
 /** Number of segments in the fuse bar (5% steps). */
 export const FUSE_SEGMENTS = 20;
 
+/** The fuse ticks once for each segment lost from this many left down to the last (a quarter of the fuse). */
+export const FUSE_TICK_FROM = 5;
+
 /** Versus rules (ADR 0012). Hearts and the fuse's start, step and floor are the solo ones. */
 export const VERSUS = {
   /** Room code letters: consonants that can't be misread (no I, O, L, Y or vowels, so no words). */
