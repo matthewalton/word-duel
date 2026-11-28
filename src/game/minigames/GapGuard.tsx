@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import styles from "@/components/game.module.css";
 import { HowToStep, StageProgressVisual } from "@/components/HowToParts";
 import t from "@/components/title.module.css";
+import { Button } from "@/components/ui/Button";
+import { ChoiceButton, type ChoiceMark } from "@/components/ui/ChoiceButton";
 import { strings } from "@/i18n/strings";
 import { FIT_STEPS_CHOICE, useFitText } from "@/lib/useFitText";
 import { drawOrder, shuffle } from "@/lib/random";
@@ -62,40 +64,38 @@ function GapGuardControls({ round, phase, outcome, onSubmit, onStart, locked = f
 
   // The pick is judged by the answer, not the reason: in versus a round can be
   // won by the other player after this one picked wrong.
-  const stateClass = (option: string) => {
-    if (!outcome) return "";
-    if (option === outcome.given) return option === round.reveal.text ? styles.choiceRight : styles.choiceWrong;
-    if (option === round.reveal.text) return styles.choiceReveal;
-    return "";
+  const markOf = (option: string): ChoiceMark | undefined => {
+    if (!outcome) return undefined;
+    if (option === outcome.given) return option === round.reveal.text ? "right" : "wrong";
+    if (option === round.reveal.text) return "reveal";
+    return undefined;
   };
 
   return (
     <div className={styles.choiceArea}>
       <div className={styles.choiceRow}>
         {options.map((option, i) => (
-          <button
+          <ChoiceButton
             key={`${round.promptId}-${option}`}
             ref={(el) => {
               buttonRefs.current[i] = el;
             }}
-            type="button"
-            className={`${styles.choiceButton} ${stateClass(option)}`}
+            keyNumber={i + 1}
+            mark={markOf(option)}
+            className={styles.choiceButton}
             lang={round.answerLang.code}
             dir={round.answerLang.dir}
             disabled={!live}
             onClick={() => onSubmit(option)}
           >
-            <span className={styles.choiceKey} aria-hidden="true">
-              {i + 1}
-            </span>
             {waiting ? "\u00A0" : option}
-          </button>
+          </ChoiceButton>
         ))}
       </div>
       {showStart && (
-        <button ref={startRef} type="button" className={styles.goldButton} onClick={onStart}>
+        <Button ref={startRef} variant="primary" className={styles.goldButton} onClick={onStart}>
           {strings.start}
-        </button>
+        </Button>
       )}
     </div>
   );

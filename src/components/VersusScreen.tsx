@@ -17,8 +17,9 @@ import { DirectionLabel } from "./DirectionLabel";
 import styles from "./game.module.css";
 import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
-import { HeartRow } from "./PixelHeart";
 import { PromptBoard } from "./PromptBoard";
+import { Button, buttonClass } from "./ui/Button";
+import { HeartRow } from "./ui/PixelHeart";
 import v from "./versus.module.css";
 
 const minigameName = (id: MinigameId) => (strings.modes[id] ?? id).toUpperCase();
@@ -92,7 +93,7 @@ export function VersusScreen({ code }: { code: string }) {
 /** Back to the hub; `onLeave` gives up the seat first (leaving before a match is won loses it). */
 function MenuLink({ label = strings.menu, onLeave }: { label?: string; onLeave?: () => void }) {
   return (
-    <Link href="/" className={`${styles.modeButton} ${v.menuLink}`} aria-label={strings.menuAria} onClick={onLeave}>
+    <Link href="/" className={buttonClass(`${styles.modeButton} ${v.menuLink}`)} aria-label={strings.menuAria} onClick={onLeave}>
       &lt; {label}
     </Link>
   );
@@ -111,7 +112,7 @@ function RoomMessage({ title, body = strings.versus.errorBody, quiet }: { title:
         {!quiet && (
           <>
             <p className={v.messageBody}>{body}</p>
-            <Link href="/" className={styles.goldButton}>
+            <Link href="/" className={buttonClass(styles.goldButton, "primary")}>
               {strings.versus.backToMenu}
             </Link>
           </>
@@ -241,9 +242,9 @@ function CodeRow({ code }: { code: string }) {
           </span>
         ))}
       </span>
-      <button type="button" className={v.linkButton} onClick={send} aria-live="polite">
+      <Button variant="primary" className={v.linkButton} onClick={send} aria-live="polite">
         {copied ? strings.versus.copied : share ? strings.versus.shareLink : strings.versus.copyLink}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -477,7 +478,7 @@ function OverBar({
   let note: ReactNode;
   if (rivalGone) {
     note = (
-      <Link ref={backRef} href="/" className={`${styles.goldButton} ${v.overBack}`} onClick={leave}>
+      <Link ref={backRef} href="/" className={buttonClass(`${styles.goldButton} ${v.overBack}`, "primary")} onClick={leave}>
         {strings.versus.backToMenu}
       </Link>
     );
@@ -500,16 +501,16 @@ function OverBar({
   return (
     <div className={v.overBar}>
       {note}
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
+        variant="primary"
         className={`${styles.goldButton} ${v.rematchButton}`}
         onClick={press}
         disabled={rivalGone || asked || sending}
         aria-pressed={asked}
       >
         {rivalGone ? strings.versus.rivalLeft : strings.versus.rematch}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { FuseBar } from "./FuseBar";
 import { GameOverPanel } from "./GameOverPanel";
 import styles from "./game.module.css";
 import { LangSpan, wordBreakStyle } from "./LangSpan";
+import { Button } from "./ui/Button";
 
 /**
  * The middle of the board: START on the ready screen, then the countdown,
@@ -140,9 +141,9 @@ function ReadyStart({ onStart }: { onStart: () => void }) {
 
   return (
     <div className={styles.ready}>
-      <button ref={ref} type="button" className={`${styles.goldButton} ${styles.startButton}`} onClick={onStart}>
+      <Button ref={ref} variant="primary" className={`${styles.goldButton} ${styles.startButton}`} onClick={onStart}>
         {strings.start}
-      </button>
+      </Button>
       <span className={styles.readyHint}>{strings.pressEnter}</span>
     </div>
   );
