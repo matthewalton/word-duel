@@ -1,147 +1,14 @@
 /*
- * Versus (design canvas round 19, `VersusTitleBar` and its boards): the room
- * panel, the waiting screen's player cards, and the versus parts of the duel
+ * Versus (design canvas round 19, `VersusTitleBar` and its boards): the
+ * waiting screen's player cards, and the versus parts of the duel
  * board.
  * Same pixel rules: 4px borders, square corners, unblurred offset shadows,
  * steps() motion only.
  */
 
-/* ---------- Room panel ---------- */
-
-.codeInput:focus-visible,
 .linkButton:focus-visible {
   outline: 4px solid var(--player);
   outline-offset: 2px;
-}
-
-.panel {
-  width: min(calc(860px * var(--s)), calc(100% - 32px));
-  gap: calc(22px * var(--s));
-  border-color: var(--rival);
-  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--rival);
-}
-
-.panelLead {
-  margin: 0 calc(16px * var(--s));
-  font-family: var(--font-words);
-  font-size: calc(18px * var(--s));
-  color: #4a4060;
-}
-
-.options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: calc(24px * var(--s));
-}
-
-.option {
-  display: flex;
-  flex-direction: column;
-  gap: calc(14px * var(--s));
-  padding: calc(20px * var(--s));
-  background: var(--track);
-}
-
-.optionTitle {
-  margin: 0;
-  font-size: calc(20px * var(--s));
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.optionBody {
-  margin: 0;
-  font-family: var(--font-words);
-  font-size: calc(17px * var(--s));
-  line-height: 1.4;
-  color: #4a4060;
-}
-
-.minigameOption {
-  min-height: calc(44px * var(--s));
-  padding: 0 calc(8px * var(--s));
-  font-size: calc(16px * var(--s));
-}
-
-.minigameNote {
-  margin: 0;
-  font-family: var(--font-words);
-  font-size: calc(15px * var(--s));
-  color: var(--muted);
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  font-size: calc(14px * var(--s));
-  border: 3px solid var(--ink);
-}
-
-.createButton,
-.joinButton {
-  min-height: calc(52px * var(--s));
-  font-size: calc(22px * var(--s));
-}
-
-.createButton {
-  margin-block-start: auto;
-}
-
-/* The join button is the ink version of the primary button. */
-.joinButton {
-  color: var(--board);
-  background: var(--ink);
-}
-
-.joinForm {
-  display: flex;
-  flex-direction: column;
-  gap: calc(14px * var(--s));
-}
-
-.codeInput {
-  min-width: 0;
-  padding: calc(8px * var(--s)) calc(14px * var(--s));
-  font-size: calc(34px * var(--s));
-  font-weight: 700;
-  letter-spacing: calc(14px * var(--s));
-  text-transform: uppercase;
-  color: var(--ink);
-  background: #fff;
-  border: var(--border);
-  outline: none;
-}
-
-.codeInput::placeholder {
-  color: #8a7fa6;
-}
-
-.codeInput:focus {
-  border-color: var(--player);
-}
-
-.panelError {
-  margin: 0;
-  font-family: var(--font-words);
-  font-size: calc(16px * var(--s));
-  color: #a31f3a;
-}
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 /* ---------- Waiting screen ---------- */

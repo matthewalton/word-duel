@@ -1,54 +1,65 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { PRACTICE_MIN_MISSED } from "@/config/game";
 import { minigamesFor, practiceCount, promptKindOf } from "@/game/minigames";
-import type { Direction, Minigame, PromptKind } from "@/game/types";
+import type { Minigame, PromptKind } from "@/game/types";
 import { fill, strings } from "@/i18n/strings";
 import { practiceHref } from "@/lib/practiceLink";
-import { useLastMissed } from "@/lib/useLastMissed";
-import type { LanguagePack } from "@/packs/types";
+import { useLastMissed, type MissedLists } from "@/lib/useLastMissed";
+import type { LanguageInfo, LanguagePack } from "@/packs/types";
 import { DirectionLabel } from "./DirectionLabel";
 import { Button } from "./ui/Button";
 import { Dialog } from "./ui/Dialog";
 import w from "./wordbook.module.css";
 
-type Way = { kind: PromptKind; label: ReactNode; name: string; count: number };
+/** One way to practise: a minigame's prompt kind, with how many missed items it would ask. */
+export type PracticeWay = {
+  kind: PromptKind;
+  minigame: Minigame;
+  /** Word Strike's direction, as from and to languages; absent for a minigame without one. */
+  languages?: readonly [LanguageInfo, LanguageInfo];
+  /** Null for a guest, and while the account's missed list for this kind loads. */
+  count: number | null;
+};
 
 /**
- * The ways the account can practise in this pack, each with its missed count:
- * Word Strike both ways, and Gap Guard when the pack has gap sentences.
- * Null until every count has loaded.
+ * Every way to practise in this pack, in registry order: Word Strike both
+ * ways, and Gap Guard when the pack has gap sentences. Counts come from the
+ * account's missed lists (null for a guest).
  */
-function useWays(pack: LanguagePack, userId: string): Way[] | null {
-  const missed = useLastMissed(pack.meta.id, userId);
+export function practiceWays(pack: LanguagePack, missed: MissedLists | null): PracticeWay[] {
   const { base, target } = pack.meta;
-  const ways: Way[] = [];
-  for (const m of minigamesFor(pack)) {
-    const add = (kind: PromptKind, label: ReactNode, name: string, direction: Direction = "toTarget") => {
-      const count = practiceCount(m, pack, missed, direction);
-      if (count != null) ways.push({ kind, label, name, count });
-    };
-    if (m.usesDirection) {
-      for (const [direction, from, to] of [
+  return minigamesFor(pack).flatMap((minigame): PracticeWay[] => {
+    if (!minigame.usesDirection)
+      return [{ kind: promptKindOf(minigame, "toTarget"), minigame, count: practiceCount(minigame, pack, missed, "toTarget") }];
+    return (
+      [
         ["toTarget", base, target],
         ["toBase", target, base],
-      ] as const)
-        add(
-          direction,
-          <DirectionLabel from={from} to={to} />,
-          fill(strings.practice.directionWay, { from: from.name, to: to.name }),
-          direction,
-        );
-    } else {
-      add(promptKindOf(m, "toTarget"), minigameName(m).toUpperCase(), minigameName(m));
-    }
-  }
-  const expected = minigamesFor(pack).reduce((n, m) => n + (m.usesDirection ? 2 : 1), 0);
-  return ways.length === expected ? ways : null;
+      ] as const
+    ).map(([direction, from, to]) => ({
+      kind: promptKindOf(minigame, direction),
+      minigame,
+      languages: [from, to] as const,
+      count: practiceCount(minigame, pack, missed, direction),
+    }));
+  });
 }
 
-const minigameName = (m: Minigame) => strings.modes[m.id] ?? m.id;
+export const minigameName = (m: Minigame) => strings.modes[m.id] ?? m.id;
+
+/** A way's name, read out: "English to Korean", or the minigame's name. */
+export const wayName = (way: PracticeWay) =>
+  way.languages
+    ? fill(strings.practice.directionWay, { from: way.languages[0].name, to: way.languages[1].name })
+    : minigameName(way.minigame);
+
+/** Ways with their counts, or null until every count has loaded. */
+function useWays(pack: LanguagePack, userId: string): (PracticeWay & { count: number })[] | null {
+  const ways = practiceWays(pack, useLastMissed(pack.meta.id, userId));
+  return ways.every((w): w is PracticeWay & { count: number } => w.count != null) ? ways : null;
+}
 
 /**
  * PRACTISE MISSED WORDS, at the top of the Wordbook's MISSED tab: opens a
@@ -70,7 +81,7 @@ export function PracticeMissed({ pack, userId }: { pack: LanguagePack; userId: s
   );
 }
 
-function Chooser({ ways, onClose }: { ways: Way[]; onClose: () => void }) {
+function Chooser({ ways, onClose }: { ways: (PracticeWay & { count: number })[]; onClose: () => void }) {
   return (
     <Dialog
       title={strings.practice.chooserTitle}
@@ -81,10 +92,16 @@ function Chooser({ ways, onClose }: { ways: Way[]; onClose: () => void }) {
       <p className={w.chooserBody}>{strings.practice.chooserBody}</p>
       <ul className={w.ways} aria-label={strings.practice.waysLabel}>
         {ways.map((way) => {
-          const aria = fill(strings.practice.wayAria, { way: way.name, n: way.count });
+          const aria = fill(strings.practice.wayAria, { way: wayName(way), n: way.count });
           const inner = (
             <>
-              <span className={w.wayName}>{way.label}</span>
+              <span className={w.wayName}>
+                {way.languages ? (
+                  <DirectionLabel from={way.languages[0]} to={way.languages[1]} />
+                ) : (
+                  minigameName(way.minigame).toUpperCase()
+                )}
+              </span>
               {way.count < PRACTICE_MIN_MISSED && (
                 <span className={w.wayHint}>{fill(strings.practice.tooFew, { n: PRACTICE_MIN_MISSED })}</span>
               )}

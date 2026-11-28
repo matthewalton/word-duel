@@ -13,27 +13,24 @@ import { keepSeat } from "./versusSeat";
 type Busy = "create" | "join" | null;
 
 /**
- * CREATE ROOM and JOIN, shared by the hub's VERSUS panel and the versus
- * dialog. A room runs the given minigame with the saved difficulty and
+ * CREATE ROOM and JOIN, shared by the hub's VERSUS panel and the Versus
+ * area. A room runs the given minigame with the saved difficulty and
  * direction (the direction only counts for Word Strike) and the language
  * picker's pack; joining by code shows "no room" and "full" before
- * leaving the screen. `beforeLeave` runs just before moving to the room.
- * A reply that comes back after the screen has gone (the player started a
- * duel or opened an area meanwhile) is dropped, so it never pulls them into
- * the room.
+ * leaving the screen. A reply that comes back after the screen has gone
+ * (the player started a duel or opened an area meanwhile) is dropped, so it
+ * never pulls them into the room.
  */
 export function useRoomActions({
   pack,
   minigame,
   direction,
   difficulty,
-  beforeLeave,
 }: {
   pack: LanguagePack;
   minigame: MinigameId;
   direction: Direction;
   difficulty: Difficulty;
-  beforeLeave?: () => void;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState<Busy>(null);
@@ -48,7 +45,6 @@ export function useRoomActions({
 
   const go = (roomCode: string, token: string) => {
     keepSeat(roomCode, token);
-    beforeLeave?.();
     router.push(`/versus/${roomCode}`);
   };
 

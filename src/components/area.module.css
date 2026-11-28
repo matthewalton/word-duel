@@ -1,0 +1,646 @@
+/*
+ * The Versus and Study areas' contents (design canvas round 20, NavKitVersus
+ * and NavKitStudy, framed as NavDoorsVersus and NavDoorsStudy). The frame
+ * and the top bar are in nav.module.css.
+ * Pixel rules: 4px borders, square corners, unblurred offset shadows, no motion.
+ */
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(24px * var(--s));
+  /* Room for the panels' shadows. */
+  padding: 0 10px 10px 0;
+}
+
+.short {
+  display: none;
+}
+
+.lead {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(18px * var(--s));
+  line-height: 1.4;
+  color: var(--line);
+}
+
+/* ---------- Light panels: make and join a room, the guest banner ---------- */
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(32px * var(--s));
+}
+
+.create,
+.join {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(14px * var(--s));
+  padding: calc(22px * var(--s));
+}
+
+.create {
+  border-color: var(--rival);
+  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 var(--rival);
+}
+
+.join {
+  box-shadow: calc(10px * var(--s)) calc(10px * var(--s)) 0 #000;
+}
+
+/* On a desktop the chips sit under the minigame switch; on a phone, beside the title. */
+.createHead {
+  display: contents;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: calc(24px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.panelBody {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(17px * var(--s));
+  line-height: 1.4;
+  color: #4a4060;
+}
+
+.create > .panelBody {
+  order: 1;
+}
+
+.toggle,
+.note {
+  order: 2;
+}
+
+.chips {
+  order: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.createButton {
+  order: 4;
+  margin-top: auto;
+  min-height: calc(52px * var(--s));
+  font-size: calc(22px * var(--s));
+}
+
+.chip,
+.chipDark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: calc(14px * var(--s));
+  font-weight: 400;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  border: 3px solid var(--ink);
+}
+
+.minigameOption {
+  min-height: calc(44px * var(--s));
+  padding: 0 calc(8px * var(--s));
+  font-size: calc(16px * var(--s));
+}
+
+.note {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(15px * var(--s));
+  color: var(--muted);
+}
+
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14px * var(--s));
+}
+
+.joinRow {
+  display: flex;
+  gap: calc(12px * var(--s));
+}
+
+/* Shrinks with the panel, so a typed code never widens the screen. */
+.codeInput {
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 4px calc(14px * var(--s));
+  font-family: inherit;
+  font-size: calc(32px * var(--s));
+  font-weight: 700;
+  letter-spacing: calc(14px * var(--s));
+  text-transform: uppercase;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 0;
+  outline: none;
+}
+
+.codeInput::placeholder {
+  color: #8a7fa6;
+}
+
+.codeInput:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+/* The ink version of the primary button. */
+.joinButton {
+  flex: none;
+  padding: 0 calc(24px * var(--s));
+  font-size: calc(22px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--board);
+  background: var(--ink);
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.joinButton:disabled {
+  opacity: 0.6;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(16px * var(--s));
+  color: #ff8fa3;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: calc(24px * var(--s));
+  padding: calc(18px * var(--s)) calc(22px * var(--s));
+  border-color: var(--player);
+  box-shadow: 8px 8px 0 var(--player);
+}
+
+.bannerText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.banner .panelTitle {
+  font-size: calc(22px * var(--s));
+}
+
+.bannerButton {
+  flex: none;
+  min-height: 48px;
+  padding: 0 calc(22px * var(--s));
+  font-size: calc(20px * var(--s));
+}
+
+/* ---------- Dark panels: the versus record, the Wordbook, practice ---------- */
+
+.dark {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: calc(20px * var(--s)) calc(22px * var(--s));
+  background: #332c4e;
+  border: 4px solid var(--muted);
+}
+
+.darkHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.darkIcon {
+  display: block;
+  flex: none;
+  width: calc(28px * var(--s));
+  height: calc(24px * var(--s));
+  color: var(--line);
+}
+
+.darkTitle {
+  margin: 0;
+  font-size: calc(22px * var(--s));
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.darkBody,
+.status {
+  margin: 0;
+  font-family: var(--font-words);
+  font-size: calc(17px * var(--s));
+  line-height: 1.4;
+  color: var(--line);
+}
+
+.status {
+  font-family: inherit;
+  letter-spacing: 1px;
+}
+
+.tally {
+  margin-inline-start: auto;
+  font-size: calc(18px * var(--s));
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.won {
+  color: var(--player);
+}
+
+.lost {
+  color: #ff8fa3;
+}
+
+.recent {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.match {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border: 3px solid #4e4670;
+}
+
+.match > :first-child {
+  min-width: calc(54px * var(--s));
+  font-size: calc(15px * var(--s));
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.rival {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(16px * var(--s));
+  letter-spacing: 1px;
+}
+
+.when {
+  flex: none;
+  margin-inline-start: auto;
+  font-size: calc(15px * var(--s));
+  letter-spacing: 1px;
+  color: var(--line);
+}
+
+.guestRow {
+  display: flex;
+  align-items: center;
+  gap: calc(20px * var(--s));
+}
+
+.guestRow .darkBody {
+  flex: 1;
+}
+
+.signIn,
+.fullRecord {
+  flex: none;
+}
+
+.fullRecord {
+  align-self: flex-start;
+}
+
+.studyPanels {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: calc(28px * var(--s));
+}
+
+.studyPanels > .dark {
+  flex: 1 1 0;
+}
+
+/* A guest's Wordbook and practice: shown dimmed, nothing to open. */
+.locked {
+  opacity: 0.5;
+}
+
+.missedList,
+.ways {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.missedRow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 6px 12px;
+  color: var(--ink);
+  background: var(--board);
+  border: 3px solid var(--ink);
+}
+
+.missedTarget {
+  font-family: var(--font-words);
+  font-size: calc(22px * var(--s));
+}
+
+.missedBase {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-words);
+  font-size: calc(16px * var(--s));
+  color: var(--muted);
+}
+
+.missedCount {
+  flex: none;
+  margin-inline-start: auto;
+  font-size: calc(14px * var(--s));
+  letter-spacing: 1px;
+  color: #b0213f;
+}
+
+.wordbookFoot {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.counts {
+  font-size: calc(15px * var(--s));
+  letter-spacing: 1px;
+  color: var(--line);
+}
+
+.openWordbook,
+.practise {
+  margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.openWordbook {
+  min-height: 46px;
+  padding: 0 calc(18px * var(--s));
+  font-size: calc(17px * var(--s));
+  background: var(--board);
+}
+
+.way {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 3px solid #4e4670;
+}
+
+.wayText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wayName {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: calc(17px * var(--s));
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.chipDark {
+  padding: 2px 8px;
+  font-size: calc(13px * var(--s));
+  border-color: #4e4670;
+}
+
+.wayNote {
+  font-family: var(--font-words);
+  font-size: calc(14px * var(--s));
+  color: var(--line);
+}
+
+.practise {
+  flex: none;
+  min-height: 44px;
+  padding: 0 calc(16px * var(--s));
+  font-size: calc(16px * var(--s));
+  background: var(--accent);
+}
+
+.practise:disabled,
+.openWordbook:disabled {
+  background: var(--muted);
+  box-shadow: none;
+}
+
+.openWordbook:focus-visible,
+.practise:focus-visible {
+  outline: 4px solid var(--player);
+  outline-offset: 2px;
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 640px) {
+  .body {
+    gap: 14px;
+    padding: 0 8px 8px 0;
+  }
+
+  .long {
+    display: none;
+  }
+
+  .short {
+    display: inline;
+  }
+
+  .lead,
+  .missedList,
+  .match:nth-child(3) {
+    display: none;
+  }
+
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .create,
+  .join {
+    gap: 10px;
+    padding: 14px 16px 16px;
+  }
+
+  .create {
+    box-shadow: 8px 8px 0 var(--rival);
+  }
+
+  .join {
+    box-shadow: 8px 8px 0 #000;
+  }
+
+  .createHead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .createHead .panelTitle {
+    white-space: nowrap;
+  }
+
+  .chips {
+    margin-inline-start: auto;
+    gap: 4px;
+  }
+
+  .chip {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+
+  .create > .panelBody {
+    display: none;
+  }
+
+  .panelTitle {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .createButton {
+    min-height: 50px;
+    font-size: 20px;
+  }
+
+  /* The panel's title names the box on a phone; the label stays for screen readers. */
+  .joinLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .joinRow {
+    gap: 8px;
+  }
+
+  .codeInput {
+    padding: 4px 10px;
+    font-size: 28px;
+    letter-spacing: 10px;
+  }
+
+  .joinButton {
+    padding: 0 16px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    box-shadow: none;
+  }
+
+  .banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 16px 16px;
+  }
+
+  .banner .panelTitle {
+    font-size: 18px;
+  }
+
+  .dark {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .darkTitle {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .darkBody {
+    font-size: 15px;
+  }
+
+  .tally {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .match {
+    gap: 10px;
+    padding: 4px 10px;
+  }
+
+  .guestRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .studyPanels {
+    flex: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .studyPanels > .dark {
+    flex: none;
+  }
+}
+
+/* Nothing here moves; any motion added later stops here. */
+@media (prefers-reduced-motion: reduce) {
+}

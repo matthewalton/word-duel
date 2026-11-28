@@ -1,6 +1,6 @@
 /**
  * What a versus room deals and how its answers are judged (ADR 0012): plain
- * functions over the pack, shared by the server referee, the Versus panel and
+ * functions over the pack, shared by the server referee, the Versus area and
  * the tests. Relative imports keep it loadable by `node --test`.
  */
 import { VERSUS } from "../config/game.ts";
