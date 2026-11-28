@@ -315,8 +315,14 @@ export const strings = {
     newest: "NEWEST",
     mostMissed: "MOST MISSED",
     missedIntro: "Words you got wrong or ran out of time on.",
-    /** Downloads the MISSED tab as a file Anki imports. */
+    /** Downloads the MISSED tab as an Anki deck (.apkg). */
     ankiExport: "EXPORT TO ANKI",
+    /** The export button while the deck is being made. */
+    ankiExporting: "EXPORTING…",
+    ankiExportError: "Couldn't make the Anki deck. Check your connection and try again.",
+    /** Inside the exported deck: the cloze note type's name, and the deck's description in Anki. */
+    ankiClozeType: "{game} Cloze",
+    ankiDeckDesc: "Missed words from {game}, exported {date}.",
     bestIntro: "Your most accurate words, once you have answered them {n} times or more.",
     misses: "{n} MISSES",
     oneMiss: "1 MISS",

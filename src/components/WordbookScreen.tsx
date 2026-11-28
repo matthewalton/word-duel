@@ -5,7 +5,6 @@ import { useEffect, useId, useState, type ReactNode } from "react";
 import { WORDBOOK } from "@/config/game";
 import { langText, type PromptKind } from "@/game/types";
 import { fill, strings, UI_LANG } from "@/i18n/strings";
-import { ankiExport } from "@/lib/ankiExport";
 import { useChosenPack } from "@/lib/packChoice";
 import { dateText, daysSince } from "@/lib/dates";
 import { useAccount } from "@/lib/useAccount";
@@ -156,10 +155,12 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
   const [order, setOrder] = useState<Order>("newest");
   const [openId, setOpenId] = useState<string | null>(null);
   const [details, setDetails] = useState<Record<string, WordbookDetail | "failed">>({});
+  const [exportFailed, setExportFailed] = useState(false);
 
   const pick = (t: BookTab) => {
     setTab(t);
     setOpenId(null);
+    setExportFailed(false);
   };
 
   const toggle = (itemId: string) => {
@@ -223,12 +224,17 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
           <>
             {tab === "missed" && <PracticeMissed pack={pack} userId={userId} />}
             {tab === "missed" ? (
-              <div className={w.introRow}>
-                <p className={w.intro}>{s.missedIntro}</p>
-                <Button className={w.plain} onClick={() => download(ankiExport(pack, entries, new Date()))}>
-                  {s.ankiExport}
-                </Button>
-              </div>
+              <>
+                <div className={w.introRow}>
+                  <p className={w.intro}>{s.missedIntro}</p>
+                  <AnkiExportButton pack={pack} entries={entries} onFail={setExportFailed} />
+                </div>
+                {exportFailed && (
+                  <p className={`${w.intro} ${w.exportError}`} role="alert">
+                    {s.ankiExportError}
+                  </p>
+                )}
+              </>
             ) : (
               <p className={w.intro}>{fill(s.bestIntro, { n: WORDBOOK.bestMinAnswers })}</p>
             )}
@@ -254,15 +260,45 @@ function Book({ pack, book, userId }: { pack: LanguagePack; book: Wordbook; user
   );
 }
 
-/** Saves a text file through the browser's own download. */
-function download({ fileName, text }: { fileName: string; text: string }) {
-  const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = fileName;
-  a.click();
-  // Revoked once the click has handed the file to the download.
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+/**
+ * EXPORT TO ANKI: builds the MISSED tab's `.apkg` in the browser. The deck
+ * writer loads only on tap; while it works the button reads EXPORTING… and
+ * ignores taps, holding the idle label's width so the row doesn't jump. It is
+ * aria-disabled rather than disabled so keyboard focus stays on it.
+ */
+function AnkiExportButton({
+  pack,
+  entries,
+  onFail,
+}: {
+  pack: LanguagePack;
+  entries: readonly WordbookEntry[];
+  onFail: (failed: boolean) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  const exportDeck = async () => {
+    if (busy) return;
+    setBusy(true);
+    onFail(false);
+    try {
+      const { exportAnkiDeck } = await import("@/lib/ankiDownload");
+      await exportAnkiDeck(pack, entries, new Date());
+    } catch (error) {
+      console.error(error);
+      onFail(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Button className={`${w.plain} ${w.export}`} onClick={exportDeck} aria-disabled={busy} aria-busy={busy}>
+      {/* Both labels share one grid cell, so the button keeps the wider one's width. */}
+      <span className={busy ? w.exportHidden : undefined}>{s.ankiExport}</span>
+      <span className={busy ? undefined : w.exportHidden}>{s.ankiExporting}</span>
+    </Button>
+  );
 }
 
 function whenText(d: Date | null): string {

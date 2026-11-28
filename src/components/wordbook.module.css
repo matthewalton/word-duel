@@ -181,6 +181,31 @@
   flex: none;
 }
 
+/* EXPORT TO ANKI: both labels in one grid cell, so EXPORTING… doesn't change the width. */
+.introRow .export {
+  display: inline-grid;
+  place-items: center;
+}
+
+.export > span {
+  grid-area: 1 / 1;
+}
+
+.exportHidden {
+  visibility: hidden;
+}
+
+.export[aria-disabled="true"] {
+  color: #4a4060;
+  cursor: progress;
+}
+
+/* The export's failure line, under the intro row. */
+.intro.exportError {
+  padding-top: calc(8px * var(--s));
+  font-size: calc(15px * var(--s));
+}
+
 /* ---------- Practise missed words ---------- */
 
 .practice {
