@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { RULES } from "@/config/game";
+import { FUSE_SEGMENTS, RULES } from "@/config/game";
 import { duelReducer, initialDuel } from "./duel";
 import type { Round } from "./types";
-import { FUSE_SEGMENTS } from "./useDuel";
 import { loserSide, type RoomSnapshot, type Seat, type VersusRound } from "./versus";
 
 /** How often the controller catches the screen up with the server's clock. */

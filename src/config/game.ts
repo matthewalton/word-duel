@@ -45,6 +45,9 @@ export const RULES = {
   countdownGoMs: 500,
 } as const;
 
+/** Number of segments in the fuse bar (5% steps). */
+export const FUSE_SEGMENTS = 20;
+
 /** Versus rules (ADR 0012). Hearts and the fuse's start, step and floor are the solo ones. */
 export const VERSUS = {
   /** Room code letters: consonants that can't be misread (no I, O, L, Y or vowels, so no words). */
