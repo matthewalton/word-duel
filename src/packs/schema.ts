@@ -34,7 +34,11 @@ export const wordItemSchema = z.strictObject({
   target: text,
   /** Other accepted target-language spellings, if any. */
   targetAlt: z.array(text).min(1).optional(),
-  /** Accepted base-language answers; the first is the main one. */
+  /**
+   * Accepted base-language answers; the first is the main one, shown as the
+   * prompt. A meaning with several senses names its sense in a clarifier,
+   * "to lose (an item)", which is shown but optional to type.
+   */
   base: z.array(text).min(1),
   /** How hard the word is, 1 (easiest) to 3, from its source grade (ADR 0009). Difficulty picks which tiers a duel draws. */
   tier,
