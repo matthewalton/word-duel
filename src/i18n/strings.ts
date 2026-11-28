@@ -270,7 +270,9 @@ export const strings = {
     pageTitle: "Wordbook",
     /** Accessible name of the icon-only link on a phone. */
     linkAria: "Wordbook",
-    missedCount: "{n} MISSED",
+    /** The account menu's Wordbook row, which shows the missed count as a bare number. */
+    menuAria: "Wordbook: {n} missed words",
+    menuAriaOne: "Wordbook: 1 missed word",
     gameOverLink: "OPEN WORDBOOK",
     gameOverNote: "This duel is saved there.",
     tabsLabel: "Wordbook",

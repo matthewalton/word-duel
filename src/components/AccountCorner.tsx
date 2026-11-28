@@ -164,10 +164,21 @@ function AccountMenu({
         <span className={a.menuName}>{name.toUpperCase()}</span>
       </div>
       <MenuItem asChild>
-        <Link href="/wordbook" className={a.menuRow}>
+        <Link
+          href="/wordbook"
+          className={a.menuRow}
+          // The count shows as a bare number; the label says what it counts.
+          aria-label={
+            missed
+              ? missed === 1
+                ? strings.wordbook.menuAriaOne
+                : fill(strings.wordbook.menuAria, { n: missed })
+              : undefined
+          }
+        >
           <BookIcon className={a.wordbookIcon} />
           <span className={a.menuRowName}>{strings.wordbook.title}</span>
-          {missed ? <span className={a.menuWordbookCount}>{fill(strings.wordbook.missedCount, { n: missed })}</span> : null}
+          {missed ? <span className={a.menuWordbookCount}>{missed}</span> : null}
           <span aria-hidden="true">&gt;</span>
         </Link>
       </MenuItem>
