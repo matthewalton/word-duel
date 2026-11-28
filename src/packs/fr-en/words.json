@@ -391,7 +391,7 @@
   { "id": "voler.to-fly", "kind": "word", "target": "voler", "base": ["to fly", "to steal", "to rob"], "tier": 1 },
   { "id": "ouvrir.to-open", "kind": "word", "target": "ouvrir", "base": ["to open"], "tier": 1 },
   { "id": "la-réponse.answer", "kind": "word", "target": "la réponse", "base": ["answer", "reply", "response"], "tier": 1 },
-  { "id": "la-lumière.light", "kind": "word", "target": "la lumière", "base": ["light"], "tier": 1 },
+  { "id": "la-lumière.light", "kind": "word", "target": "la lumière", "base": ["light (brightness)"], "tier": 1 },
   { "id": "le-pied.foot", "kind": "word", "target": "le pied", "base": ["foot"], "tier": 1 },
   { "id": "la-montre.watch", "kind": "word", "target": "la montre", "base": ["watch", "wristwatch"], "tier": 1 },
   { "id": "le-soleil.sun", "kind": "word", "target": "le soleil", "base": ["sun"], "tier": 1 },
