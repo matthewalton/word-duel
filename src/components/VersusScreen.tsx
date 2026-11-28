@@ -10,6 +10,8 @@ import { useVersusDuel } from "@/game/useVersusDuel";
 import { useVersusRoom } from "@/game/useVersusRoom";
 import { otherSeat, roundsWon, type RoomSnapshot, type Seat, type VersusRound } from "@/game/versus";
 import { fill, strings } from "@/i18n/strings";
+import { playSound } from "@/lib/sound";
+import { useDuelSounds } from "@/lib/useDuelSounds";
 import { useViewportHeight, viewportHeightVar } from "@/lib/useViewportHeight";
 import { getPack, listPacks } from "@/packs";
 import type { LanguagePack } from "@/packs/types";
@@ -18,6 +20,7 @@ import styles from "./game.module.css";
 import { LangSpan } from "./LangSpan";
 import { PackFonts, packVars } from "./PackFonts";
 import { PromptBoard } from "./PromptBoard";
+import { SoundButton } from "./SoundButton";
 import { Button, buttonClass } from "./ui/Button";
 import { HeartRow } from "./ui/PixelHeart";
 import v from "./versus.module.css";
@@ -106,6 +109,7 @@ function RoomMessage({ title, body = strings.versus.errorBody, quiet }: { title:
       <div className={styles.modeBar}>
         <MenuLink />
         <span className={styles.duelName}>{strings.versus.title}</span>
+        <SoundButton className={styles.modeSound} />
       </div>
       <div className={v.message} role={quiet ? "status" : "alert"}>
         <h1 className={quiet ? v.messageQuiet : v.messageTitle}>{title}</h1>
@@ -144,11 +148,19 @@ function Waiting({
   const { base, target } = pack.meta;
   const [from, to] = snapshot.direction === "toTarget" ? [base, target] : [target, base];
 
+  // The doorbell when the empty card fills; arriving to a room the rival is already in is silent.
+  const wasJoined = useRef(joined);
+  useEffect(() => {
+    if (joined && !wasJoined.current) playSound("rivalJoined");
+    wasJoined.current = joined;
+  }, [joined]);
+
   return (
     <main className={v.wait}>
       <div className={styles.modeBar}>
         <MenuLink onLeave={onLeave} />
         <span className={styles.duelName}>{strings.versus.title}</span>
+        <SoundButton className={styles.modeSound} />
       </div>
 
       <div className={v.faceOff}>
@@ -270,6 +282,16 @@ function VersusDuel({
   leave: () => void;
 }) {
   const { state, fuseLit, current, locked, onSubmit } = useVersusDuel({ snapshot, seat, now, submit, nudge });
+  useDuelSounds({
+    versus: true,
+    phase: state.phase,
+    count: state.count,
+    fxKey: state.fxKey,
+    outcome: state.outcome,
+    fuseLit,
+    lockedOut: locked && current != null && current.answered.includes(seat),
+    result: state.phase === "gameOver" ? (snapshot.winner === seat ? "win" : "lose") : null,
+  });
   const rivalName = nameOf(snapshot, otherSeat(seat));
   const lost = state.phase === "resolving" && state.outcome?.loser === "you";
   const Controls = getMinigame(snapshot.minigame).Controls;
@@ -281,6 +303,7 @@ function VersusDuel({
         <MenuLink onLeave={leave} />
         <span className={styles.duelName}>{fill(strings.versus.titleMinigame, { minigame: minigameName(snapshot.minigame) })}</span>
         <span className={v.roomTag}>{fill(strings.versus.roomCode, { code: snapshot.code })}</span>
+        <SoundButton className={`${styles.modeSound} ${v.roomSound}`} />
       </div>
       <div className={`${styles.board} ${lost ? styles.boardJolt : ""}`}>
         <VersusHud state={state} rivalName={rivalName} />
