@@ -23,7 +23,7 @@ const AREAS = {
  * An area screen's top bar (board NavDoorsSingle and its siblings): BACK to
  * the hub, the area's title strip in its colour, the language chip and the
  * account. Escape goes back to the hub too, unless a menu or dialog is open
- * (it closes that instead).
+ * (it closes that instead) or the player is typing (a room code, say).
  */
 export function AreaBar({
   area,
@@ -41,7 +41,7 @@ export function AreaBar({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || e.defaultPrevented) return;
-      if (e.target instanceof Element && e.target.closest('[role="menu"], [role="dialog"]')) return;
+      if (e.target instanceof Element && e.target.closest('input, textarea, [role="menu"], [role="dialog"]')) return;
       router.push("/");
     };
     window.addEventListener("keydown", onKey);
