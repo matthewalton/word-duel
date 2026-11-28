@@ -36,7 +36,11 @@ const FR: Record<string, string> = {
   différent: "différente", amoureux: "amoureuse", blessé: "blessée", ouvert: "ouverte", humain: "humaine",
   occupé: "occupée", personnel: "personnelle", spécial: "spéciale", mignon: "mignonne", fier: "fière",
   marié: "mariée", précis: "précise", médical: "médicale", égal: "égale", idéal: "idéale",
-  malheureux: "malheureuse", supérieur: "supérieure",
+  malheureux: "malheureuse", supérieur: "supérieure", désolé: "désolée", haut: "haute", pareil: "pareille",
+  intéressant: "intéressante", merveilleux: "merveilleuse", ancien: "ancienne", bleu: "bleue",
+  intelligent: "intelligente", doux: "douce", fatigué: "fatiguée", vert: "verte", précieux: "précieuse",
+  furieux: "furieuse", pur: "pure", ennuyeux: "ennuyeuse", gratuit: "gratuite", léger: "légère", sain: "saine",
+  fâché: "fâchée", généreux: "généreuse", mortel: "mortelle",
 };
 
 /**
@@ -51,7 +55,7 @@ const packs = [
   { name: "es-en", lang: "es", words: esWords, matching: esMatching, feminine: ES, masculineEnding: /o$/, notAdjectives: none },
   {
     name: "fr-en", lang: "fr", words: frWords, matching: frMatching, feminine: FR,
-    masculineEnding: /(eux|if|el|er|et|é|al|on)$/, notAdjectives: ["hier"],
+    masculineEnding: /(eux|if|el|er|et|é|al|on)$/, notAdjectives: ["hier", "environ"],
   },
 ];
 
